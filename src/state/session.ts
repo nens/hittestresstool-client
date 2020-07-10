@@ -30,8 +30,6 @@ interface ReceiveBootstrapAction {
   bootstrap: Bootstrap
 }
 
-type SessionAction = ReceiveBootstrapAction;
-
 // Reducer
 
 const reducer = (state=INITIAL_STATE, action: ReceiveBootstrapAction) => {

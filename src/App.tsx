@@ -11,8 +11,7 @@ import * as reducers from './state/';
 import { getLocaleStringFromBrowserSetting } from './utils/detectLanguage';
 import { isAuthenticated } from './state/session';
 import AttemptLogin from './screens/AttemptLogin';
-
-import './App.css';
+import MainScreen from './screens/MainScreen';
 
 
 const rootReducer = combineReducers(reducers);
@@ -59,7 +58,7 @@ const AppWithAuthentication: React.FC = () => {
 
   return (
     <div>
-      {authenticated ? <p>Hoi</p> : <AttemptLogin/>}
+      {authenticated ? <MainScreen/> : <AttemptLogin/>}
     </div>
   );
 };
