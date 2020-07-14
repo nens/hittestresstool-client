@@ -1,0 +1,44 @@
+.sidebarBlock {
+  width: 15.5rem;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0px 3px 6px #00000029;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebarBlockClosed {
+  background-color: #39AEA9;
+  cursor: pointer;
+}
+
+.sidebarBlockOpened {
+  background-color: #567B83;
+}
+
+.sidebarBlockDisabled {
+  background-color: #6DC1A9;
+  opacity: 49%;
+}
+
+.sidebarBlockRow {
+  height: 3rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+
+}
+
+.sidebarBlockTitle {
+  flex-grow: 10;
+}
+
+.sidebarBlockRow div {
+  flex-grow: 1;
+  padding-top: 0.5rem;
+}
+
+.sidebarBlockRow svg {
+  flex-grow: 1;
+  padding-top: 0.5rem;
+}
