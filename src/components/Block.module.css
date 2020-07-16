@@ -1,19 +1,24 @@
 .sidebarBlock {
-  width: 15.5rem;
+  width: 17.5rem;
   color: white;
   border-radius: 5px;
   box-shadow: 0px 3px 6px #00000029;
   padding: 0;
   margin: 0;
+  margin-bottom: 1rem;
+  transition: height 0.3s;
+  overflow: hidden;
 }
 
 .sidebarBlockClosed {
   background-color: #39AEA9;
   cursor: pointer;
+  height: 3rem;
 }
 
 .sidebarBlockOpened {
   background-color: #567B83;
+  height: 12rem;
 }
 
 .sidebarBlockDisabled {
@@ -30,7 +35,7 @@
 }
 
 .sidebarBlockTitle {
-  flex-grow: 10;
+  flex-grow: 100;
 }
 
 .sidebarBlockRow div {

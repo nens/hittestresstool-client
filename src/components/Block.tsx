@@ -15,7 +15,7 @@ export interface BlockProps {
   icon: any,
   status: BlockStatus,
   onOpen?: () => void, // Function called is status = closed and clicked on title
-  children: any
+  children?: any
 }
 
 export const IconRow: React.FC<{children: any}> = ({children}) => {
