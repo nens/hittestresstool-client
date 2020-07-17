@@ -1,8 +1,11 @@
 import React, { useRef } from 'react';
+import { useSelector } from 'react-redux';
 import Leaflet from 'leaflet';
 import {
-  Map, TileLayer
+  Map, TileLayer, WMSTileLayer
 } from 'react-leaflet';
+
+import { getOpenBlock } from '../state/sidebar';
 
 // Since we haven't quite decided at which bounds a given user should start,
 // and I'm interested how hot this bedroom I'm working from home in will become,
@@ -17,6 +20,8 @@ const BOUNDS = Leaflet.latLngBounds(Leaflet.latLng({
 
 
 const MainMap: React.FC = () => {
+  const openBlock = useSelector(getOpenBlock);
+
   // see default public token at https://account.mapbox.com/
   const mapBoxAccesToken = "pk.eyJ1IjoibmVsZW5zY2h1dXJtYW5zIiwiYSI6ImhkXzhTdXcifQ.3k2-KAxQdyl5bILh_FioCw";
   const mapRef = useRef(null);
@@ -35,9 +40,14 @@ const MainMap: React.FC = () => {
     >
       <TileLayer
         url={`https://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${mapBoxAccesToken}`}
-      // why is it here zIndex and in ObjectTypeVectorGrid z-index ? however it works
         zIndex={0}
       />
+      {openBlock === 'heatstress' ? (
+        <WMSTileLayer
+          url="https://nxt3.staging.lizard.net/wms/"
+          layers="nelen-schuurmans:interactive-heat-stress-model"
+        />
+      ) : null}
     </Map>
   );
 };
