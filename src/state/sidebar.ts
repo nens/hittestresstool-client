@@ -11,21 +11,26 @@ export type Map = "heatstress" | "pavements" | "trees";
 
 export type Tree = "tree_5m" | "tree_10m" | "tree_15m";
 
+export type Pavement = "water" | "grass" | "shrub" | "semipaved" | "paved";
+
 interface SidebarState {
   openMap: Map;
   editing: boolean;
   selectedTree: Tree;
+  selectedPavement: Pavement;
 }
 
 const INITIAL_STATE: SidebarState = {
   openMap: "heatstress",
   editing: false,
-  selectedTree: "tree_5m"
+  selectedTree: "tree_5m",
+  selectedPavement: "grass",
 };
 
 const CLICK_HEAT_STRESS = "sidebar/clickHeatStress";
 const CLICK_BLOCK_TREES = "sidebar/clickBlockTrees";
 const CLICK_BLOCK_PAVEMENTS = "sidebar/clickBlockPavements";
+const SET_SELECTED_PAVEMENT = "sidebar/setSelectedPavement";
 
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
   const type = action.type;
@@ -52,6 +57,11 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       } else {
         return {...state, openMap: "pavements"};
       }
+    case SET_SELECTED_PAVEMENT:
+      return {
+        ...state,
+        selectedPavement: action.pavement
+      };
     default:
       return state;
   }
@@ -62,6 +72,7 @@ export default reducer;
 // Selectors
 
 export const getOpenBlock = (state: AppState): Map | null => state.sidebar.openMap;
+export const getSelectedPavement = (state: AppState): Pavement => state.sidebar.selectedPavement;
 
 export const getEditingTrees = (state: AppState): boolean => (
   state.sidebar.editing && state.sidebar.openMap === 'trees'
@@ -94,3 +105,10 @@ export const clickBlockPavements = () => {
     type: CLICK_BLOCK_PAVEMENTS
   };
 };
+
+export const setSelectedPavement = (pavement: Pavement) => {
+  return {
+    type: SET_SELECTED_PAVEMENT,
+    pavement
+  };
+}

@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { action } from '@storybook/addon-actions';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
+
 import Botanical from '../icons/Botanical';
 import Brick from '../icons/Brick';
 import Check from '../icons/Check';
@@ -19,9 +22,9 @@ export default {
   title: 'Icons'
 }
 
-export const grass = () => <Grass/>;
-export const botanical = () => <Botanical/>;
-export const brick = () => <Brick/>;
+export const grass = () => <Grass active={boolean("Active", false)} onClick={action("Grass")} />;
+export const brush = () => <Botanical active={boolean("Active", false)} onClick={action("Brush")} />;
+export const semipaved = () => <Brick active={boolean("Active", false)} onClick={action("Semipaved")} />;
 export const check = () => <Check/>;
 export const close = () => <Close/>;
 export const download = () => <Download/>;
@@ -30,6 +33,6 @@ export const heat = () => <Heat/>;
 export const land = () => <Land/>;
 export const pencil = () => <Pencil/>;
 export const eturn = () => <Return/>;
-export const road = () => <Road/>;
-export const sea = () => <Sea/>;
+export const paved = () => <Road active={boolean("Active", false)} onClick={action("Paved")} />;
+export const sea = () => <Sea active={boolean("Active", false)} onClick={action("Water")} />;
 export const tree = () => <Tree/>;

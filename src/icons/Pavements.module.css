@@ -1,0 +1,23 @@
+.pavementInactive {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 3px;
+  box-shadow: 0px 3px 6px #00000029;
+  background: #39AEA9;
+  margin: 0 0.5rem;
+}
+
+.pavementActive {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 3px;
+  box-shadow: 0px 3px 6px #00000029;
+  background: #E5EFC0;
+  margin: 0 0.5rem;
+}
+
+.pavementActive svg, .pavementInactive svg {
+  display: block;
+  margin: auto;
+  padding: 0;
+}

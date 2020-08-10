@@ -48,6 +48,18 @@ const MainMap: React.FC = () => {
           layers="nelen-schuurmans:interactive-heat-stress-model"
         />
       ) : null}
+      {openBlock === 'trees' ? (
+        <WMSTileLayer
+          url="https://nxt3.staging.lizard.net/wms/"
+          layers="nelen-schuurmans:treescmheight-interactive-heat-stress-cp20rxms"
+        />
+      ) : null}
+      {openBlock === 'pavements' ? (
+        <WMSTileLayer
+          url="https://nxt3.staging.lizard.net/wms/"
+          layers="nelen-schuurmans:landuse-interactive-heat-stress-tm76ldn4"
+        />
+      ) : null}
     </Map>
   );
 };

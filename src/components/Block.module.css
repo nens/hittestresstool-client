@@ -8,12 +8,12 @@
   margin-bottom: 1rem;
   transition: height 0.3s;
   overflow: hidden;
+  height: 3rem;
 }
 
 .sidebarBlockClosed {
   background-color: #39AEA9;
   cursor: pointer;
-  height: 3rem;
 }
 
 .sidebarBlockOpened {
@@ -27,23 +27,10 @@
 }
 
 .sidebarBlockRow {
+  width: 15.5rem;
   height: 3rem;
   padding: 0.5rem 1rem;
   display: flex;
   justify-content: center;
-
-}
-
-.sidebarBlockTitle {
-  flex-grow: 100;
-}
-
-.sidebarBlockRow div {
-  flex-grow: 1;
-  padding-top: 0.5rem;
-}
-
-.sidebarBlockRow svg {
-  flex-grow: 1;
-  padding-top: 0.5rem;
+  margin: 0;
 }

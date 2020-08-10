@@ -1,13 +1,14 @@
 import React from 'react';
 
-import styles from './Icons.module.css';
+import styles from './Pavements.module.css';
 
 interface BotanicalProps {
-  active?: boolean
+  active: boolean,
+  onClick: () => void
 }
 
-const Botanical: React.FC<BotanicalProps> = ({active=false}) => (
-  <div className={active ? styles.hardenedActive : styles.hardenedInactive}>
+const Botanical: React.FC<BotanicalProps> = ({active, onClick}) => (
+  <div className={active ? styles.pavementActive : styles.pavementInactive} onClick={onClick}>
     <svg xmlns="http://www.w3.org/2000/svg" width="24.39" height="11.052" viewBox="0 0 24.39 11.052">
       <g transform="translate(0 0)">
         <path style={{fill: "#aedb81"}} d="M151.573,151.457h10.8a4.564,4.564,0,0,0-2.895-7.164.743.743,0,0,1-.566-.519,2.666,2.666,0,0,0-3.419-1.694.746.746,0,0,1-.723-.107,5.309,5.309,0,0,0-2.575-1.131,5.412,5.412,0,0,0-.773,0c-3.032,0-4.967,2.474-4.823,5.538A4.991,4.991,0,0,0,151.573,151.457Z" transform="translate(-139.609 -140.786)"/>

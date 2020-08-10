@@ -29,7 +29,7 @@ export const closed = () => (
     status={select("Status", ["closed", "disabled", "opened"], "closed")}
     onOpen={action("Open")}
   >
-    <IconRow> <Sea/> <Grass active={true} /> <Botanical/> <Brick/> <Road/> </IconRow>
+    <div>This is the first row</div>
     <IconRow> <Close/> <Return/> <Check/> </IconRow>
   </Block>
 );
