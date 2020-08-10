@@ -18,7 +18,7 @@
 
 .sidebarBlockOpened {
   background-color: #567B83;
-  height: 12rem;
+  height: 9rem;
 }
 
 .sidebarBlockDisabled {
@@ -29,8 +29,18 @@
 .sidebarBlockRow {
   width: 15.5rem;
   height: 3rem;
-  padding: 0.5rem 1rem;
+  padding: 0 0.5rem;
   display: flex;
   justify-content: center;
   margin: 0;
+}
+
+.sidebarBlockTitle {
+  width: 14.5rem;
+  margin: auto 0;
+}
+
+.sidebarBlockIcon {
+  width: 1rem;
+  margin: auto 0;
 }

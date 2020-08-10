@@ -49,7 +49,9 @@ const Block: React.FC<BlockProps> = ({title, icon, status, children, onOpen}: Bl
     }>
       <div className={styles.sidebarBlockRow}>
         <h2 className={styles.sidebarBlockTitle}>{title}</h2>
-        {icon}
+        <div className={styles.sidebarBlockIcon}>
+          {icon}
+        </div>
       </div>
       {(status === 'opened') ? children : null}
     </div>

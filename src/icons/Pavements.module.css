@@ -18,6 +18,7 @@
 
 .pavementActive svg, .pavementInactive svg {
   display: block;
-  margin: auto;
+  height: 1rem;
+  margin: 0.5rem auto;
   padding: 0;
 }

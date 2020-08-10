@@ -2,8 +2,13 @@ import React from 'react';
 
 import { connect, useSelector } from 'react-redux';
 
-import Block from '../components/Block';
+import Block, { IconRow } from '../components/Block';
+import TextButton from '../components/TextButton';
+import Slider from '../components/Slider';
+
+import FarmingAndGardening from '../icons/FarmingAndGardening';
 import Tree from '../icons/Tree';
+
 import { getEditing, getOpenBlock, clickBlockTrees } from '../state/sidebar';
 
 interface Props {
@@ -18,7 +23,15 @@ const BlockTrees: React.FC<Props> = ({clickBlockTrees}) => {
 
   return (
     <Block title="Bomen planten" icon={<Tree/>} status={status}
-           onOpen={clickBlockTrees} />
+           onOpen={clickBlockTrees}>
+      <IconRow>
+        <Tree size="small" /> <Slider amount={3} current={1} /> <Tree size="large" />
+      </IconRow>
+      <IconRow>
+        <TextButton text="Plant op kaart" icon={<FarmingAndGardening/>}
+        onClick={() => {}} />
+      </IconRow>
+    </Block>
   );
 };
 

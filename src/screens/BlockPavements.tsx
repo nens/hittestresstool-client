@@ -3,11 +3,13 @@ import React from 'react';
 import { connect, useSelector } from 'react-redux';
 
 import Block, { IconRow } from '../components/Block';
+import TextButton from '../components/TextButton';
 import PavementIcons from '../components/PavementIcons';
 import Land from '../icons/Land';
 import Close from '../icons/Close';
 import Return from '../icons/Return';
 import Check from '../icons/Check';
+import Pencil from '../icons/Pencil';
 
 import {
   Pavement,
@@ -34,7 +36,10 @@ const BlockPavements: React.FC<Props> = ({clickBlockPavements, setSelectedPaveme
     <Block title="Verharding aanpassen" icon={<Land/>} status={status}
            onOpen={clickBlockPavements}>
       <PavementIcons active={selectedPavement} setActive={setSelectedPavement} />
-    <IconRow> <Close/> <Return/> <Check/> </IconRow>
+      <IconRow>
+        <TextButton text="Teken op kaart" icon={<Pencil/>}
+                    onClick={() => {}} />
+      </IconRow>
     </Block>
   );
 };
