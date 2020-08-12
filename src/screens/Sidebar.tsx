@@ -1,8 +1,5 @@
 import React from 'react';
 
-import Block from '../components/Block';
-import Land from '../icons/Land';
-
 import BlockHittestress from './BlockHittestress';
 import BlockPavements from './BlockPavements';
 import BlockTrees from './BlockTrees';

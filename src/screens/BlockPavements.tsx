@@ -3,12 +3,10 @@ import React from 'react';
 import { connect, useSelector } from 'react-redux';
 
 import Block, { IconRow } from '../components/Block';
+import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
 import TextButton from '../components/TextButton';
 import PavementIcons from '../components/PavementIcons';
 import Land from '../icons/Land';
-import Close from '../icons/Close';
-import Return from '../icons/Return';
-import Check from '../icons/Check';
 import Pencil from '../icons/Pencil';
 
 import {
@@ -30,15 +28,23 @@ const BlockPavements: React.FC<Props> = ({clickBlockPavements, setSelectedPaveme
   const openBlock = useSelector(getOpenBlock);
   const selectedPavement = useSelector(getSelectedPavement);
 
-  const status = openBlock === 'pavements' ? "opened" : editing ? "disabled" : "closed";
+  const blockStatus = openBlock === 'pavements' ? "opened" : editing ? "disabled" : "closed";
+  const editingPavements = openBlock === 'pavements' && editing;
 
   return (
-    <Block title="Verharding aanpassen" icon={<Land/>} status={status}
+    <Block title="Verharding aanpassen" icon={<Land/>} status={blockStatus}
            onOpen={clickBlockPavements}>
       <PavementIcons active={selectedPavement} setActive={setSelectedPavement} />
       <IconRow>
-        <TextButton text="Teken op kaart" icon={<Pencil/>}
-                    onClick={() => {}} />
+        {editingPavements ?
+         <CloseUndoCheckBar
+           onClose={() => {}}
+           onUndo={() => {}}
+           onCheck={() => {}}
+         />
+        :
+         <TextButton text="Teken op kaart" icon={<Pencil/>}
+                     onClick={() => {}} />}
       </IconRow>
     </Block>
   );

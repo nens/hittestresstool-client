@@ -14,6 +14,10 @@
   margin: 2px;
 }
 
+.checkIcon svg {
+  padding: 0.5rem;
+}
+
 .returnIcon {
   background: #E5EFC09;
   flex-grow: 0;
@@ -24,6 +28,10 @@
   margin: 2px;
 }
 
+.returnIcon svg {
+  padding: 0.5rem;
+}
+
 .closeIcon {
   background: #FF7D7D;
   flex-grow: 0;
@@ -32,4 +40,8 @@
   width: 2.5rem;
   height: 2.5rem;
   margin: 2px;
+}
+
+.closeIcon svg {
+  padding: 0.5rem;
 }

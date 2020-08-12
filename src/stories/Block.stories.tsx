@@ -3,18 +3,8 @@ import React from 'react';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, select } from '@storybook/addon-knobs';
 
-import Block, { IconRow } from '../components/Block';
+import Block from '../components/Block';
 import Land from '../icons/Land';
-
-import Sea from '../icons/Sea';
-import Grass from '../icons/Grass';
-import Botanical from '../icons/Botanical';
-import Brick from '../icons/Brick';
-import Road from '../icons/Road';
-
-import Close from '../icons/Close';
-import Return from '../icons/Return';
-import Check from '../icons/Check';
 
 export default {
   component: Block,
@@ -30,6 +20,6 @@ export const closed = () => (
     onOpen={action("Open")}
   >
     <div>This is the first row</div>
-    <IconRow> <Close/> <Return/> <Check/> </IconRow>
+    <div>This is the second row</div>
   </Block>
 );

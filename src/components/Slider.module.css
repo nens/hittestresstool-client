@@ -1,0 +1,44 @@
+.Slider {
+  display: inline-block;
+  margin: 1rem;
+}
+
+.SliderBullet {
+  display: inline-block;
+  color: white;
+  border: solid white 1px;
+  background: white;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 0.3125rem;
+}
+
+.SliderBulletActive {
+  display: inline-block;
+  color: #041C3B;
+  border: solid #041C3B 1px;
+  background: #041C3B;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 0.3125rem;
+}
+
+.SliderLine {
+  display: inline-block;
+  color: white;
+  border: solid white 0.0625rem;
+  background: white;
+  width: 3rem;
+  height: 0.1875rem;
+  margin: 0.25rem 0;
+}
+
+.SliderLineActive {
+  display: inline-block;
+  color: #041C3B;
+  border: solid #041C3B 0.0625rem;
+  background: #041C3B;
+  width: 3rem;
+  height: 0.1875rem;
+  margin: 0.25rem 0;
+}

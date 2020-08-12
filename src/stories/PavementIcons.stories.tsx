@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { action } from '@storybook/addon-actions';
-import { withKnobs, select } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 
 import PavementIcons from '../components/PavementIcons';
 

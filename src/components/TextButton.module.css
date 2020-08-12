@@ -1,0 +1,12 @@
+.TextButton {
+  padding: 0.75rem;
+  font: SemiBold;
+  width: 10rem;
+  height: 1rem;
+  color: #5A5152;
+  background: #E5EFC0;
+  box-shadow: 2px 2px 2px #00000029;
+  border-radius: 3px;
+  vertical-align: middle;
+  text-align: center;
+}

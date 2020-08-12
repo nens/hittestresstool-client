@@ -28,7 +28,6 @@ export const IconRow: React.FC<{children: any}> = ({children}) => {
 
 const Block: React.FC<BlockProps> = ({title, icon, status, children, onOpen}: BlockProps) => {
   const clickable = (status === 'closed' && onOpen);
-  const disabled = (status === 'disabled');
 
   let className = styles.sidebarBlock;
 

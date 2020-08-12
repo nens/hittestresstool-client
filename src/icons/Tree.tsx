@@ -6,12 +6,7 @@ interface TreeProps {
   size?: TreeSize
 }
 
-const Tree: React.FC<TreeProps> = ({size}: TreeProps) => {
-  const width = 22.349;
-  const height = 32;
-
-  const remHeight = height / 16;
-
+export function treeScaleFactor(size: TreeSize) {
   let factor = 1;
 
   if (size === 'small') {
@@ -20,6 +15,16 @@ const Tree: React.FC<TreeProps> = ({size}: TreeProps) => {
     factor = 1.5;
   }
 
+  return factor;
+}
+
+const Tree: React.FC<TreeProps> = ({size='default'}: TreeProps) => {
+  const width = 22.349;
+  const height = 32;
+
+  const remHeight = height / 16;
+
+  const factor = treeScaleFactor(size);
   const margin = (3 - factor*remHeight)/2 + 'rem';
 
   return (
