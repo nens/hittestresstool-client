@@ -14,6 +14,14 @@ export const TREES: [Tree, Tree, Tree] = ["tree_5m", "tree_10m", "tree_15m"];
 
 export type Pavement = "water" | "grass" | "shrub" | "semipaved" | "paved";
 
+export const COLORS_PER_PAVEMENT = {
+  "water": "blue",
+  "grass": "lightgreen",
+  "shrub": "green",
+  "semipaved": "red",
+  "paved": "black"
+};
+
 interface SidebarState {
   openMap: Map;
   editing: boolean;
@@ -37,6 +45,10 @@ export const START_EDITING_TREES = "sidebar/startEditingTrees";
 export const CANCEL_EDITING_TREES = "sidebar/cancelEditingTrees";
 export const SUBMIT_EDITING_TREES = "sidebar/submitEditingTrees";
 export const UNDO_EDITING_TREES = "sidebar/undoEditingTrees";
+export const START_EDITING_PAVEMENTS = "sidebar/startEditingPavements";
+export const CANCEL_EDITING_PAVEMENTS = "sidebar/cancelEditingPavements";
+export const SUBMIT_EDITING_PAVEMENTS = "sidebar/submitEditingPavements";
+export const UNDO_EDITING_PAVEMENTS = "sidebar/undoEditingPavements";
 
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
   const type = action.type;
@@ -74,12 +86,15 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
         selectedTree: action.tree
       };
     case START_EDITING_TREES:
+    case START_EDITING_PAVEMENTS:
       return {
         ...state,
         editing: true
       };
     case CANCEL_EDITING_TREES:
     case SUBMIT_EDITING_TREES:
+    case CANCEL_EDITING_PAVEMENTS:
+    case SUBMIT_EDITING_PAVEMENTS:
       return {
         ...state,
         editing: false
@@ -165,5 +180,30 @@ export const submitEditingTrees = () => {
 export const undoEditingTrees = () => {
   return {
     type: UNDO_EDITING_TREES
+  };
+}
+
+// For the following, see also pavements.ts
+export const startEditingPavements = () => {
+  return {
+    type: START_EDITING_PAVEMENTS
+  };
+}
+
+export const cancelEditingPavements = () => {
+  return {
+    type: CANCEL_EDITING_PAVEMENTS
+  };
+}
+
+export const submitEditingPavements = () => {
+  return {
+    type: SUBMIT_EDITING_PAVEMENTS
+  };
+}
+
+export const undoEditingPavements = () => {
+  return {
+    type: UNDO_EDITING_PAVEMENTS
   };
 }

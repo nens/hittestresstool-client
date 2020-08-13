@@ -16,15 +16,30 @@ import {
   clickBlockPavements,
   getSelectedPavement,
   setSelectedPavement,
+  startEditingPavements,
+  cancelEditingPavements,
+  submitEditingPavements,
+  undoEditingPavements,
 } from '../state/sidebar';
 
 interface Props {
   clickBlockPavements: () => void,
   setSelectedPavement: (pavement: Pavement) => void
+  startEditingPavements: () => void,
+  cancelEditingPavements: () => void,
+  submitEditingPavements: () => void,
+  undoEditingPavements: () => void
 }
 
-const BlockPavements: React.FC<Props> = ({clickBlockPavements, setSelectedPavement}) => {
-  const editing = useSelector(getEditing);
+const BlockPavements: React.FC<Props> = ({
+  clickBlockPavements,
+  setSelectedPavement,
+  startEditingPavements,
+  cancelEditingPavements,
+  submitEditingPavements,
+  undoEditingPavements,
+}) => {
+    const editing = useSelector(getEditing);
   const openBlock = useSelector(getOpenBlock);
   const selectedPavement = useSelector(getSelectedPavement);
 
@@ -38,16 +53,23 @@ const BlockPavements: React.FC<Props> = ({clickBlockPavements, setSelectedPaveme
       <IconRow>
         {editingPavements ?
          <CloseUndoCheckBar
-           onClose={() => {}}
-           onUndo={() => {}}
-           onCheck={() => {}}
+           onClose={cancelEditingPavements}
+           onUndo={undoEditingPavements}
+           onCheck={submitEditingPavements}
          />
         :
          <TextButton text="Teken op kaart" icon={<Pencil/>}
-                     onClick={() => {}} />}
+                     onClick={startEditingPavements} />}
       </IconRow>
     </Block>
   );
 };
 
-export default connect(null, {clickBlockPavements, setSelectedPavement})(BlockPavements);
+export default connect(null, {
+  clickBlockPavements,
+  setSelectedPavement,
+  startEditingPavements,
+  cancelEditingPavements,
+  submitEditingPavements,
+  undoEditingPavements,
+})(BlockPavements);

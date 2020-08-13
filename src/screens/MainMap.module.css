@@ -1,0 +1,8 @@
+.MapEditTrees:hover {
+  cursor: crosshair;
+  cursor: url(../icons/tree.svg), auto;
+}
+
+.MapEditPavements:hover {
+  cursor: crosshair;
+}
