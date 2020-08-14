@@ -1,7 +1,7 @@
 import { FeatureCollection, Feature, Polygon } from 'geojson';
 import { LatLng } from 'leaflet';
 import { AnyAction } from 'redux';
-import { AppState, Thunk } from '../App';
+import { AppState } from '../App';
 
 import {
   Pavement,

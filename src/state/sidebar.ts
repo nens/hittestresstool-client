@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux';
-import { AppState } from '../App';
+import { AppState, Thunk } from '../App';
+import { refreshHeatstress } from './hittestress';
 
 // Sidebar state:
 
@@ -171,10 +172,16 @@ export const cancelEditingTrees = () => {
   };
 }
 
-export const submitEditingTrees = () => {
-  return {
+export const submitEditingTrees = (): Thunk => (dispatch, getState) => {
+  dispatch({
     type: SUBMIT_EDITING_TREES
-  };
+  });
+
+  const state = getState();
+
+  refreshHeatstress(
+    state.trees.treesOnMap,
+    state.pavements.pavementsOnMap);
 }
 
 export const undoEditingTrees = () => {
@@ -196,10 +203,16 @@ export const cancelEditingPavements = () => {
   };
 }
 
-export const submitEditingPavements = () => {
-  return {
+export const submitEditingPavements = (): Thunk => (dispatch, getState) => {
+  dispatch({
     type: SUBMIT_EDITING_PAVEMENTS
-  };
+  });
+
+  const state = getState();
+
+  refreshHeatstress(
+    state.trees.treesOnMap,
+    state.pavements.pavementsOnMap);
 }
 
 export const undoEditingPavements = () => {
