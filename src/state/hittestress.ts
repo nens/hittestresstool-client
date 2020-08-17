@@ -16,7 +16,7 @@ function geojsonToMultipolygonWKT(pavements: PavementOnMap[]) {
         pavement.geometry.coordinates[0][0]
       ];
 
-      return '(' + coordinates.map(coord => coord[0] + ' ' + coord[1]).join(',') + ')'
+      return '((' + coordinates.map(coord => coord[0] + ' ' + coord[1]).join(',') + '))'
     }
   ).join(',') + ')';
 }
