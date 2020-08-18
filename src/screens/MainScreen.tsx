@@ -1,13 +1,16 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-import Sidebar from './Sidebar';
+import { showSlider } from '../state/map';
+
+import CompareImageSlider from './CompareImageSlider';
 import MainMap from './MainMap';
+import Sidebar from './Sidebar';
 
 import styles from './MainScreen.module.css';
 
-import CompareImageSlider from './CompareImageSlider';
-
 const MainScreen: React.FC = () => {
+  const doShowSlider = useSelector(showSlider);
   return (
     <div className={styles.container}>
       <div className={styles.leftBar}>
@@ -15,7 +18,7 @@ const MainScreen: React.FC = () => {
       </div>
       <div className={styles.map}>
         <MainMap />
-        <CompareImageSlider />
+        {doShowSlider && <CompareImageSlider />}
       </div>
     </div>
   );

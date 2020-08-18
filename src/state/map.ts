@@ -25,11 +25,17 @@ export default function reducer(state=INITIAL_STATE, action: AnyAction): MapStat
   }
 }
 
-// Selector
+// Selectors
 
 export function getMapState(state: AppState) {
   return state.map;
 }
+
+export function showSlider(state: AppState) {
+  // Only show it when looking at Hittestress and there are two map
+  return state.sidebar.openMap === 'heatstress';
+}
+
 
 // Action creators
 
