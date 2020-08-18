@@ -5,6 +5,8 @@ import MainMap from './MainMap';
 
 import styles from './MainScreen.module.css';
 
+import CompareImageSlider from './CompareImageSlider';
+
 const MainScreen: React.FC = () => {
   return (
     <div className={styles.container}>
@@ -13,6 +15,7 @@ const MainScreen: React.FC = () => {
       </div>
       <div className={styles.map}>
         <MainMap />
+        <CompareImageSlider />
       </div>
     </div>
   );
