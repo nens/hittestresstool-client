@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { attemptLogin } from '../state/session';
+import { attemptLogin, fetchConfiguration } from '../state/session';
 import { FormattedMessage } from 'react-intl.macro';
 
 interface AttemptLoginProps {
-  attemptLogin: () => void
+  attemptLogin: () => void,
+  fetchConfiguration: () => void
 };
 
 // This component checks if we are logged in; if yes, set that in the Redux state;
@@ -13,6 +14,7 @@ interface AttemptLoginProps {
 class AttemptLoginComponent extends React.Component<AttemptLoginProps, {}> {
   componentDidMount() {
     this.props.attemptLogin();
+    this.props.fetchConfiguration();
   }
 
   render() {
@@ -25,5 +27,5 @@ class AttemptLoginComponent extends React.Component<AttemptLoginProps, {}> {
 
 export default connect<{}, AttemptLoginProps>(
   null,
-  {attemptLogin}
+  {attemptLogin, fetchConfiguration}
 )(AttemptLoginComponent);

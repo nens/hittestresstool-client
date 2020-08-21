@@ -1,4 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
+import ReactDOMServer from 'react-dom/server';
+
+import { Geometry } from 'geojson';
 import { connect, useSelector } from 'react-redux';
 import Leaflet, { LatLng } from 'leaflet';
 import {
@@ -6,6 +9,10 @@ import {
 } from 'react-leaflet';
 
 import {
+  getConfiguration
+} from '../state/session';
+import {
+  Tree,
   getOpenBlock,
   getEditing,
   getSelectedPavement,
@@ -15,7 +22,8 @@ import {
 import {
   mapClickWhileEditingTrees,
   getTreesOnMap,
-  getTreesBeingAdded
+  getTreesBeingAdded,
+  removeTree
 } from '../state/trees';
 import {
   PavementOnMap,
@@ -36,28 +44,18 @@ import PolygonEditableComponent from './PolygonEditableComponent';
 
 import styles from './MainMap.module.css';
 
-// Since we haven't quite decided at which bounds a given user should start,
-// and I'm interested how hot this bedroom I'm working from home in will become,
-// let's use it as a temporary default.
-const BOUNDS = Leaflet.latLngBounds(Leaflet.latLng({
-  "lat": 50.90416950130772,
-  "lng": 6.00904941558838
-}), Leaflet.latLng({
-  "lat": 50.87758580817798,
-  "lng": 5.94776630401611
-}));
-
-
 interface MainMapProps {
   mapClickWhileEditingTrees: (latlng: LatLng) => void,
   addPavement: (polygon: LatLng[], pavement: Pavement) => void,
   setPavementBeingConstructed: (latlngs: LatLng[]) => void,
+  removeTree: (geometry: Geometry, tree: Tree) => void
 }
 
 const MainMap: React.FC<MainMapProps> = ({
   mapClickWhileEditingTrees,
   addPavement,
-  setPavementBeingConstructed
+  setPavementBeingConstructed,
+  removeTree
 }) => {
   const openBlock = useSelector(getOpenBlock);
   const editing = useSelector(getEditing);
@@ -68,23 +66,15 @@ const MainMap: React.FC<MainMapProps> = ({
   const pavementsBeingAdded = useSelector(getPavementsBeingAdded);
   const pavementBeingConstructed = useSelector(getPavementBeingConstructed);
   const mapState = useSelector(getMapState);
+  const configuration = useSelector(getConfiguration);
 
   const [leftClip, setLeftClip]= useState<string>('none');
+  const [rightClip, setRightClip] = useState<string>('none');
 
   // Track location of the mouse pointer, for drawing lines when editing pavements
   const [mouseLatLng, setMouseLatLng] = useState<LatLng>(new LatLng(0, 0));
 
-  // see default public token at https://account.mapbox.com/
-  const mapBoxAccesToken = "pk.eyJ1IjoibmVsZW5zY2h1dXJtYW5zIiwiYSI6ImhkXzhTdXcifQ.3k2-KAxQdyl5bILh_FioCw";
   const mapRef = useRef(null);
-
-  const editingTrees = editing && openBlock === 'trees';
-  const editingPavements = editing && openBlock === 'pavements';
-
-  const mapClass = (
-    editingTrees ?
-    styles.MapEditTrees : editingPavements ?
-    styles.MapEditPavements : '');
 
   const updateClip = () => {
     const mapRefCurrent = mapRef && mapRef.current;
@@ -94,10 +84,30 @@ const MainMap: React.FC<MainMapProps> = ({
       const se: {x: number, y: number} = leaflet.containerPointToLayerPoint(leaflet.getSize())
       const clipX = nw.x + mapState.width * mapState.sliderPos;
       setLeftClip(`polygon(${nw.x}px ${nw.y}px, ${clipX}px ${nw.y}px, ${clipX}px ${se.y}px, ${nw.x}px ${se.y}px)`);
+      setRightClip(`polygon(${clipX}px ${nw.y}px, ${se.x}px ${nw.y}px, ${se.x}px ${se.y}px, ${clipX}px ${se.y}px`);
     }
+
+    return () => {setLeftClip('none'); setRightClip('none')}; // For when the map is closed
   };
 
   useEffect(updateClip, [mapRef, mapState]);
+
+  if (configuration === null) return null;
+
+  const editingTrees = editing && openBlock === 'trees';
+  const editingPavements = editing && openBlock === 'pavements';
+
+  const mapClass = (
+    editingTrees ?
+    styles.MapEditTrees : editingPavements ?
+    styles.MapEditPavements : '');
+
+  const initialBounds = Leaflet.latLngBounds(
+    Leaflet.latLng(configuration.initialBounds.sw),
+    Leaflet.latLng(configuration.initialBounds.ne)
+  );
+
+  const showTwoPanes = mapState.templatedLayer !== null;
 
   return (
     <div style={{
@@ -112,7 +122,7 @@ const MainMap: React.FC<MainMapProps> = ({
         style={{
           height: "100%", width: "100%", position: "relative"
         }}
-        bounds={BOUNDS}
+        bounds={initialBounds}
         onClick={(event: any) => {
           const latlng: LatLng = event.latlng;
 
@@ -133,16 +143,27 @@ const MainMap: React.FC<MainMapProps> = ({
         onViewportChange={updateClip}
       >
         <TileLayer
-          url={`https://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${mapBoxAccesToken}`}
+          url={`https://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${configuration.mapboxAccessToken}`}
           zIndex={0}
         />
-        {openBlock === 'heatstress' && leftClip ? (
-          <Pane style={{clipPath: leftClip}}>
-            <WMSTileLayer
-              url="https://nxt3.staging.lizard.net/wms/"
-              layers="nelen-schuurmans:interactive-heat-stress-model"
-            />
-          </Pane>
+        {openBlock === 'heatstress' ? (
+          <>
+            <Pane style={showTwoPanes ? {clipPath: leftClip} : {}}>
+              <WMSTileLayer
+                url="//wms/"
+                layers={configuration.originalHeatstressLayer}
+                styles={configuration.heatstressStyle}
+              />
+            </Pane>
+            {showTwoPanes ? (
+              <Pane style={{clipPath: rightClip}}>
+                <WMSTileLayer
+                  url="//wms/"
+                  layers={mapState.templatedLayer!}
+                  styles={configuration.heatstressStyle}
+                />
+              </Pane>) : null}
+          </>
         ) : null}
         {openBlock === 'trees' ? (
           <>
@@ -154,6 +175,17 @@ const MainMap: React.FC<MainMapProps> = ({
               key={"treesOnMap" + treesOnMap.features.length + editing}
               data={treesOnMap}
               pointToLayer={TreeMarker(editing)}
+              onEachFeature={(feature, layer) => {
+                const popup = (
+                  <div>
+                    <p>{feature.properties.tree}</p>
+                    <button onClick={() => removeTree(feature.geometry, feature.properties.tree)}>Verwijderen</button>
+                  </div>
+                );
+                const popupString = ReactDOMServer.renderToString(popup);
+
+                layer.bindPopup(popupString, {});
+              }}
             />
             <GeoJSON
               key={"treesBeingAdded" + treesBeingAdded.features.length}
@@ -207,4 +239,5 @@ export default connect(null, {
   mapClickWhileEditingTrees,
   setPavementBeingConstructed,
   addPavement,
+  removeTree
 })(MainMap);

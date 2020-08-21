@@ -1,4 +1,5 @@
-import { AppDispatch, AppState } from '../App';
+import { AnyAction } from 'redux';
+import { AppDispatch, AppState, Thunk } from '../App';
 
 // Types and actions
 
@@ -12,32 +13,45 @@ interface Bootstrap {
   sso: {
     login: string,
     logout: string
-  }
+  },
+}
+
+interface Configuration {
+  mapboxAccessToken: string,
+  initialBounds: {
+    sw: {lat: number, lng: number},
+    ne: {lat: number, lng: number}
+  },
+  originalHeatstressLayer: string,
+  heatstressStyle: string
 }
 
 interface SessionState {
-  bootstrap: Bootstrap | null
+  bootstrap: Bootstrap | null,
+  configuration: Configuration | null
 }
 
 const INITIAL_STATE: SessionState = {
-  bootstrap: null
+  bootstrap: null,
+  configuration: null
 };
 
 const RECEIVE_BOOTSTRAP = 'session/RECEIVE_BOOTSTRAP';
-
-interface ReceiveBootstrapAction {
-  type: typeof RECEIVE_BOOTSTRAP;
-  bootstrap: Bootstrap
-}
+const RECEIVE_CONFIGURATION = 'session/RECEIVE_CONFIGURATION';
 
 // Reducer
 
-const reducer = (state=INITIAL_STATE, action: ReceiveBootstrapAction) => {
+const reducer = (state=INITIAL_STATE, action: AnyAction): SessionState => {
   switch (action.type) {
     case RECEIVE_BOOTSTRAP:
       return {
         ...state,
         bootstrap: action.bootstrap
+      };
+    case RECEIVE_CONFIGURATION:
+      return {
+        ...state,
+        configuration: action.configuration
       };
     default:
       return state;
@@ -48,11 +62,17 @@ export default reducer;
 
 // Selectors
 
-export const isAuthenticated = (state: AppState): boolean =>
-  !!(state.session.bootstrap && state.session.bootstrap.user.authenticated)
+export const appReady = (state: AppState): boolean => {
+  return (
+    !!(state.session.bootstrap && state.session.bootstrap.user.authenticated)) &&
+         (!!(state.session.configuration));
+
+};
 
 export const getUser = (state: AppState) => (
   state.session.bootstrap && state.session.bootstrap.user);
+
+export const getConfiguration = (state: AppState) => state.session.configuration;
 
 // Action creators
 
@@ -77,3 +97,14 @@ export const attemptLogin = () => async (dispatch: AppDispatch) => {
     window.location.href = bootstrap.sso.login + '&next=/hittestress/';
   }
 };
+
+export const fetchConfiguration = (): Thunk => async (dispatch: AppDispatch) => {
+  const response = await fetch('/api/v4/clientconfigs/?slug=hittestresstool');
+  const json = await response.json();
+
+  if (json && json.count === 1) {
+    const configuration: Configuration = json.results[0].clientconfig.configuration;
+
+    dispatch({type: RECEIVE_CONFIGURATION, configuration});
+  }
+}

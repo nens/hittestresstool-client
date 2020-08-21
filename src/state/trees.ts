@@ -1,7 +1,8 @@
-import { FeatureCollection, Feature, Point } from 'geojson';
+import { FeatureCollection, Geometry, Feature, Point } from 'geojson';
 import { AnyAction } from 'redux';
 import { LatLng } from 'leaflet';
 import { AppState, Thunk } from '../App';
+import { pointEqual } from '../utils/geometry';
 
 import {
   Tree,
@@ -35,6 +36,7 @@ const INITIAL_STATE: TreesState = {
 };
 
 const ADD_TREE = 'trees/addTree';
+const REMOVE_TREE = 'trees/removeTree';
 
 export function latLng2Feature(latlng: LatLng, tree: Tree): TreeOnMap {
   return {
@@ -99,6 +101,23 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): TreesState => {
           features: [...state.treesBeingAdded.features, latLng2Feature(latlng, tree)]
         }
       };
+    case REMOVE_TREE: {
+      console.log("CASE REMOVE TREE");
+      const geometry: Point = action.geometry;
+      const tree: Tree = action.tree;
+
+      return {
+        ...state,
+        treesOnMap: {
+          ...state.treesOnMap,
+          features: state.treesOnMap.features.filter(
+            (feature) => (
+              feature.properties.tree !== tree ||
+              !pointEqual(feature.geometry, geometry)
+            ))
+        }
+      };
+    }
     default:
       return state;
   }
@@ -121,5 +140,14 @@ export const mapClickWhileEditingTrees = (latlng: LatLng): Thunk => (dispatch, g
     type: ADD_TREE,
     latlng: latlng,
     tree: selectedTree
+  });
+};
+
+export const removeTree = (geometry: Geometry, tree: Tree) => {
+  console.log("IN REMOVE TREE");
+  return ({
+    type: REMOVE_TREE,
+    geometry,
+    tree
   });
 };

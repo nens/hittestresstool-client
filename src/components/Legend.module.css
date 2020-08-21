@@ -1,0 +1,13 @@
+.Legend {
+  background: #5A5152;
+  box-shadow: 3px 3px 6px #00000029;
+  border-radius: 3px;
+  width: 4.5rem;
+  height: 6.5rem;
+  padding: 1rem;
+}
+
+.Color {
+  width: 3rem;
+  height: 0.1rem;
+}
