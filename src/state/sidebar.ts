@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux';
 import { AppState, Thunk } from '../App';
-import { refreshHeatstress } from './hittestress';
+import { refreshHeatstress, RECEIVE_TEMPLATED_LAYER } from './map';
 
 // Sidebar state:
 
@@ -28,6 +28,7 @@ interface SidebarState {
   editing: boolean;
   selectedTree: Tree;
   selectedPavement: Pavement;
+  heatstressUpdated: boolean;
 }
 
 const INITIAL_STATE: SidebarState = {
@@ -35,6 +36,7 @@ const INITIAL_STATE: SidebarState = {
   editing: false,
   selectedTree: "tree_5m",
   selectedPavement: "grass",
+  heatstressUpdated: false
 };
 
 const CLICK_HEAT_STRESS = "sidebar/clickHeatStress";
@@ -60,7 +62,11 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
         // Doesn't do anything
         return state;
       } else {
-        return {...state, openMap: "heatstress"};
+        return {
+          ...state,
+          openMap: "heatstress",
+          heatstressUpdated: false, // Remove notification that map was updated
+        };
       }
     case CLICK_BLOCK_TREES:
       if (state.editing || state.openMap === 'trees') {
@@ -100,6 +106,17 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
         ...state,
         editing: false
       };
+    case RECEIVE_TEMPLATED_LAYER:
+      // If there is a new layer and we're not looking at the map, show that it was
+      // updated.
+      if (state.openMap !== 'heatstress') {
+        return {
+          ...state,
+          heatstressUpdated: true
+        }
+      } else {
+        return state;
+      }
     default:
       return state;
   }
@@ -124,6 +141,10 @@ export const getEditingPavements = (state: AppState): boolean => (
 export const getEditing = (state: AppState): boolean => (
   getEditingTrees(state) || getEditingPavements(state)
 );
+
+export const getHeatstressUpdated = (state: AppState): boolean => {
+  return state.sidebar.heatstressUpdated;
+};
 
 // Action creators
 
@@ -179,9 +200,9 @@ export const submitEditingTrees = (): Thunk => (dispatch, getState) => {
 
   const state = getState();
 
-  refreshHeatstress(
+  dispatch(refreshHeatstress(
     state.trees.treesOnMap,
-    state.pavements.pavementsOnMap);
+    state.pavements.pavementsOnMap));
 }
 
 export const undoEditingTrees = () => {
@@ -210,9 +231,9 @@ export const submitEditingPavements = (): Thunk => (dispatch, getState) => {
 
   const state = getState();
 
-  refreshHeatstress(
+  dispatch(refreshHeatstress(
     state.trees.treesOnMap,
-    state.pavements.pavementsOnMap);
+    state.pavements.pavementsOnMap));
 }
 
 export const undoEditingPavements = () => {

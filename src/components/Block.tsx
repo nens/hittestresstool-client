@@ -11,7 +11,7 @@ import styles from './Block.module.css';
 type BlockStatus = 'closed' | 'opened' | 'disabled';
 
 export interface BlockProps {
-  title: string,
+  title: JSX.Element | string,
   icon: any,
   status: BlockStatus,
   onOpen?: () => void, // Function called is status = closed and clicked on title

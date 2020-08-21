@@ -9,7 +9,7 @@ import translations from './i18n/locales';
 
 import * as reducers from './state/';
 import { getLocaleStringFromBrowserSetting } from './utils/detectLanguage';
-import { isAuthenticated } from './state/session';
+import { appReady } from './state/session';
 import AttemptLogin from './screens/AttemptLogin';
 import MainScreen from './screens/MainScreen';
 
@@ -54,7 +54,7 @@ const App: React.FC = () => {
 
 const AppWithAuthentication: React.FC = () => {
   // Choose which main component to render based on the app flow
-  const authenticated = useSelector(isAuthenticated);
+  const authenticated = useSelector(appReady);
 
   return (
     <div>
