@@ -22,7 +22,7 @@ const BlockHittestress: React.FC<Props> = ({clickHeatStress}) => {
     <Block
       title={<>
         <span>Hittestress</span>
-        {heatstressUpdated || true ? <span style={{
+        {heatstressUpdated ? <span style={{
           display: "inline-block",
           textAlign: "center",
           verticalAlign: "middle",
