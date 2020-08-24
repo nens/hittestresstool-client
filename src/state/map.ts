@@ -112,7 +112,7 @@ export const refreshHeatstress = (
   );
 
   const parameters = {
-    ProjectionTag: 'WGS84',
+    ProjectionTag: 'EPSG:28992',
     AnchorTag: [0, 0], // lng/lat of Rijksdriehoek 0 0
     Trees5mTag: trees_5m.length ? trees_5m : undefined,
     Trees10mTag: trees_10m.length ? trees_10m : undefined,

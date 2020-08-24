@@ -150,7 +150,7 @@ const MainMap: React.FC<MainMapProps> = ({
           <>
             <Pane style={showTwoPanes ? {clipPath: leftClip} : {}}>
               <WMSTileLayer
-                url="//wms/"
+                url="/wms/"
                 layers={configuration.originalHeatstressLayer}
                 styles={configuration.heatstressStyle}
               />
@@ -158,7 +158,7 @@ const MainMap: React.FC<MainMapProps> = ({
             {showTwoPanes ? (
               <Pane style={{clipPath: rightClip}}>
                 <WMSTileLayer
-                  url="//wms/"
+                  url="/wms/"
                   layers={mapState.templatedLayer!}
                   styles={configuration.heatstressStyle}
                 />
