@@ -1,4 +1,4 @@
-import {Geometry, Point, Polygon} from 'geojson';
+import {Geometry, Point} from 'geojson';
 
 export function geometryEqual(geom1: Geometry, geom2: Geometry) {
   if (geom1.type === 'Point' && geom2.type === 'Point') return pointEqual(geom1, geom2);

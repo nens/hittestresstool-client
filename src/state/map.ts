@@ -2,7 +2,7 @@ import { AnyAction } from 'redux';
 import { AppState, Thunk } from '../App';
 import { TreesOnMap } from './trees';
 import { PavementOnMap, PavementsOnMap } from './pavements';
-
+import { wgs84ToRd } from '../utils/projection';
 
 interface MapState {
   width: number;
@@ -74,7 +74,9 @@ function geojsonToMultipolygonWKT(pavements: PavementOnMap[]) {
         pavement.geometry.coordinates[0][0]
       ];
 
-      return '((' + coordinates.map(coord => coord[0] + ' ' + coord[1]).join(',') + '))'
+      // Rijksdriehoek!
+      const rd_coords = coordinates.map(wgs84ToRd);
+      return '((' + rd_coords.map(coord => coord[0] + ' ' + coord[1]).join(',') + '))'
     }
   ).join(',') + ')';
 }
@@ -85,15 +87,15 @@ export const refreshHeatstress = (
 ): Thunk => async (dispatch) => {
   const trees_5m = trees.features.filter(
     tree => tree.properties.tree === 'tree_5m'
-  ).map(tree => tree.geometry.coordinates);
+  ).map(tree => tree.geometry.coordinates).map(wgs84ToRd);
 
   const trees_10m = trees.features.filter(
     tree => tree.properties.tree === 'tree_10m'
-  ).map(tree => tree.geometry.coordinates);
+  ).map(tree => tree.geometry.coordinates).map(wgs84ToRd);
 
   const trees_15m = trees.features.filter(
     tree => tree.properties.tree === 'tree_15m'
-  ).map(tree => tree.geometry.coordinates);
+  ).map(tree => tree.geometry.coordinates).map(wgs84ToRd);
 
   const pavementsWater = geojsonToMultipolygonWKT(
     pavements.features.filter(pavement => pavement.properties.pavement === 'water')
