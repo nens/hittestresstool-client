@@ -1,24 +1,39 @@
 import { AnyAction } from 'redux';
+import { LatLng } from 'leaflet';
 import { AppState, Thunk } from '../App';
-import { TreesOnMap } from './trees';
-import { PavementOnMap, PavementsOnMap } from './pavements';
+import { REMOVE_TREE, TreeOnMap, TreesOnMap } from './trees';
+import { REMOVE_PAVEMENT, PavementOnMap, PavementsOnMap } from './pavements';
 import { wgs84ToRd } from '../utils/projection';
+import { getConfiguration } from './session';
 
 interface MapState {
-  width: number;
+  width: number; // PX; for the slider
   sliderPos: number; // 0 to 1
   templatedLayer: string | null;
+
+  // Popup. We show at most one at a time
+  popupLatLng: LatLng | null,
+  popupType: "tree" | "pavement" | "temperature" | null,
+  popupTree: TreeOnMap | null,
+  popupPavement: PavementOnMap | null
 }
 
 const INITIAL_STATE = {
   width: 0,
   sliderPos: 0.5,
-  templatedLayer: null
+  templatedLayer: null,
+  popupLatLng: null,
+  popupType: null,
+  popupTree: null,
+  popupPavement: null
 }
 
 const SET_WIDTH = 'map/setWidth';
 const SET_SLIDER_POS = 'map/setSliderPos';
 export const RECEIVE_TEMPLATED_LAYER = 'map/receiveTemplatedLayer';
+const CLICK_TREE = 'map/clickTree';
+const CLICK_PAVEMENT = 'map/clickPavement';
+const CLOSE_POPUP = 'map/closePopup';
 
 export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction): MapState {
   switch (action.type) {
@@ -28,6 +43,33 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
       return {...state, sliderPos: action.sliderPos};
     case RECEIVE_TEMPLATED_LAYER:
       return {...state, templatedLayer: action.templatedLayer };
+    case CLICK_TREE:
+      return {
+        ...state,
+        popupLatLng: action.latlng,
+        popupType: "tree",
+        popupTree: action.tree,
+        popupPavement: null
+      };
+    case CLICK_PAVEMENT:
+      return {
+        ...state,
+        popupLatLng: action.latlng,
+        popupType: "pavement",
+        popupPavement: action.pavement,
+        popupTree: null
+      };
+    case REMOVE_TREE:
+    case REMOVE_PAVEMENT:
+    case CLOSE_POPUP:
+      // Remove popup
+      return {
+        ...state,
+        popupLatLng: null,
+        popupType: null,
+        popupTree: null,
+        popupPavement: null
+      };
     default:
       return state;
   }
@@ -84,7 +126,10 @@ function geojsonToMultipolygonWKT(pavements: PavementOnMap[]) {
 export const refreshHeatstress = (
   trees: TreesOnMap,
   pavements: PavementsOnMap
-): Thunk => async (dispatch) => {
+): Thunk => async (dispatch, getState) => {
+  const configuration = getConfiguration(getState());
+  if (configuration === null) return;
+
   const trees_5m = trees.features.filter(
     tree => tree.properties.tree === 'tree_5m'
   ).map(tree => tree.geometry.coordinates).map(wgs84ToRd);
@@ -126,7 +171,7 @@ export const refreshHeatstress = (
     PavedTag: pavementsPaved
   };
 
-  const URL = '/api/v4/rasters/620b825c-090a-4d32-a17b-bf29e3e28830/template/';
+  const URL = `/api/v4/rasters/${configuration.templateUuid!}/template/`;
 
   const response = await fetch(
     URL, {
@@ -144,4 +189,28 @@ export const refreshHeatstress = (
       templatedLayer: json.wms_info.layer
     });
   }
+}
+
+// Clciks for popups
+
+export const clickTree = (latlng: LatLng, tree: TreeOnMap) => {
+  return {
+    type: CLICK_TREE,
+    latlng,
+    tree
+  };
+};
+
+export const clickPavement = (latlng: LatLng, pavement: PavementOnMap) => {
+  return {
+    type: CLICK_PAVEMENT,
+    latlng,
+    pavement
+  };
+};
+
+export const closePopup = () => {
+  return {
+    type: CLOSE_POPUP
+  };
 }

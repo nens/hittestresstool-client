@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from 'react';
-import ReactDOMServer from 'react-dom/server';
 
 import { Geometry } from 'geojson';
 import { connect, useSelector } from 'react-redux';
@@ -22,6 +21,7 @@ import {
 import {
   mapClickWhileEditingTrees,
   getTreesOnMap,
+  TreeOnMap,
   getTreesBeingAdded,
   removeTree
 } from '../state/trees';
@@ -34,13 +34,17 @@ import {
   addPavement,
 } from '../state/pavements';
 import {
-  getMapState
+  getMapState,
+  clickTree,
+  clickPavement
 } from '../state/map';
 
 import { getPointsWhereNewPointInLineCrossesExistingLines } from '../utils/polygonUtils';
 
 import TreeMarker from '../icons/TreeLeafletIcon';
 import PolygonEditableComponent from './PolygonEditableComponent';
+import TreePopup from './TreePopup';
+import PavementPopup from './PavementPopup';
 
 import styles from './MainMap.module.css';
 
@@ -48,14 +52,17 @@ interface MainMapProps {
   mapClickWhileEditingTrees: (latlng: LatLng) => void,
   addPavement: (polygon: LatLng[], pavement: Pavement) => void,
   setPavementBeingConstructed: (latlngs: LatLng[]) => void,
-  removeTree: (geometry: Geometry, tree: Tree) => void
+  removeTree: (geometry: Geometry, tree: Tree) => void,
+  clickTree: (latlng: LatLng, tree: TreeOnMap) => void
+  clickPavement: (latlng: LatLng, pavement: PavementOnMap) => void
 }
 
 const MainMap: React.FC<MainMapProps> = ({
   mapClickWhileEditingTrees,
   addPavement,
   setPavementBeingConstructed,
-  removeTree
+  clickTree,
+  clickPavement
 }) => {
   const openBlock = useSelector(getOpenBlock);
   const editing = useSelector(getEditing);
@@ -129,12 +136,10 @@ const MainMap: React.FC<MainMapProps> = ({
           if (editingTrees) {
             mapClickWhileEditingTrees(latlng);
           } else if (editingPavements) {
-            console.log('Click!');
             const intersectionArray = getPointsWhereNewPointInLineCrossesExistingLines(
               latlng, pavementBeingConstructed
             );
             if (intersectionArray.length === 0) {
-              console.log('Yes');
               setPavementBeingConstructed(pavementBeingConstructed.concat([latlng]));
             }
           }
@@ -175,17 +180,10 @@ const MainMap: React.FC<MainMapProps> = ({
               key={"treesOnMap" + treesOnMap.features.length + editing}
               data={treesOnMap}
               pointToLayer={TreeMarker(editing)}
-              onEachFeature={(feature, layer) => {
-                const popup = (
-                  <div>
-                    <p>{feature.properties.tree}</p>
-                    <button onClick={() => removeTree(feature.geometry, feature.properties.tree)}>Verwijderen</button>
-                  </div>
-                );
-                const popupString = ReactDOMServer.renderToString(popup);
-
-                layer.bindPopup(popupString, {});
-              }}
+              onEachFeature={(feature: TreeOnMap, layer) =>
+                !editing && layer.on("click", (event) => {
+                  clickTree((event as any).latlng, feature);
+                })}
             />
             <GeoJSON
               key={"treesBeingAdded" + treesBeingAdded.features.length}
@@ -206,6 +204,11 @@ const MainMap: React.FC<MainMapProps> = ({
                   fillOpacity: editingPavements ? 0.1 : 0.25
                 };
               }}
+              onEachFeature={(feature: PavementOnMap, layer) =>
+                !editing && layer.on("click", (event) => {
+                  console.log("CLICK");
+                  clickPavement((event as any).latlng, feature);
+                })}
             />
             {editingPavements && (
               <GeoJSON
@@ -229,7 +232,18 @@ const MainMap: React.FC<MainMapProps> = ({
             )}
           </>
         ) : null}
-
+        {(mapState.popupLatLng !== null && mapState.popupType === 'tree' && mapState.popupTree) && (
+          <TreePopup
+            latLng={mapState.popupLatLng}
+            tree={mapState.popupTree}
+          />
+        )}
+        {(mapState.popupLatLng !== null && mapState.popupType === 'pavement' && mapState.popupPavement) && (
+          <PavementPopup
+            latLng={mapState.popupLatLng}
+            pavement={mapState.popupPavement}
+          />
+        )}
       </Map>
     </div>
   );
@@ -239,5 +253,7 @@ export default connect(null, {
   mapClickWhileEditingTrees,
   setPavementBeingConstructed,
   addPavement,
-  removeTree
+  removeTree,
+  clickTree,
+  clickPavement
 })(MainMap);

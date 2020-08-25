@@ -1,7 +1,8 @@
-import { FeatureCollection, Feature, Polygon } from 'geojson';
+import { FeatureCollection, Geometry, Feature, Polygon } from 'geojson';
 import { LatLng } from 'leaflet';
 import { AnyAction } from 'redux';
-import { AppState } from '../App';
+import { AppState, Thunk } from '../App';
+import { polygonEqual } from '../utils/geometry';
 
 import {
   Pavement,
@@ -10,6 +11,9 @@ import {
   SUBMIT_EDITING_PAVEMENTS,
   UNDO_EDITING_PAVEMENTS,
 } from './sidebar';
+import {
+  refreshHeatstress
+} from './map';
 
 interface PavementGeojsonProperties {
   pavement: Pavement
@@ -38,6 +42,7 @@ const INITIAL_STATE: PavementsState = {
 
 export const SET_PAVEMENT_BEING_CONSTRUCTED = 'pavements/setBeingConstructed';
 export const ADD_PAVEMENT = 'pavements/addPavement';
+export const REMOVE_PAVEMENT = 'pavements/removePavement';
 
 // Helper functions
 
@@ -104,7 +109,7 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): PavementsState => {
         ...state,
         pavementBeingConstructed: action.latlngs
       };
-    case ADD_PAVEMENT:
+    case ADD_PAVEMENT: {
       const polygon: LatLng[] = action.polygon;
       const pavement: Pavement = action.pavement;
 
@@ -119,6 +124,23 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): PavementsState => {
         },
         pavementBeingConstructed: []
       };
+    }
+    case REMOVE_PAVEMENT: {
+      const geometry: Polygon = action.geometry;
+      const pavement: Pavement = action.pavement;
+
+      return {
+        ...state,
+        pavementsOnMap: {
+          ...state.pavementsOnMap,
+          features: state.pavementsOnMap.features.filter(
+            (feature) => (
+              feature.properties.pavement !== pavement ||
+              !polygonEqual(feature.geometry, geometry)
+            ))
+        }
+      };
+    }
     default: return state;
   };
 };
@@ -155,3 +177,20 @@ export function getPavementsBeingAdded(state: AppState) {
 export function getPavementBeingConstructed(state: AppState) {
   return state.pavements.pavementBeingConstructed;
 }
+
+export const removePavement = (
+  geometry: Geometry,
+  pavement: Pavement
+): Thunk => (dispatch, getState) => {
+  dispatch({
+    type: REMOVE_PAVEMENT,
+    geometry,
+    pavement
+  });
+
+  const state = getState();
+
+  dispatch(refreshHeatstress(
+    state.trees.treesOnMap,
+    state.pavements.pavementsOnMap));
+};

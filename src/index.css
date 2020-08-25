@@ -32,7 +32,7 @@ body {
   margin: 0;
   font: SemiBold;
   font-family: 'Semibold Montserrat', sans-serif;
-  color: #5A5152;
+  color: var(--main-text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -43,6 +43,7 @@ body {
   --sidebar-width: 17.5rem;
   --sidebar-color: #A3D5AB;
   --sidebar-padding: 21px;
+  --main-text-color: #515152;
 }
 
 h1 {

@@ -23,6 +23,7 @@ interface Configuration {
     ne: {lat: number, lng: number}
   },
   originalHeatstressLayer: string,
+  templateUuid: string,
   heatstressStyle: string
 }
 

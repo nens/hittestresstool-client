@@ -12,6 +12,9 @@ import {
   SUBMIT_EDITING_TREES,
   UNDO_EDITING_TREES,
 } from './sidebar';
+import {
+  refreshHeatstress
+} from './map';
 
 interface TreeGeojsonProperties {
   tree: Tree
@@ -36,7 +39,7 @@ const INITIAL_STATE: TreesState = {
 };
 
 const ADD_TREE = 'trees/addTree';
-const REMOVE_TREE = 'trees/removeTree';
+export const REMOVE_TREE = 'trees/removeTree';
 
 export function latLng2Feature(latlng: LatLng, tree: Tree): TreeOnMap {
   return {
@@ -102,7 +105,6 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): TreesState => {
         }
       };
     case REMOVE_TREE: {
-      console.log("CASE REMOVE TREE");
       const geometry: Point = action.geometry;
       const tree: Tree = action.tree;
 
@@ -143,11 +145,16 @@ export const mapClickWhileEditingTrees = (latlng: LatLng): Thunk => (dispatch, g
   });
 };
 
-export const removeTree = (geometry: Geometry, tree: Tree) => {
-  console.log("IN REMOVE TREE");
-  return ({
+export const removeTree = (geometry: Geometry, tree: Tree): Thunk => (dispatch, getState) => {
+  dispatch({
     type: REMOVE_TREE,
     geometry,
     tree
   });
+
+  const state = getState();
+
+  dispatch(refreshHeatstress(
+    state.trees.treesOnMap,
+    state.pavements.pavementsOnMap));
 };

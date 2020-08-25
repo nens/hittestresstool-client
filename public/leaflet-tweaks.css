@@ -1,0 +1,3 @@
+.leaflet-popup-content-wrapper, .leaflet-popup-content, .leaflet-popup-tip {
+  background-color: var(--sidebar-color);
+}

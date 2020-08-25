@@ -4,11 +4,11 @@ import styles from './TextButton.module.css';
 
 interface TextButtonProps {
   text: string,
-  icon: any,
+  icon?: any,
   onClick: () => void
 }
 
-export default function TextButton({text, icon, onClick}: TextButtonProps) {
+export default function TextButton({text, icon=null, onClick}: TextButtonProps) {
   return (
     <div className={styles.TextButton} onClick={onClick}>
       {text} {icon}
