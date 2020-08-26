@@ -1,6 +1,7 @@
 .TextButton {
   padding: 0.75rem;
   font: SemiBold;
+  font-size: 1rem;
   width: 10rem;
   height: 1rem;
   color: #5A5152;

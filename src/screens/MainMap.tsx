@@ -172,10 +172,11 @@ const MainMap: React.FC<MainMapProps> = ({
         ) : null}
         {openBlock === 'trees' ? (
           <>
-            {/* <WMSTileLayer
-                url="https://nxt3.staging.lizard.net/wms/"
-                layers="nelen-schuurmans:treescmheight-interactive-heat-stress-cp20rxms"
-                /> */}
+            <WMSTileLayer
+              url="/wms/"
+              layers={configuration.originalTreesLayer}
+              styles={configuration.treesStyle}
+            />
             <GeoJSON
               key={"treesOnMap" + treesOnMap.features.length + editing}
               data={treesOnMap}
@@ -194,6 +195,11 @@ const MainMap: React.FC<MainMapProps> = ({
         ) : null}
         {openBlock === 'pavements' ? (
           <>
+            <WMSTileLayer
+              url="/wms/"
+              layers={configuration.originalPavementsLayer}
+              styles={configuration.pavementsStyle}
+            />
             <GeoJSON
               key={"pavementsOnMap" + pavementsOnMap.features.length + editing}
               data={pavementsOnMap}

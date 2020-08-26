@@ -23,8 +23,12 @@ interface Configuration {
     ne: {lat: number, lng: number}
   },
   originalHeatstressLayer: string,
+  originalTreesLayer: string,
+  originalPavementsLayer: string,
   templateUuid: string,
-  heatstressStyle: string
+  heatstressStyle: string,
+  treesStyle: string,
+  pavementsStyle: string
 }
 
 interface SessionState {
