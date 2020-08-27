@@ -155,6 +155,7 @@ const MainMap: React.FC<MainMapProps> = ({
           <>
             <Pane style={showTwoPanes ? {clipPath: leftClip} : {}}>
               <WMSTileLayer
+                key="heatstress-original"
                 url="/wms/"
                 layers={configuration.originalHeatstressLayer}
                 styles={configuration.heatstressStyle}
@@ -174,6 +175,7 @@ const MainMap: React.FC<MainMapProps> = ({
           <>
             <WMSTileLayer
               url="/wms/"
+              key="trees"
               layers={configuration.originalTreesLayer}
               styles={configuration.treesStyle}
             />
@@ -196,6 +198,7 @@ const MainMap: React.FC<MainMapProps> = ({
         {openBlock === 'pavements' ? (
           <>
             <WMSTileLayer
+              key="pavements"
               url="/wms/"
               layers={configuration.originalPavementsLayer}
               styles={configuration.pavementsStyle}
