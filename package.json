@@ -43,7 +43,8 @@
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
     "i18n:extract": "MESSAGE_DIR='./.messages' react-scripts build",
-    "i18n:manageTranslations": "node ./translationRunner.js"
+    "i18n:manageTranslations": "node ./translationRunner.js",
+    "release": "release-it"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -65,6 +66,7 @@
     "@storybook/addon-links": "^5.3.19",
     "@storybook/addons": "^5.3.19",
     "@storybook/preset-create-react-app": "^3.1.2",
-    "@storybook/react": "^5.3.19"
+    "@storybook/react": "^5.3.19",
+    "release-it": "^13.7.0"
   }
 }
