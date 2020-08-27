@@ -1,7 +1,7 @@
 {
   "name": "hittestresstool-client",
   "homepage": "/hittestresstool/",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "dependencies": {
     "@storybook/addon-knobs": "^5.3.19",
