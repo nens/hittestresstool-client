@@ -1,5 +1,14 @@
 {
+  "prompt": {
+    "src": {
+      "status": true
+    }
+  },
   "github": {
-    "release": true
+    "release": true,
+    "assets": "dist/hittestresstool-client.zip"
+  },
+  "npm": {
+    "publish": false
   }
 }
