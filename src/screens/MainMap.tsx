@@ -117,144 +117,138 @@ const MainMap: React.FC<MainMapProps> = ({
   const showTwoPanes = mapState.templatedLayer !== null;
 
   return (
-    <div style={{
-      height: "100%", width: "100%",
-      position: "absolute"
-    }}
-    >
-      <Map
-        ref={mapRef}
-        zoomControl={false}
-        className={mapClass}
-        style={{
-          height: "100%", width: "100%", position: "relative"
-        }}
-        bounds={initialBounds}
-        onClick={(event: any) => {
-          const latlng: LatLng = event.latlng;
+    <Map
+      ref={mapRef}
+      zoomControl={false}
+      style={{
+        height: "100%", width: "100%"
+      }}
+      className={mapClass}
+      bounds={initialBounds}
+      onClick={(event: any) => {
+        const latlng: LatLng = event.latlng;
 
-          if (editingTrees) {
-            mapClickWhileEditingTrees(latlng);
-          } else if (editingPavements) {
-            const intersectionArray = getPointsWhereNewPointInLineCrossesExistingLines(
-              latlng, pavementBeingConstructed
-            );
-            if (intersectionArray.length === 0) {
-              setPavementBeingConstructed(pavementBeingConstructed.concat([latlng]));
-            }
+        if (editingTrees) {
+          mapClickWhileEditingTrees(latlng);
+        } else if (editingPavements) {
+          const intersectionArray = getPointsWhereNewPointInLineCrossesExistingLines(
+            latlng, pavementBeingConstructed
+          );
+          if (intersectionArray.length === 0) {
+            setPavementBeingConstructed(pavementBeingConstructed.concat([latlng]));
           }
-        }}
-        onMousemove={(event: any) => editingPavements && setMouseLatLng(event.latlng as LatLng)}
-        onViewportChange={updateClip}
-      >
-        <TileLayer
-          url={`https://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${configuration.mapboxAccessToken}`}
-          zIndex={0}
-        />
-        {openBlock === 'heatstress' ? (
-          <>
-            <Pane style={showTwoPanes ? {clipPath: leftClip} : {}}>
+        }
+      }}
+      onMousemove={(event: any) => editingPavements && setMouseLatLng(event.latlng as LatLng)}
+      onViewportChange={updateClip}
+    >
+      <TileLayer
+        url={`https://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${configuration.mapboxAccessToken}`}
+        zIndex={0}
+      />
+      {openBlock === 'heatstress' ? (
+        <>
+          <Pane style={showTwoPanes ? {clipPath: leftClip} : {}}>
+            <WMSTileLayer
+              key="heatstress-original"
+              url="/wms/"
+              layers={configuration.originalHeatstressLayer}
+              styles={configuration.heatstressStyle}
+            />
+          </Pane>
+          {showTwoPanes ? (
+            <Pane style={{clipPath: rightClip}}>
               <WMSTileLayer
-                key="heatstress-original"
                 url="/wms/"
-                layers={configuration.originalHeatstressLayer}
+                layers={mapState.templatedLayer!}
                 styles={configuration.heatstressStyle}
               />
-            </Pane>
-            {showTwoPanes ? (
-              <Pane style={{clipPath: rightClip}}>
-                <WMSTileLayer
-                  url="/wms/"
-                  layers={mapState.templatedLayer!}
-                  styles={configuration.heatstressStyle}
-                />
-              </Pane>) : null}
-          </>
-        ) : null}
-        {openBlock === 'trees' ? (
-          <>
-            <WMSTileLayer
-              url="/wms/"
-              key="trees"
-              layers={configuration.originalTreesLayer}
-              styles={configuration.treesStyle}
-            />
+            </Pane>) : null}
+        </>
+      ) : null}
+      {openBlock === 'trees' ? (
+        <>
+          <WMSTileLayer
+            url="/wms/"
+            key="trees"
+            layers={configuration.originalTreesLayer}
+            styles={configuration.treesStyle}
+          />
+          <GeoJSON
+            key={"treesOnMap" + treesOnMap.features.length + editing}
+            data={treesOnMap}
+            pointToLayer={TreeMarker(editing)}
+            onEachFeature={(feature: TreeOnMap, layer) =>
+              !editing && layer.on("click", (event) => {
+                clickTree((event as any).latlng, feature);
+              })}
+          />
+          <GeoJSON
+            key={"treesBeingAdded" + treesBeingAdded.features.length}
+            data={treesBeingAdded}
+            pointToLayer={TreeMarker()}
+          />
+        </>
+      ) : null}
+      {openBlock === 'pavements' ? (
+        <>
+          <WMSTileLayer
+            key="pavements"
+            url="/wms/"
+            layers={configuration.originalPavementsLayer}
+            styles={configuration.pavementsStyle}
+          />
+          <GeoJSON
+            key={"pavementsOnMap" + pavementsOnMap.features.length + editing}
+            data={pavementsOnMap}
+            style={(feature: any) => {
+              return {
+                color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement],
+                opacity: editingPavements ? 0.3 : 1,
+                fillOpacity: editingPavements ? 0.1 : 0.25
+              };
+            }}
+            onEachFeature={(feature: PavementOnMap, layer) =>
+              !editing && layer.on("click", (event) => {
+                console.log("CLICK");
+                clickPavement((event as any).latlng, feature);
+              })}
+          />
+          {editingPavements && (
             <GeoJSON
-              key={"treesOnMap" + treesOnMap.features.length + editing}
-              data={treesOnMap}
-              pointToLayer={TreeMarker(editing)}
-              onEachFeature={(feature: TreeOnMap, layer) =>
-                !editing && layer.on("click", (event) => {
-                  clickTree((event as any).latlng, feature);
-                })}
-            />
-            <GeoJSON
-              key={"treesBeingAdded" + treesBeingAdded.features.length}
-              data={treesBeingAdded}
-              pointToLayer={TreeMarker()}
-            />
-          </>
-        ) : null}
-        {openBlock === 'pavements' ? (
-          <>
-            <WMSTileLayer
-              key="pavements"
-              url="/wms/"
-              layers={configuration.originalPavementsLayer}
-              styles={configuration.pavementsStyle}
-            />
-            <GeoJSON
-              key={"pavementsOnMap" + pavementsOnMap.features.length + editing}
-              data={pavementsOnMap}
+              key={"pavementsBeingAdded" + pavementsBeingAdded.features.length}
+              data={pavementsBeingAdded}
               style={(feature: any) => {
                 return {
-                  color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement],
-                  opacity: editingPavements ? 0.3 : 1,
-                  fillOpacity: editingPavements ? 0.1 : 0.25
+                  color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement]
                 };
               }}
-              onEachFeature={(feature: PavementOnMap, layer) =>
-                !editing && layer.on("click", (event) => {
-                  console.log("CLICK");
-                  clickPavement((event as any).latlng, feature);
-                })}
             />
-            {editingPavements && (
-              <GeoJSON
-                key={"pavementsBeingAdded" + pavementsBeingAdded.features.length}
-                data={pavementsBeingAdded}
-                style={(feature: any) => {
-                  return {
-                    color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement]
-                  };
-                }}
-              />
-            )}
-            {editingPavements && pavementBeingConstructed && (
-              <PolygonEditableComponent
-                polygonPoints={pavementBeingConstructed}
-                setPolygonPoints={setPavementBeingConstructed}
-                mouseLocation={mouseLatLng}
-                setPointsAction={(polygon: LatLng[]) => addPavement(polygon, selectedPavement)}
-                polygonColor={COLORS_PER_PAVEMENT[selectedPavement]}
-              />
-            )}
-          </>
-        ) : null}
-        {(mapState.popupLatLng !== null && mapState.popupType === 'tree' && mapState.popupTree) && (
-          <TreePopup
-            latLng={mapState.popupLatLng}
-            tree={mapState.popupTree}
-          />
-        )}
-        {(mapState.popupLatLng !== null && mapState.popupType === 'pavement' && mapState.popupPavement) && (
-          <PavementPopup
-            latLng={mapState.popupLatLng}
-            pavement={mapState.popupPavement}
-          />
-        )}
-      </Map>
-    </div>
+          )}
+          {editingPavements && pavementBeingConstructed && (
+            <PolygonEditableComponent
+              polygonPoints={pavementBeingConstructed}
+              setPolygonPoints={setPavementBeingConstructed}
+              mouseLocation={mouseLatLng}
+              setPointsAction={(polygon: LatLng[]) => addPavement(polygon, selectedPavement)}
+              polygonColor={COLORS_PER_PAVEMENT[selectedPavement]}
+            />
+          )}
+        </>
+      ) : null}
+      {(mapState.popupLatLng !== null && mapState.popupType === 'tree' && mapState.popupTree) && (
+        <TreePopup
+          latLng={mapState.popupLatLng}
+          tree={mapState.popupTree}
+        />
+      )}
+      {(mapState.popupLatLng !== null && mapState.popupType === 'pavement' && mapState.popupPavement) && (
+        <PavementPopup
+          latLng={mapState.popupLatLng}
+          pavement={mapState.popupPavement}
+        />
+      )}
+    </Map>
   );
 };
 

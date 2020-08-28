@@ -14,6 +14,6 @@
 
 .map {
   background-color: #ccc;
-  width: 100%;
+  width: calc(100% - var(--sidebar-width));
   height: 100%;
 }
