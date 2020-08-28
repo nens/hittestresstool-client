@@ -32,17 +32,20 @@ interface Configuration {
 }
 
 interface SessionState {
-  bootstrap: Bootstrap | null,
-  configuration: Configuration | null
+  bootstrap: Bootstrap | null;
+  configuration: Configuration | null;
+  startupErrors: string[];
 }
 
 const INITIAL_STATE: SessionState = {
   bootstrap: null,
-  configuration: null
+  configuration: null,
+  startupErrors: []
 };
 
 const RECEIVE_BOOTSTRAP = 'session/RECEIVE_BOOTSTRAP';
 const RECEIVE_CONFIGURATION = 'session/RECEIVE_CONFIGURATION';
+const ADD_ERROR = 'session/ADD_ERROR';
 
 // Reducer
 
@@ -58,6 +61,11 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SessionState => {
         ...state,
         configuration: action.configuration
       };
+    case ADD_ERROR:
+      return {
+        ...state,
+        startupErrors: [...state.startupErrors, action.error]
+      }
     default:
       return state;
   }
@@ -79,6 +87,8 @@ export const getUser = (state: AppState) => (
 
 export const getConfiguration = (state: AppState) => state.session.configuration;
 
+export const getErrors = (state: AppState) => state.session.startupErrors;
+
 // Action creators
 
 export const attemptLogin = () => async (dispatch: AppDispatch) => {
@@ -87,7 +97,7 @@ export const attemptLogin = () => async (dispatch: AppDispatch) => {
   });
 
   if (response.status !== 200) {
-    console.error("Something went wrong trying to get bootstrap: ", response);
+    dispatch(addError("Kan niet inloggen op de Hittestresstool: Bootstrap response status " + response.status + "."));
     return;
   }
 
@@ -99,17 +109,34 @@ export const attemptLogin = () => async (dispatch: AppDispatch) => {
       bootstrap
     });
   } else {
-    window.location.href = bootstrap.sso.login + '&next=/hittestress/';
+    window.location.href = bootstrap.sso.login + '&next=/hittestresstool/';
   }
 };
 
 export const fetchConfiguration = (): Thunk => async (dispatch: AppDispatch) => {
   const response = await fetch('/api/v4/clientconfigs/?slug=hittestresstool');
+
+  if (response.status !== 200) {
+    dispatch(addError("Fout bij ophalen Hittestresstool configuratie, status " + response.status + "."));
+    return;
+  }
+
   const json = await response.json();
 
-  if (json && json.count === 1) {
+  if (!json) {
+    dispatch(addError("Fout bij ophalen Hittestresstool configuratie, response was geen JSON. "));
+  } else if (json.count === 1) {
     const configuration: Configuration = json.results[0].clientconfig.configuration;
 
     dispatch({type: RECEIVE_CONFIGURATION, configuration});
+  } else {
+    dispatch(addError("Fout bij ophalen Hittestresstool configuratie, " + json.count + " configuraties gevonden."));
   }
-}
+};
+
+const addError = (error: string) => {
+  return {
+    type: ADD_ERROR,
+    error
+  };
+};
