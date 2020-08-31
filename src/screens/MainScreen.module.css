@@ -5,6 +5,7 @@
 }
 
 .leftBar {
+  box-sizing: 'border-box';
   width: var(--sidebar-width);
   flex: 0 0 var(--sidebar-width);
   height: 100&;
@@ -14,6 +15,6 @@
 
 .map {
   background-color: #ccc;
-  width: calc(100% - var(--sidebar-width));
+  width: calc(100% - var(--sidebar-width) - 2 * var(--sidebar-padding));
   height: 100%;
 }
