@@ -202,8 +202,12 @@ const ReactCompareImage: React.FC<IProps> = (props: IProps) => {
     container: {
       boxSizing: 'border-box',
       position: 'absolute',
-      width: '100%',
+      width: 'calc(100% - var(--sidebar-width) - 2 * var(--sidebar-padding))',
+      margin: 0,
+      padding: 0,
       height: '100%',
+      top: 0,
+      left: 'calc(var(--sidebar-width) + 2 * var(--sidebar-padding))',
       overflow: 'hidden',
       pointerEvents: 'none'
     },
