@@ -15,7 +15,7 @@ interface MapState {
   popupLatLng: LatLng | null,
   popupType: "tree" | "pavement" | "temperature" | null,
   popupTree: TreeOnMap | null,
-  popupPavement: PavementOnMap | null
+  popupPavement: PavementOnMap | null,
 }
 
 const INITIAL_STATE = {
@@ -25,7 +25,7 @@ const INITIAL_STATE = {
   popupLatLng: null,
   popupType: null,
   popupTree: null,
-  popupPavement: null
+  popupPavement: null,
 }
 
 const SET_WIDTH = 'map/setWidth';
@@ -33,6 +33,7 @@ const SET_SLIDER_POS = 'map/setSliderPos';
 export const RECEIVE_TEMPLATED_LAYER = 'map/receiveTemplatedLayer';
 const CLICK_TREE = 'map/clickTree';
 const CLICK_PAVEMENT = 'map/clickPavement';
+const CLICK_TEMPERATURE = 'map/clickTemperature';
 const CLOSE_POPUP = 'map/closePopup';
 
 export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction): MapState {
@@ -49,7 +50,7 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
         popupLatLng: action.latlng,
         popupType: "tree",
         popupTree: action.tree,
-        popupPavement: null
+        popupPavement: null,
       };
     case CLICK_PAVEMENT:
       return {
@@ -57,6 +58,14 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
         popupLatLng: action.latlng,
         popupType: "pavement",
         popupPavement: action.pavement,
+        popupTree: null,
+      };
+    case CLICK_TEMPERATURE:
+      return {
+        ...state,
+        popupLatLng: action.latlng,
+        popupType: "temperature",
+        popupPavement: null,
         popupTree: null
       };
     case REMOVE_TREE:
@@ -208,6 +217,13 @@ export const clickPavement = (latlng: LatLng, pavement: PavementOnMap) => {
     pavement
   };
 };
+
+export const clickTemperature = (latlng: LatLng) => {
+  return {
+    type: CLICK_TEMPERATURE,
+    latlng
+  }
+}
 
 export const closePopup = () => {
   return {

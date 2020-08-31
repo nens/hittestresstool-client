@@ -36,7 +36,8 @@ import {
 import {
   getMapState,
   clickTree,
-  clickPavement
+  clickPavement,
+  clickTemperature,
 } from '../state/map';
 
 import { getPointsWhereNewPointInLineCrossesExistingLines } from '../utils/polygonUtils';
@@ -45,6 +46,7 @@ import TreeMarker from '../icons/TreeLeafletIcon';
 import PolygonEditableComponent from './PolygonEditableComponent';
 import TreePopup from './TreePopup';
 import PavementPopup from './PavementPopup';
+import TemperaturePopup from './TemperaturePopup';
 
 import styles from './MainMap.module.css';
 
@@ -54,7 +56,8 @@ interface MainMapProps {
   setPavementBeingConstructed: (latlngs: LatLng[]) => void,
   removeTree: (geometry: Geometry, tree: Tree) => void,
   clickTree: (latlng: LatLng, tree: TreeOnMap) => void
-  clickPavement: (latlng: LatLng, pavement: PavementOnMap) => void
+  clickPavement: (latlng: LatLng, pavement: PavementOnMap) => void,
+  clickTemperature: (latlng: LatLng) => void,
 }
 
 const MainMap: React.FC<MainMapProps> = ({
@@ -62,7 +65,8 @@ const MainMap: React.FC<MainMapProps> = ({
   addPavement,
   setPavementBeingConstructed,
   clickTree,
-  clickPavement
+  clickPavement,
+  clickTemperature
 }) => {
   const openBlock = useSelector(getOpenBlock);
   const editing = useSelector(getEditing);
@@ -137,6 +141,9 @@ const MainMap: React.FC<MainMapProps> = ({
           if (intersectionArray.length === 0) {
             setPavementBeingConstructed(pavementBeingConstructed.concat([latlng]));
           }
+        } else if (openBlock === 'heatstress') {
+          console.log('CLICK');
+          clickTemperature(latlng);
         }
       }}
       onMousemove={(event: any) => editingPavements && setMouseLatLng(event.latlng as LatLng)}
@@ -248,8 +255,11 @@ const MainMap: React.FC<MainMapProps> = ({
           pavement={mapState.popupPavement}
         />
       )}
+      {(mapState.popupLatLng !== null && mapState.popupType === 'temperature') && (
+        <TemperaturePopup latLng={mapState.popupLatLng!} />
+      )}
     </Map>
-  );
+      );
 };
 
 export default connect(null, {
@@ -258,5 +268,6 @@ export default connect(null, {
   addPavement,
   removeTree,
   clickTree,
-  clickPavement
+  clickPavement,
+  clickTemperature,
 })(MainMap);
