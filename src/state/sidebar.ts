@@ -39,9 +39,9 @@ const INITIAL_STATE: SidebarState = {
   heatstressUpdated: false
 };
 
-const CLICK_HEAT_STRESS = "sidebar/clickHeatStress";
-const CLICK_BLOCK_TREES = "sidebar/clickBlockTrees";
-const CLICK_BLOCK_PAVEMENTS = "sidebar/clickBlockPavements";
+export const CLICK_HEAT_STRESS = "sidebar/clickHeatStress";
+export const CLICK_BLOCK_TREES = "sidebar/clickBlockTrees";
+export const CLICK_BLOCK_PAVEMENTS = "sidebar/clickBlockPavements";
 const SET_SELECTED_PAVEMENT = "sidebar/setSelectedPavement";
 const SET_SELECTED_TREE = "sidebar/setSelectedTree";
 export const START_EDITING_TREES = "sidebar/startEditingTrees";
