@@ -12,6 +12,11 @@ import {
   SENDING_CHANGES
 } from './sidebar';
 
+export interface LegendStep {
+  value: number;
+  color: string;
+}
+
 interface MapState {
   width: number; // PX; for the slider
   sliderPos: number; // 0 to 1
@@ -23,6 +28,9 @@ interface MapState {
   popupType: "tree" | "pavement" | "temperature" | null,
   popupTree: TreeOnMap | null,
   popupPavement: PavementOnMap | null,
+
+  // Legend
+  steps: LegendStep[] | null,
 }
 
 const INITIAL_STATE = {
@@ -34,6 +42,7 @@ const INITIAL_STATE = {
   popupType: null,
   popupTree: null,
   popupPavement: null,
+  steps: null,
 }
 
 const SET_WIDTH = 'map/setWidth';

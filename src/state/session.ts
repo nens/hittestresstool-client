@@ -31,21 +31,29 @@ interface Configuration {
   pavementsStyle: string
 }
 
+export interface LegendStep {
+  value: number;
+  color: string;
+}
+
 interface SessionState {
   bootstrap: Bootstrap | null;
   configuration: Configuration | null;
   startupErrors: string[];
+  steps: LegendStep[] | null;
 }
 
 const INITIAL_STATE: SessionState = {
   bootstrap: null,
   configuration: null,
-  startupErrors: []
+  startupErrors: [],
+  steps: null,
 };
 
 const RECEIVE_BOOTSTRAP = 'session/RECEIVE_BOOTSTRAP';
 const RECEIVE_CONFIGURATION = 'session/RECEIVE_CONFIGURATION';
 const ADD_ERROR = 'session/ADD_ERROR';
+const SET_LEGEND_STEPS = 'session/SET_LEGEND_STEPS';
 
 // Reducer
 
@@ -66,6 +74,11 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SessionState => {
         ...state,
         startupErrors: [...state.startupErrors, action.error]
       }
+    case SET_LEGEND_STEPS:
+      return {
+        ...state,
+        steps: action.steps
+      };
     default:
       return state;
   }
@@ -88,6 +101,8 @@ export const getUser = (state: AppState) => (
 export const getConfiguration = (state: AppState) => state.session.configuration;
 
 export const getErrors = (state: AppState) => state.session.startupErrors;
+
+export const getLegendSteps = (state: AppState) => state.session.steps;
 
 // Action creators
 
@@ -129,6 +144,7 @@ export const fetchConfiguration = (): Thunk => async (dispatch: AppDispatch) => 
     const configuration: Configuration = json.results[0].clientconfig.configuration;
 
     dispatch({type: RECEIVE_CONFIGURATION, configuration});
+    dispatch(fetchLegend(configuration.heatstressStyle));
   } else {
     dispatch(addError("Fout bij ophalen Hittestresstool configuratie, " + json.count + " configuraties gevonden."));
   }
@@ -139,4 +155,16 @@ const addError = (error: string) => {
     type: ADD_ERROR,
     error
   };
+};
+
+// Fetch legend
+
+export const fetchLegend = (style: string): Thunk => (dispatch) => {
+  fetch(`/wms/?service=WMS&request=GetLegend&style=${style}&steps=65&format=json`).then(
+    (response) => response.json()).then(
+      (json) => {
+        const steps = json.legend as LegendStep[];
+        steps.reverse();
+        dispatch({type: SET_LEGEND_STEPS, steps});
+      });
 };

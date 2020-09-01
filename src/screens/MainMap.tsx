@@ -8,7 +8,8 @@ import {
 } from 'react-leaflet';
 
 import {
-  getConfiguration
+  getConfiguration,
+  getLegendSteps
 } from '../state/session';
 import {
   Tree,
@@ -47,6 +48,7 @@ import PolygonEditableComponent from './PolygonEditableComponent';
 import TreePopup from './TreePopup';
 import PavementPopup from './PavementPopup';
 import TemperaturePopup from './TemperaturePopup';
+import Legend from '../components/Legend';
 
 import styles from './MainMap.module.css';
 
@@ -78,6 +80,7 @@ const MainMap: React.FC<MainMapProps> = ({
   const pavementBeingConstructed = useSelector(getPavementBeingConstructed);
   const mapState = useSelector(getMapState);
   const configuration = useSelector(getConfiguration);
+  const legendSteps = useSelector(getLegendSteps);
 
   const [leftClip, setLeftClip]= useState<string>('none');
   const [rightClip, setRightClip] = useState<string>('none');
@@ -125,7 +128,8 @@ const MainMap: React.FC<MainMapProps> = ({
       ref={mapRef}
       zoomControl={false}
       style={{
-        height: "100%", width: "100%"
+        height: "100%", width: "100%",
+        position: "relative"
       }}
       className={mapClass}
       bounds={initialBounds}
@@ -171,95 +175,98 @@ const MainMap: React.FC<MainMapProps> = ({
                 styles={configuration.heatstressStyle}
               />
             </Pane>) : null}
+        {legendSteps !== null && (
+          <Legend steps={legendSteps} style={configuration.heatstressStyle}/>
+        )}
         </>
       ) : null}
-      {openBlock === 'trees' ? (
-        <>
-          <WMSTileLayer
-            url="/wms/"
-            key="trees"
-            layers={configuration.originalTreesLayer}
-            styles={configuration.treesStyle}
-          />
-          <GeoJSON
-            key={"treesOnMap" + treesOnMap.features.length + editing}
-            data={treesOnMap}
-            pointToLayer={TreeMarker(editing)}
-            onEachFeature={(feature: TreeOnMap, layer) =>
-              !editing && layer.on("click", (event) => {
-                clickTree((event as any).latlng, feature);
-              })}
-          />
-          <GeoJSON
-            key={"treesBeingAdded" + treesBeingAdded.features.length}
-            data={treesBeingAdded}
-            pointToLayer={TreeMarker()}
-          />
-        </>
-      ) : null}
-      {openBlock === 'pavements' ? (
-        <>
-          <WMSTileLayer
-            key="pavements"
-            url="/wms/"
-            layers={configuration.originalPavementsLayer}
-            styles={configuration.pavementsStyle}
-          />
-          <GeoJSON
-            key={"pavementsOnMap" + pavementsOnMap.features.length + editing}
-            data={pavementsOnMap}
-            style={(feature: any) => {
-              return {
-                color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement],
-                opacity: editingPavements ? 0.3 : 1,
-                fillOpacity: editingPavements ? 0.1 : 0.25
-              };
-            }}
-            onEachFeature={(feature: PavementOnMap, layer) =>
-              !editing && layer.on("click", (event) => {
-                console.log("CLICK");
-                clickPavement((event as any).latlng, feature);
-              })}
-          />
-          {editingPavements && (
+        {openBlock === 'trees' ? (
+          <>
+            <WMSTileLayer
+              url="/wms/"
+              key="trees"
+              layers={configuration.originalTreesLayer}
+              styles={configuration.treesStyle}
+            />
             <GeoJSON
-              key={"pavementsBeingAdded" + pavementsBeingAdded.features.length}
-              data={pavementsBeingAdded}
+              key={"treesOnMap" + treesOnMap.features.length + editing}
+              data={treesOnMap}
+              pointToLayer={TreeMarker(editing)}
+              onEachFeature={(feature: TreeOnMap, layer) =>
+                !editing && layer.on("click", (event) => {
+                  clickTree((event as any).latlng, feature);
+                })}
+            />
+            <GeoJSON
+              key={"treesBeingAdded" + treesBeingAdded.features.length}
+              data={treesBeingAdded}
+              pointToLayer={TreeMarker()}
+            />
+          </>
+        ) : null}
+        {openBlock === 'pavements' ? (
+          <>
+            <WMSTileLayer
+              key="pavements"
+              url="/wms/"
+              layers={configuration.originalPavementsLayer}
+              styles={configuration.pavementsStyle}
+            />
+            <GeoJSON
+              key={"pavementsOnMap" + pavementsOnMap.features.length + editing}
+              data={pavementsOnMap}
               style={(feature: any) => {
                 return {
-                  color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement]
+                  color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement],
+                  opacity: editingPavements ? 0.3 : 1,
+                  fillOpacity: editingPavements ? 0.1 : 0.25
                 };
               }}
+              onEachFeature={(feature: PavementOnMap, layer) =>
+                !editing && layer.on("click", (event) => {
+                  console.log("CLICK");
+                  clickPavement((event as any).latlng, feature);
+                })}
             />
-          )}
-          {editingPavements && pavementBeingConstructed && (
-            <PolygonEditableComponent
-              polygonPoints={pavementBeingConstructed}
-              setPolygonPoints={setPavementBeingConstructed}
-              mouseLocation={mouseLatLng}
-              setPointsAction={(polygon: LatLng[]) => addPavement(polygon, selectedPavement)}
-              polygonColor={COLORS_PER_PAVEMENT[selectedPavement]}
-            />
-          )}
-        </>
-      ) : null}
-      {(mapState.popupLatLng !== null && mapState.popupType === 'tree' && mapState.popupTree) && (
-        <TreePopup
-          latLng={mapState.popupLatLng}
-          tree={mapState.popupTree}
-        />
-      )}
-      {(mapState.popupLatLng !== null && mapState.popupType === 'pavement' && mapState.popupPavement) && (
-        <PavementPopup
-          latLng={mapState.popupLatLng}
-          pavement={mapState.popupPavement}
-        />
-      )}
-      {(mapState.popupLatLng !== null && mapState.popupType === 'temperature') && (
-        <TemperaturePopup latLng={mapState.popupLatLng!} />
-      )}
+            {editingPavements && (
+              <GeoJSON
+                key={"pavementsBeingAdded" + pavementsBeingAdded.features.length}
+                data={pavementsBeingAdded}
+                style={(feature: any) => {
+                  return {
+                    color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement]
+                  };
+                }}
+              />
+            )}
+            {editingPavements && pavementBeingConstructed && (
+              <PolygonEditableComponent
+                polygonPoints={pavementBeingConstructed}
+                setPolygonPoints={setPavementBeingConstructed}
+                mouseLocation={mouseLatLng}
+                setPointsAction={(polygon: LatLng[]) => addPavement(polygon, selectedPavement)}
+                polygonColor={COLORS_PER_PAVEMENT[selectedPavement]}
+              />
+            )}
+          </>
+        ) : null}
+        {(mapState.popupLatLng !== null && mapState.popupType === 'tree' && mapState.popupTree) && (
+          <TreePopup
+            latLng={mapState.popupLatLng}
+            tree={mapState.popupTree}
+          />
+        )}
+        {(mapState.popupLatLng !== null && mapState.popupType === 'pavement' && mapState.popupPavement) && (
+          <PavementPopup
+            latLng={mapState.popupLatLng}
+            pavement={mapState.popupPavement}
+          />
+        )}
+        {(mapState.popupLatLng !== null && mapState.popupType === 'temperature') && (
+          <TemperaturePopup latLng={mapState.popupLatLng!} />
+        )}
     </Map>
-      );
+  );
 };
 
 export default connect(null, {

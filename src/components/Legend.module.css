@@ -2,12 +2,43 @@
   background: #5A5152;
   box-shadow: 3px 3px 6px #00000029;
   border-radius: 3px;
-  width: 4.5rem;
+  width: 3.5rem;
   height: 6.5rem;
-  padding: 1rem;
+  padding: 0.5rem;
+  z-index: 1000;
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+}
+
+.Steps {
+  width: 2rem;
+  height: 6.5rem;
+  float: left;
+}
+
+.Temperatures {
+  position: relative;
+  color: white;
+  width: 1.5rem;
+  height: 6.5rem;
+  float: left;
+  text-align: right;
+}
+
+.HighTemp {
+  border-top: solid white 1px;
+  width: 100%;
+}
+
+.LowTemp {
+  position: absolute;
+  border-bottom: solid white 1px;
+  width: 100%;
+  bottom: 0;
 }
 
 .Color {
-  width: 3rem;
+  width: 1.5rem;
   height: 0.1rem;
 }

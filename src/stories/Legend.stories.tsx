@@ -12,8 +12,7 @@ export default {
 
 export const legend = () => (
   <Legend
-  wmsServer="https://nxt3.staging.lizard.net/wms"
-  style={text("Style", "heatstress:34:46")}
-  numSteps={number("Steps", 65)}
+    steps={[]}
+    style={text("Style", "heatstress:34:46")}
   />
 );
