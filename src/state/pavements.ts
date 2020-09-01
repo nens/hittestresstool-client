@@ -1,7 +1,7 @@
 import { FeatureCollection, Geometry, Feature, Polygon } from 'geojson';
 import { LatLng } from 'leaflet';
 import { AnyAction } from 'redux';
-import { AppState, Thunk } from '../App';
+import { AppState } from '../App';
 import { polygonEqual } from '../utils/geometry';
 
 import {
@@ -11,9 +11,6 @@ import {
   SUBMIT_EDITING_PAVEMENTS,
   UNDO_EDITING_PAVEMENTS,
 } from './sidebar';
-import {
-  refreshHeatstress
-} from './map';
 
 interface PavementGeojsonProperties {
   pavement: Pavement
@@ -181,16 +178,10 @@ export function getPavementBeingConstructed(state: AppState) {
 export const removePavement = (
   geometry: Geometry,
   pavement: Pavement
-): Thunk => (dispatch, getState) => {
-  dispatch({
+) => {
+  return {
     type: REMOVE_PAVEMENT,
     geometry,
     pavement
-  });
-
-  const state = getState();
-
-  dispatch(refreshHeatstress(
-    state.trees.treesOnMap,
-    state.pavements.pavementsOnMap));
+  };
 };

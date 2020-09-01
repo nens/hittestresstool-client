@@ -1,14 +1,15 @@
 import { AnyAction } from 'redux';
 import { LatLng } from 'leaflet';
 import { AppState, Thunk } from '../App';
-import { REMOVE_TREE, TreeOnMap, TreesOnMap } from './trees';
-import { REMOVE_PAVEMENT, PavementOnMap, PavementsOnMap } from './pavements';
+import { REMOVE_TREE, TreeOnMap } from './trees';
+import { REMOVE_PAVEMENT, PavementOnMap } from './pavements';
 import { wgs84ToRd } from '../utils/projection';
 import { getConfiguration } from './session';
 import {
   CLICK_HEAT_STRESS,
   CLICK_BLOCK_TREES,
-  CLICK_BLOCK_PAVEMENTS
+  CLICK_BLOCK_PAVEMENTS,
+  SENDING_CHANGES
 } from './sidebar';
 
 interface MapState {
@@ -149,12 +150,16 @@ function geojsonToMultipolygonWKT(pavements: PavementOnMap[]) {
   ).join(',') + ')';
 }
 
-export const refreshHeatstress = (
-  trees: TreesOnMap,
-  pavements: PavementsOnMap
-): Thunk => async (dispatch, getState) => {
-  const configuration = getConfiguration(getState());
+export const clickCalculate = (): Thunk => async (dispatch, getState) => {
+  const state = getState();
+
+  dispatch({type: SENDING_CHANGES});
+
+  const configuration = getConfiguration(state);
   if (configuration === null) return;
+
+  const trees = state.trees.treesOnMap;
+  const pavements = state.pavements.pavementsOnMap;
 
   const trees_5m = trees.features.filter(
     tree => tree.properties.tree === 'tree_5m'
@@ -216,7 +221,7 @@ export const refreshHeatstress = (
       templatedUuid: json.uuid
     });
   }
-}
+};
 
 // Clciks for popups
 

@@ -1,6 +1,8 @@
 import { AnyAction } from 'redux';
 import { AppState, Thunk } from '../App';
-import { refreshHeatstress, RECEIVE_TEMPLATED_LAYER } from './map';
+import { RECEIVE_TEMPLATED_LAYER } from './map';
+import { REMOVE_TREE } from './trees';
+import { REMOVE_PAVEMENT } from './pavements';
 
 // Sidebar state:
 
@@ -28,6 +30,7 @@ interface SidebarState {
   editing: boolean;
   selectedTree: Tree;
   selectedPavement: Pavement;
+  changesMade: boolean;
   heatstressUpdated: boolean;
 }
 
@@ -36,7 +39,8 @@ const INITIAL_STATE: SidebarState = {
   editing: false,
   selectedTree: "tree_5m",
   selectedPavement: "grass",
-  heatstressUpdated: false
+  changesMade: false,
+  heatstressUpdated: false,
 };
 
 export const CLICK_HEAT_STRESS = "sidebar/clickHeatStress";
@@ -52,6 +56,7 @@ export const START_EDITING_PAVEMENTS = "sidebar/startEditingPavements";
 export const CANCEL_EDITING_PAVEMENTS = "sidebar/cancelEditingPavements";
 export const SUBMIT_EDITING_PAVEMENTS = "sidebar/submitEditingPavements";
 export const UNDO_EDITING_PAVEMENTS = "sidebar/undoEditingPavements";
+export const SENDING_CHANGES = "sidebar/sendingChanges";
 
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
   const type = action.type;
@@ -98,10 +103,15 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
         ...state,
         editing: true
       };
-    case CANCEL_EDITING_TREES:
     case SUBMIT_EDITING_TREES:
-    case CANCEL_EDITING_PAVEMENTS:
     case SUBMIT_EDITING_PAVEMENTS:
+      return {
+        ...state,
+        editing: false,
+        changesMade: true
+      };
+    case CANCEL_EDITING_PAVEMENTS:
+    case CANCEL_EDITING_TREES:
       return {
         ...state,
         editing: false
@@ -117,6 +127,17 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       } else {
         return state;
       }
+    case REMOVE_TREE:
+    case REMOVE_PAVEMENT:
+      return {
+        ...state,
+        changesMade: true
+      };
+    case SENDING_CHANGES:
+      return {
+        ...state,
+        changesMade: false
+      };
     default:
       return state;
   }
@@ -145,6 +166,10 @@ export const getEditing = (state: AppState): boolean => (
 export const getHeatstressUpdated = (state: AppState): boolean => {
   return state.sidebar.heatstressUpdated;
 };
+
+export const getChangesMade = (state: AppState): boolean => (
+  state.sidebar.changesMade
+);
 
 // Action creators
 
@@ -197,12 +222,6 @@ export const submitEditingTrees = (): Thunk => (dispatch, getState) => {
   dispatch({
     type: SUBMIT_EDITING_TREES
   });
-
-  const state = getState();
-
-  dispatch(refreshHeatstress(
-    state.trees.treesOnMap,
-    state.pavements.pavementsOnMap));
 }
 
 export const undoEditingTrees = () => {
@@ -228,12 +247,6 @@ export const submitEditingPavements = (): Thunk => (dispatch, getState) => {
   dispatch({
     type: SUBMIT_EDITING_PAVEMENTS
   });
-
-  const state = getState();
-
-  dispatch(refreshHeatstress(
-    state.trees.treesOnMap,
-    state.pavements.pavementsOnMap));
 }
 
 export const undoEditingPavements = () => {

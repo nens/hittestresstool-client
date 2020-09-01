@@ -3,6 +3,7 @@ import React from 'react';
 import BlockHittestress from './BlockHittestress';
 import BlockPavements from './BlockPavements';
 import BlockTrees from './BlockTrees';
+import BlockCalculate from './BlockCalculate';
 
 const Sidebar: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const Sidebar: React.FC = () => {
       <h2>Brondata</h2>
       <BlockTrees/>
       <BlockPavements/>
+      <BlockCalculate/>
     </div>
   );
 };

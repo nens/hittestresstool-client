@@ -12,9 +12,6 @@ import {
   SUBMIT_EDITING_TREES,
   UNDO_EDITING_TREES,
 } from './sidebar';
-import {
-  refreshHeatstress
-} from './map';
 
 interface TreeGeojsonProperties {
   tree: Tree
@@ -145,16 +142,10 @@ export const mapClickWhileEditingTrees = (latlng: LatLng): Thunk => (dispatch, g
   });
 };
 
-export const removeTree = (geometry: Geometry, tree: Tree): Thunk => (dispatch, getState) => {
-  dispatch({
+export const removeTree = (geometry: Geometry, tree: Tree) => {
+  return {
     type: REMOVE_TREE,
     geometry,
     tree
-  });
-
-  const state = getState();
-
-  dispatch(refreshHeatstress(
-    state.trees.treesOnMap,
-    state.pavements.pavementsOnMap));
+  };
 };
