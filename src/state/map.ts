@@ -5,27 +5,34 @@ import { REMOVE_TREE, TreeOnMap, TreesOnMap } from './trees';
 import { REMOVE_PAVEMENT, PavementOnMap, PavementsOnMap } from './pavements';
 import { wgs84ToRd } from '../utils/projection';
 import { getConfiguration } from './session';
+import {
+  CLICK_HEAT_STRESS,
+  CLICK_BLOCK_TREES,
+  CLICK_BLOCK_PAVEMENTS
+} from './sidebar';
 
 interface MapState {
   width: number; // PX; for the slider
   sliderPos: number; // 0 to 1
   templatedLayer: string | null;
+  templatedUuid: string | null,
 
   // Popup. We show at most one at a time
   popupLatLng: LatLng | null,
   popupType: "tree" | "pavement" | "temperature" | null,
   popupTree: TreeOnMap | null,
-  popupPavement: PavementOnMap | null
+  popupPavement: PavementOnMap | null,
 }
 
 const INITIAL_STATE = {
   width: 0,
   sliderPos: 0.5,
   templatedLayer: null,
+  templatedUuid: null,
   popupLatLng: null,
   popupType: null,
   popupTree: null,
-  popupPavement: null
+  popupPavement: null,
 }
 
 const SET_WIDTH = 'map/setWidth';
@@ -33,6 +40,7 @@ const SET_SLIDER_POS = 'map/setSliderPos';
 export const RECEIVE_TEMPLATED_LAYER = 'map/receiveTemplatedLayer';
 const CLICK_TREE = 'map/clickTree';
 const CLICK_PAVEMENT = 'map/clickPavement';
+const CLICK_TEMPERATURE = 'map/clickTemperature';
 const CLOSE_POPUP = 'map/closePopup';
 
 export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction): MapState {
@@ -42,14 +50,18 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
     case SET_SLIDER_POS:
       return {...state, sliderPos: action.sliderPos};
     case RECEIVE_TEMPLATED_LAYER:
-      return {...state, templatedLayer: action.templatedLayer };
+      return {
+        ...state,
+        templatedLayer: action.templatedLayer,
+        templatedUuid: action.templatedUuid
+      };
     case CLICK_TREE:
       return {
         ...state,
         popupLatLng: action.latlng,
         popupType: "tree",
         popupTree: action.tree,
-        popupPavement: null
+        popupPavement: null,
       };
     case CLICK_PAVEMENT:
       return {
@@ -57,11 +69,22 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
         popupLatLng: action.latlng,
         popupType: "pavement",
         popupPavement: action.pavement,
+        popupTree: null,
+      };
+    case CLICK_TEMPERATURE:
+      return {
+        ...state,
+        popupLatLng: action.latlng,
+        popupType: "temperature",
+        popupPavement: null,
         popupTree: null
       };
     case REMOVE_TREE:
     case REMOVE_PAVEMENT:
     case CLOSE_POPUP:
+    case CLICK_HEAT_STRESS:
+    case CLICK_BLOCK_TREES:
+    case CLICK_BLOCK_PAVEMENTS:
       // Remove popup
       return {
         ...state,
@@ -86,6 +109,9 @@ export function showSlider(state: AppState) {
   return state.sidebar.openMap === 'heatstress' && state.map.templatedLayer !== null;
 }
 
+export function getTemplatedUuid(state: AppState) {
+  return state.map.templatedUuid;
+}
 
 // Action creators
 
@@ -186,7 +212,8 @@ export const refreshHeatstress = (
 
     dispatch({
       type: RECEIVE_TEMPLATED_LAYER,
-      templatedLayer: json.wms_info.layer
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
     });
   }
 }
@@ -208,6 +235,13 @@ export const clickPavement = (latlng: LatLng, pavement: PavementOnMap) => {
     pavement
   };
 };
+
+export const clickTemperature = (latlng: LatLng) => {
+  return {
+    type: CLICK_TEMPERATURE,
+    latlng
+  }
+}
 
 export const closePopup = () => {
   return {

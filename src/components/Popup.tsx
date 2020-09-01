@@ -7,12 +7,12 @@ import { TREE_SVG_DATA_URL } from '../icons/TreeLeafletIcon';
 
 import styles from './Popup.module.css';
 
-interface TreePopupProps {
+interface PopupProps {
   latLng: Leaflet.LatLng;
   onClose: () => void
 }
 
-const Popup: React.FC<TreePopupProps> = (props) => {
+const Popup: React.FC<PopupProps> = (props) => {
   const {
     latLng,
     onClose,
@@ -33,7 +33,7 @@ const Popup: React.FC<TreePopupProps> = (props) => {
     <Marker
       position={latLng}
       icon={icon}
-      key={`tree ${latLng.toString()}`}
+      key={`popup ${latLng.toString()}`}
       onAdd={(event: any) => event.target.openPopup()}
     >
       <LPopup
