@@ -3,10 +3,16 @@
 import { LatLng } from 'leaflet';
 
 export async function fetchValueAtPoint(rasterUuid: string, latLng: LatLng) {
+  // Note we do not use use /point/ because it gives no results on production
+  // right now, probably some problem with Geoblocks
+  // This linestring is more or less the same thing.
   const { lat, lng } = latLng;
 
+  const lat2 = lat + 0.000001;
+  const lng2 = lng + 0.000001;
+
   const response = await fetch(
-    `/api/v4/rasters/${rasterUuid}/point/?geom=POINT+(${lng}+${lat})`
+    `/api/v4/rasters/${rasterUuid}/line/?geom=LINESTRING+(${lng}+${lat},+${lng2}+${lat2})`
   );
 
   if (response.status !== 200) return null;
