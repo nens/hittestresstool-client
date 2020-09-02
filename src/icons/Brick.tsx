@@ -8,7 +8,11 @@ interface BrickProps {
 }
 
 const Brick: React.FC<BrickProps> = ({active, onClick}) => (
-  <div className={active ? styles.pavementActive : styles.pavementInactive} onClick={onClick}>
+  <div
+    className={active ? styles.pavementActive : styles.pavementInactive}
+    onClick={onClick}
+    title="Halfverhard"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
       <g transform="translate(16 -0.006) rotate(90)">
         <path style={{fill: "#ce4e41"}} d="M15.567,16H.433A.433.433,0,0,1,0,15.567V.433A.433.433,0,0,1,.433,0H15.567A.433.433,0,0,1,16,.433V15.567A.433.433,0,0,1,15.567,16Z" transform="translate(0.006 0)"/>

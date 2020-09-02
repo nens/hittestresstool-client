@@ -1,0 +1,22 @@
+.Message, .MessageInvisible {
+  background: #7DF285 0% 0% no-repeat padding-box;
+  border: 3px solid #428831;
+  font-size: 1rem;
+
+  padding: 0.5rem 2rem;
+
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+
+  z-index: 1000;
+}
+
+.Message {
+  opacity: 0.6;
+}
+
+.MessageInvisible {
+  opacity: 0;
+  transition: opacity 1s;
+}

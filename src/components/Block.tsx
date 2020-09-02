@@ -47,7 +47,9 @@ const Block: React.FC<BlockProps> = ({title, icon, status, children, onOpen}: Bl
       (clickable ? onOpen!() : null)
     }>
       <div className={styles.sidebarBlockRow}>
-        <h2 className={styles.sidebarBlockTitle}>{title}</h2>
+        <h2
+          className={styles.sidebarBlockTitle}
+        >{title}</h2>
         <div className={styles.sidebarBlockIcon}>
           {icon}
         </div>

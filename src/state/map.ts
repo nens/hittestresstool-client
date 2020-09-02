@@ -11,6 +11,9 @@ import {
   CLICK_BLOCK_PAVEMENTS,
   SENDING_CHANGES
 } from './sidebar';
+import {
+  addMessage
+} from './message';
 
 export interface LegendStep {
   value: number;
@@ -163,7 +166,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
   const state = getState();
 
   dispatch({type: SENDING_CHANGES});
-
+  dispatch(addMessage("Nieuwe hittestresskaart aangevraagd"));
   const configuration = getConfiguration(state);
   if (configuration === null) return;
 
@@ -229,6 +232,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
       templatedLayer: json.wms_info.layer,
       templatedUuid: json.uuid
     });
+    dispatch(addMessage("Hittestresskaart ververst"));
   }
 };
 

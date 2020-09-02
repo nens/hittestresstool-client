@@ -3,7 +3,7 @@ import { AnyAction } from 'redux';
 import { LatLng } from 'leaflet';
 import { AppState, Thunk } from '../App';
 import { pointEqual } from '../utils/geometry';
-
+import { addMessage } from './message';
 import {
   Tree,
   getSelectedTree,
@@ -140,6 +140,7 @@ export const mapClickWhileEditingTrees = (latlng: LatLng): Thunk => (dispatch, g
     latlng: latlng,
     tree: selectedTree
   });
+  dispatch(addMessage("Boom geplaatst"));
 };
 
 export const removeTree = (geometry: Geometry, tree: Tree) => {

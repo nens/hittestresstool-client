@@ -8,7 +8,11 @@ interface SeaProps {
 }
 
 const Sea: React.FC<SeaProps> = ({active, onClick}) => (
-  <div className={active ? styles.pavementActive : styles.pavementInactive} onClick={onClick}>
+  <div
+    className={active ? styles.pavementActive : styles.pavementInactive}
+    onClick={onClick}
+    title="Water"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15.333" viewBox="0 0 16 15.333">
       <g transform="translate(0 0)">
         <path style={{fill: "#ccf2fe"}} d="M15.333,138.15c-.4,0-.8-.067-1,.333a2.041,2.041,0,0,1-2.733.733,1.937,1.937,0,0,1-.733-.733.748.748,0,0,0-1.267,0,2.041,2.041,0,0,1-2.733.733,1.937,1.937,0,0,1-.733-.733.656.656,0,0,0-1.133,0,2.041,2.041,0,0,1-2.733.733c-.533-.267-.733-1-1.267-1.067-.467-.067-1,.133-1,.667v7.333a.63.63,0,0,0,.667.667H15.333A.63.63,0,0,0,16,146.15v-7.333A.63.63,0,0,0,15.333,138.15Z" transform="translate(0 -134.15)"/>

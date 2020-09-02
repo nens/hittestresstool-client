@@ -5,6 +5,7 @@
   box-shadow: 0px 3px 6px #00000029;
   background: #39AEA9;
   margin: 0 0.5rem;
+  cursor: pointer;
 }
 
 .pavementActive {
@@ -14,6 +15,7 @@
   box-shadow: 0px 3px 6px #00000029;
   background: #E5EFC0;
   margin: 0 0.5rem;
+  cursor: pointer;
 }
 
 .pavementActive svg, .pavementInactive svg {

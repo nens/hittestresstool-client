@@ -8,7 +8,11 @@ interface GrassProps {
 }
 
 const Grass: React.FC<GrassProps> = ({active, onClick}) => (
-  <div className={active ? styles.pavementActive : styles.pavementInactive} onClick={onClick}>
+  <div
+    className={active ? styles.pavementActive : styles.pavementInactive}
+    onClick={onClick}
+    title="Gras"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" width="16.369" height="15.215" viewBox="0 0 16.369 15.215">
       <path style={{fill: "#33bc00"}} d="M59.915,138.874a29.23,29.23,0,0,1,2.477,11.352h2.565S65.163,141.823,59.915,138.874Z" transform="translate(-57.999 -135.011)"/>
       <path style={{fill: "#008100"}} d="M299.541,138.874a29.23,29.23,0,0,0-2.477,11.352H294.5S294.292,141.823,299.541,138.874Z" transform="translate(-285.082 -135.011)"/>

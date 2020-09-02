@@ -40,6 +40,11 @@ import {
   clickPavement,
   clickTemperature,
 } from '../state/map';
+import {
+  addMessage,
+  getMessage,
+  getMessageVisible
+} from '../state/message';
 
 import { getPointsWhereNewPointInLineCrossesExistingLines } from '../utils/polygonUtils';
 
@@ -49,6 +54,7 @@ import TreePopup from './TreePopup';
 import PavementPopup from './PavementPopup';
 import TemperaturePopup from './TemperaturePopup';
 import Legend from '../components/Legend';
+import Message from '../components/Message';
 
 import styles from './MainMap.module.css';
 
@@ -60,10 +66,12 @@ interface MainMapProps {
   clickTree: (latlng: LatLng, tree: TreeOnMap) => void
   clickPavement: (latlng: LatLng, pavement: PavementOnMap) => void,
   clickTemperature: (latlng: LatLng) => void,
+  addMessage: (message: string) => void,
 }
 
 const MainMap: React.FC<MainMapProps> = ({
   mapClickWhileEditingTrees,
+  addMessage,
   addPavement,
   setPavementBeingConstructed,
   clickTree,
@@ -81,6 +89,8 @@ const MainMap: React.FC<MainMapProps> = ({
   const mapState = useSelector(getMapState);
   const configuration = useSelector(getConfiguration);
   const legendSteps = useSelector(getLegendSteps);
+  const message = useSelector(getMessage);
+  const messageVisible = useSelector(getMessageVisible);
 
   const [leftClip, setLeftClip]= useState<string>('none');
   const [rightClip, setRightClip] = useState<string>('none');
@@ -224,7 +234,6 @@ const MainMap: React.FC<MainMapProps> = ({
               }}
               onEachFeature={(feature: PavementOnMap, layer) =>
                 !editing && layer.on("click", (event) => {
-                  console.log("CLICK");
                   clickPavement((event as any).latlng, feature);
                 })}
             />
@@ -244,7 +253,10 @@ const MainMap: React.FC<MainMapProps> = ({
                 polygonPoints={pavementBeingConstructed}
                 setPolygonPoints={setPavementBeingConstructed}
                 mouseLocation={mouseLatLng}
-                setPointsAction={(polygon: LatLng[]) => addPavement(polygon, selectedPavement)}
+                setPointsAction={(polygon: LatLng[]) => {
+                  addPavement(polygon, selectedPavement);
+                  addMessage("Verharding geplaatst");
+                }}
                 polygonColor={COLORS_PER_PAVEMENT[selectedPavement]}
               />
             )}
@@ -265,6 +277,7 @@ const MainMap: React.FC<MainMapProps> = ({
         {(mapState.popupLatLng !== null && mapState.popupType === 'temperature') && (
           <TemperaturePopup latLng={mapState.popupLatLng!} />
         )}
+      <Message text={message} visible={messageVisible} />
     </Map>
   );
 };
@@ -272,6 +285,7 @@ const MainMap: React.FC<MainMapProps> = ({
 export default connect(null, {
   mapClickWhileEditingTrees,
   setPavementBeingConstructed,
+  addMessage,
   addPavement,
   removeTree,
   clickTree,

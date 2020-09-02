@@ -12,6 +12,7 @@
   width: 2.5rem;
   height: 2.5rem;
   margin: 2px;
+  cursor: pointer;
 }
 
 .checkIcon svg {
@@ -26,6 +27,7 @@
   width: 2.5rem;
   height: 2.5rem;
   margin: 2px;
+  cursor: pointer;
 }
 
 .returnIcon svg {
@@ -40,6 +42,7 @@
   width: 2.5rem;
   height: 2.5rem;
   margin: 2px;
+  cursor: pointer;
 }
 
 .closeIcon svg {

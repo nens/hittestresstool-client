@@ -10,7 +10,11 @@ interface TextButtonProps {
 
 export default function TextButton({text, icon=null, onClick}: TextButtonProps) {
   return (
-    <div className={styles.TextButton} onClick={onClick}>
+    <div
+      className={styles.TextButton}
+      onClick={onClick}
+      title={text}
+    >
       {text} {icon}
     </div>
   );

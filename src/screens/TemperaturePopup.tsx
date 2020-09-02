@@ -49,9 +49,9 @@ function TemperatureMarker(props: TemperaturePopupProps) {
   return (
     <Popup latLng={latLng} onClose={closePopup}>
       <h2>Temperatuur</h2>
-      <h2>Voor: {temperatureOrig !== null ? (<span>{temperatureOrig.toFixed(1)}&deg;</span>) : "-"}</h2>
+      <h2>Voor: {temperatureOrig !== null ? (<span>{temperatureOrig.toFixed(1)}&deg;C</span>) : "-"}</h2>
       {templatedUuid !== null ? (
-        <h2>Na: {temperatureEdit !== null ? (<span>{temperatureEdit.toFixed(1)}&deg;</span>) : "-"}</h2>
+        <h2>Na: {temperatureEdit !== null ? (<span>{temperatureEdit.toFixed(1)}&deg;C</span>) : "-"}</h2>
       ) : null}
     </Popup>
   );
