@@ -8,8 +8,8 @@ export async function fetchValueAtPoint(rasterUuid: string, latLng: LatLng) {
   // This linestring is more or less the same thing.
   const { lat, lng } = latLng;
 
-  const lat2 = lat + 0.000001;
-  const lng2 = lng + 0.000001;
+  const lat2 = lat + 0.00001;
+  const lng2 = lng + 0.00001;
 
   const response = await fetch(
     `/api/v4/rasters/${rasterUuid}/line/?geom=LINESTRING+(${lng}+${lat},+${lng2}+${lat2})`
