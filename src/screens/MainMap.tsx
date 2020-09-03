@@ -274,7 +274,7 @@ const MainMap: React.FC<MainMapProps> = ({
             pavement={mapState.popupPavement}
           />
         )}
-        {(mapState.popupLatLng !== null && mapState.popupType === 'temperature') && (
+        {(mapState.popupLatLng !== null && mapState.popupType === 'temperature' && false) && (
           <TemperaturePopup latLng={mapState.popupLatLng!} />
         )}
       <Message text={message} visible={messageVisible} />
