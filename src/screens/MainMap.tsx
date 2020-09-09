@@ -162,6 +162,7 @@ const MainMap: React.FC<MainMapProps> = ({
       }}
       onMousemove={(event: any) => editingPavements && setMouseLatLng(event.latlng as LatLng)}
       onViewportChange={updateClip}
+      maxZoom={25}
     >
       <TileLayer
         url={`https://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${configuration.mapboxAccessToken}`}
@@ -274,7 +275,7 @@ const MainMap: React.FC<MainMapProps> = ({
             pavement={mapState.popupPavement}
           />
         )}
-        {(mapState.popupLatLng !== null && mapState.popupType === 'temperature' && false) && (
+        {(mapState.popupLatLng !== null && mapState.popupType === 'temperature') && (
           <TemperaturePopup latLng={mapState.popupLatLng!} />
         )}
       <Message text={message} visible={messageVisible} />
