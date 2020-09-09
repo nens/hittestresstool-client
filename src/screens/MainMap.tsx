@@ -279,7 +279,7 @@ const MainMap: React.FC<MainMapProps> = ({
         )}
       <Message text={message} visible={messageVisible} />
     </Map>
-  );
+      );
 };
 
 export default connect(null, {
