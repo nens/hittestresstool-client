@@ -24,8 +24,8 @@ function Legend (props: LegendProps) {
   return (
     <div className={styles.Legend}>
       <div className={styles.Steps}>
-        {steps.map((step) => (
-          <div className={styles.Color} style={{background: step.color}}></div>
+        {steps.map((step, i) => (
+          <div key={`legendstep-${i}`} className={styles.Color} style={{background: step.color}}></div>
         ))}
       </div>
       <div className={styles.Temperatures}>

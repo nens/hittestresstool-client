@@ -16,12 +16,16 @@ interface Bootstrap {
   },
 }
 
+interface Bounds {
+  sw: {lat: number, lng: number},
+  ne: {lat: number, lng: number}
+}
+
 interface Configuration {
   mapboxAccessToken: string,
-  initialBounds: {
-    sw: {lat: number, lng: number},
-    ne: {lat: number, lng: number}
-  },
+  initialBounds: Bounds,
+  maxBounds?: Bounds,
+  minZoom?: number,
   originalHeatstressLayer: string,
   originalTreesLayer: string,
   originalPavementsLayer: string,
