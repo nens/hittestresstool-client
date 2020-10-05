@@ -1,6 +1,14 @@
-.MapEditTrees:hover {
+.MapEditTrees5:hover {
+  cursor: url(../icons/tree-cursor-5.svg) 11 35, crosshair;
+}
+
+.MapEditTrees10:hover {
+  cursor: url(../icons/tree-cursor-10.svg) 15 40, crosshair;
+}
+
+.MapEditTrees15:hover {
   cursor: crosshair;
-  cursor: url(../icons/tree.svg), auto;
+  cursor: url(../icons/tree-cursor-15.svg) 19 60, crosshair
 }
 
 .MapEditPavements:hover {

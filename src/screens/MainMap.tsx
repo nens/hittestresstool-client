@@ -16,6 +16,7 @@ import {
   getOpenBlock,
   getEditing,
   getSelectedPavement,
+  getSelectedTree,
   Pavement,
   COLORS_PER_PAVEMENT
 } from '../state/sidebar';
@@ -91,6 +92,7 @@ const MainMap: React.FC<MainMapProps> = ({
   const legendSteps = useSelector(getLegendSteps);
   const message = useSelector(getMessage);
   const messageVisible = useSelector(getMessageVisible);
+  const selectedTree = useSelector(getSelectedTree);
 
   const [leftClip, setLeftClip]= useState<string>('none');
   const [rightClip, setRightClip] = useState<string>('none');
@@ -121,10 +123,15 @@ const MainMap: React.FC<MainMapProps> = ({
   const editingTrees = editing && openBlock === 'trees';
   const editingPavements = editing && openBlock === 'pavements';
 
+  const mapEditTreesStyle = (
+    selectedTree === 'tree_5m' ? styles.MapEditTrees5 :
+    selectedTree === 'tree_15m' ? styles.MapEditTrees15 :
+    styles.MapEditTrees10);
+
   const mapClass = (
-    editingTrees ?
-    styles.MapEditTrees : editingPavements ?
-    styles.MapEditPavements : '');
+      editingTrees ?
+      mapEditTreesStyle : editingPavements ?
+      styles.MapEditPavements : '');
 
   const initialBounds = Leaflet.latLngBounds(
     Leaflet.latLng(configuration.initialBounds.sw),
