@@ -1,44 +1,243 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Hittestresstool
 
-## Available Scripts
+The "Hittestresstool" (heat stress tool) is a Lizard frontend
+application for viewing and editing heat stress models and showing
+them on the map.
 
-In the project directory, you can run:
+It is found at e.g. https://demo.lizard.net/hittestresstool/ , or
+https://nxt3.staging.lizard.net/hittestresstool/ ; it is only
+accessible for users of the right Organisation ("Hittestress demo" for
+that production site, "Geoblocks demo" on staging).
 
-### `yarn start`
+# Functionality overview
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The Hittestresskaart is a Geoblock, a dynamically computed raster.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+It can be dynamically changed by either
+- Placing trees of various sizes (5m, 10m, 15m) or
+- Placing polygons that belong to one of five surface types ("pavements")
 
-### `yarn test`
+After placing these, the new map can be visualised, and they can be
+compared using a *comparison slider*.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Also, clicking on the map can show a popup with both the original
+temperature and the temperature in the edited situation.
 
-### `yarn build`
+When editing trees, the underlying trees raster is shown; when editing
+pavements the underlying land use raster is shown. This is a bit of
+improvisation as the design wasn't very clear and could well be
+changed later.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Configuration
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Hittestresstool uses the **new** ClientConfig model, the first app to
+use it.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The idea is that the ClientConfig is owned by the Organisation that
+the particular instance of the Hittestresstool is for, and that its
+access modifier is set to **Private**, so that only members can see
+it.
 
-### `yarn eject`
+Hittestresstool then gets all configs it has access to at
+/api/v4/clientconfigs/?slug=hittestresstool , *and it must get only
+one result*. People cannot have access to multiple instances of the tool.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+This way, multiple configurations can exist at the same URL (currently
+all customers are at https://nens.lizard.net/hittestresstool/).
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The Type of the expected JSON is currently as follows (see src/state/session.ts):
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
+interface Bounds {
+  sw: {lat: number, lng: number},
+  ne: {lat: number, lng: number}
+}
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+interface Configuration {
+  mapboxAccessToken: string,
+  initialBounds: Bounds,
+  maxBounds?: Bounds,
+  minZoom?: number,
+  originalHeatstressLayer: string,
+  originalTreesLayer: string,
+  originalPavementsLayer: string,
+  templateUuid: string,
+  heatstressStyle: string,
+  treesStyle: string,
+  pavementsStyle: string
+}
+```
 
-## Learn More
+The Mapbox access token is stored in the configuration so it does not
+have to be in the source repository; client configs are Private so
+this is protected against people who don't need it.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The layers and styles are used for the three background WMS layers;
+templateUuid is the template Geoblock that the app is about.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+If maxBounds is not given, initialBounds is used as maxBounds.
+
+# Development and proxy
+
+Install dependencies simply with `yarn install` (I guess npm also works but I didn't use it).
+
+Then
+
+```
+$ PROXY_USER=your.username PROXY_PASSWORD=your.password yarn start
+```
+
+Will start the app and proxy the relevant URLs.
+
+See `src/setupProxy.js` to configure where it proxies to.
+
+# Technical design
+
+## Our typical app layout
+
+The app was created using Create-React-App and uses most of its defaults.
+
+We use Redux for state management, *most* things are in Redux as bits
+of state are often used both in the left sidebar and on the map.
+
+Things added to the map (trees and pavements) are stored in the Redux
+store as WGS84 GeoJSON objects.
+
+*Some* CSS values are in index.css but I didn't use them that
+much. See Storybook below if you want to use them more.
+
+## Template Geoblock
+
+A template Geoblock is a Geoblock of which some things can be changed, these are called *tags*.
+
+In `src/state/map.ts` a request is built to create a new Geoblock by
+filling in these tags on the template. The result is a new,
+*temporary* Geoblock that will be cleaned up after a while (two weeks?
+not sure).
+
+For each type of tree, an array for coordinates is posted. For each
+type of pavement, the polygons for that pavement type are together
+posted as a MultiPolygon in WKT format.
+
+## Comparison slider
+
+I copied code from react-compare-image and edited it heavily so it
+works on Leaflet panes. That is why the component is still called
+ReactCompareImage.  The code still contains features we don't use
+(like the possibility of a horizontal slider) and that are probably
+broken.
+
+The slider is a completely separate component from the Map, it's
+placed over it in MainScreen.tsx. It stores its position in
+'mapState.sliderPos' in Redux.
+
+The map effect is then achieved by a `leftClip` and `rightClip` CSS
+feature that is kept as state in `MainMap.tsx`, and is updated in
+`updateClip()` in that component. The important bit there is the calls
+to `leaflet.containerPointToLayerPoint`, without them it doesn't work.
+
+# Directory structure
+
+*Components* are React components without state (ideally), at least
+without a connection to Redux. They are in `src/components/`.
+
+Other React components (the main parts of the screen, components that are connected to Redux) are in `src/screens/`. Start at `MainScreen`.
+
+Redux state is all in "ducks" in `src/state/`.
+
+Some util functions are in `src/utils/`.
+
+I did start on i18n in `src/i18n/`, but there is hardly anything there as this is such a Netherlands-specific app and there was time pressure.
+
+Storybook stories are in `src/stories/`, see below, these are not part of the App code proper.
+
+# Storybook
+
+Simple UI-focused React components can be tested in *Storybook*. They can be developed there
+and then used in larger screens.
+
+Run it with
+
+```
+$ yarn run storybook
+```
+
+And Storybook will be available on `https://localhost:9009/`.
+
+There is important configuration in the `.storybook/` directory; it
+defines which files contain stories (*.stories.tsx files) and which
+plugins we use (actions and knobs; links too but I don't think I use
+it).
+
+- Actions can show messages when a callback is used (e.g. when a button on the component is pressed)
+- Knobs let the Storybook user control what value is used for a prop
+
+Together that is enough to test the components.
+
+`preview-head.html` is used in the template used by Storybook to render the components. It contains two important things:
+
+- *External CSS and JS files*, in this case particularly the Google
+  fonts, but I included everything we have in index.html for the App.
+
+- The CSS from index.css, *copy and pasted*. As there is no easy way
+  to include a CSS file that in the app is included by Webpack. If you
+  update index.css, also update the CSS here!
+
+# Release
+
+Make a release with
+
+```
+$ GITHUB_TOKEN=your.github.token yarn run release
+```
+
+This uses the release-it library, see `.release-it.json` for configuration. It does:
+
+- Update the version (it prompts for various options) in package.json and Git
+- Creates a production build with the `yarn run build` script
+- Includes commit messages since the last version as Changelog
+- Uploads assets to Github
+
+# Deployment
+
+Using the same `deploy_clients.yml` in Lizard NXT as other clients
+use; the lines I have in clients.yml for Hittestresstool are
+currently:
+
+```
+- name: "hittestresstool-client"
+  version: "0.5.6"
+  zip_name: "hittestresstool-client.zip"
+  # https://nxt3.staging.lizard.net/hittestresstool/
+  # https://demo.lizard.net/hittestresstool/
+```
+
+# Problems
+
+## No translations
+
+I did start with a few I think, but because of the tight deadline and
+the fact that this is inherently a Netherlands-only app, I lost
+motivation. Sorry.
+
+## Point request for popups
+
+The `fetchValueAtPoint()` function in `src/utils/api.ts` does a
+*zonal* request on a small Polygon instead of a simpler Point request;
+this is because of a backend bug. This one also doesn't always work,
+but it's better than nothing.
+
+## Still no testing
+
+The app has zero automated tests. Boo!
+
+# Future features
+
+A feature is planned to upload zipped Shapefiles for adding trees and
+pavements, and also downloading them. I can that can all be done in the client.
+
+There exist libraries for working with this file format that I am planning to use:
+
+- https://github.com/calvinmetcalf/shapefile-js for shapefile to GeoJSON. Even with workers.
+
+- https://github.com/mapbox/shp-write to create a zipped Shapefile from GeoJSON.
