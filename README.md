@@ -77,6 +77,20 @@ templateUuid is the template Geoblock that the app is about.
 
 If maxBounds is not given, initialBounds is used as maxBounds.
 
+# Development and proxy
+
+Install dependencies simply with `yarn install` (I guess npm also works but I didn't use it).
+
+Then
+
+```
+$ PROXY_USER=your.username PROXY_PASSWORD=your.password yarn start
+```
+
+Will start the app and proxy the relevant URLs.
+
+See `src/setupProxy.js` to configure where it proxies to.
+
 # Technical design
 
 ## Our typical app layout
@@ -88,6 +102,9 @@ of state are often used both in the left sidebar and on the map.
 
 Things added to the map (trees and pavements) are stored in the Redux
 store as WGS84 GeoJSON objects.
+
+*Some* CSS values are in index.css but I didn't use them that
+much. See Storybook below if you want to use them more.
 
 ## Template Geoblock
 
@@ -136,20 +153,91 @@ Storybook stories are in `src/stories/`, see below, these are not part of the Ap
 
 # Storybook
 
-# Proxying for development
+Simple UI-focused React components can be tested in *Storybook*. They can be developed there
+and then used in larger screens.
 
-# Release and deployment
+Run it with
 
-## Release
+```
+$ yarn run storybook
+```
 
-## Deployment
+And Storybook will be available on `https://localhost:9009/`.
+
+There is important configuration in the `.storybook/` directory; it
+defines which files contain stories (*.stories.tsx files) and which
+plugins we use (actions and knobs; links too but I don't think I use
+it).
+
+- Actions can show messages when a callback is used (e.g. when a button on the component is pressed)
+- Knobs let the Storybook user control what value is used for a prop
+
+Together that is enough to test the components.
+
+`preview-head.html` is used in the template used by Storybook to render the components. It contains two important things:
+
+- *External CSS and JS files*, in this case particularly the Google
+  fonts, but I included everything we have in index.html for the App.
+
+- The CSS from index.css, *copy and pasted*. As there is no easy way
+  to include a CSS file that in the app is included by Webpack. If you
+  update index.css, also update the CSS here!
+
+# Release
+
+Make a release with
+
+```
+$ GITHUB_TOKEN=your.github.token yarn run release
+```
+
+This uses the release-it library, see `.release-it.json` for configuration. It does:
+
+- Update the version (it prompts for various options) in package.json and Git
+- Creates a production build with the `yarn run build` script
+- Includes commit messages since the last version as Changelog
+- Uploads assets to Github
+
+# Deployment
+
+Using the same `deploy_clients.yml` in Lizard NXT as other clients
+use; the lines I have in clients.yml for Hittestresstool are
+currently:
+
+```
+- name: "hittestresstool-client"
+  version: "0.5.6"
+  zip_name: "hittestresstool-client.zip"
+  # https://nxt3.staging.lizard.net/hittestresstool/
+  # https://demo.lizard.net/hittestresstool/
+```
 
 # Problems
 
 ## No translations
 
+I did start with a few I think, but because of the tight deadline and
+the fact that this is inherently a Netherlands-only app, I lost
+motivation. Sorry.
+
 ## Point request for popups
+
+The `fetchValueAtPoint()` function in `src/utils/api.ts` does a
+*zonal* request on a small Polygon instead of a simpler Point request;
+this is because of a backend bug. This one also doesn't always work,
+but it's better than nothing.
 
 ## Still no testing
 
+The app has zero automated tests. Boo!
+
 # Future features
+
+A feature is planned to upload zipped Shapefiles for adding trees and
+pavements, and also downloading them. I can that can all be done in the client.
+
+There exist libraries for working with this file format that I am planning to use:
+
+- https://github.com/calvinmetcalf/shapefile-js for shapefile to GeoJSON. Even with workers.
+
+- https://github.com/mapbox/shp-write to create a zipped Shapefile from GeoJSON.
