@@ -9,7 +9,7 @@ https://nxt3.staging.lizard.net/hittestresstool/ ; it is only
 accessible for users of the right Organisation ("Hittestress demo" for
 that production site, "Geoblocks demo" on staging).
 
-## Functionality overview
+# Functionality overview
 
 The Hittestresskaart is a Geoblock, a dynamically computed raster.
 
@@ -28,7 +28,7 @@ pavements the underlying land use raster is shown. This is a bit of
 improvisation as the design wasn't very clear and could well be
 changed later.
 
-## Configuration
+# Configuration
 
 Hittestresstool uses the **new** ClientConfig model, the first app to
 use it.
@@ -77,32 +77,79 @@ templateUuid is the template Geoblock that the app is about.
 
 If maxBounds is not given, initialBounds is used as maxBounds.
 
-## Technical design
+# Technical design
 
-### Our typical app layout
+## Our typical app layout
 
-### Template Geoblock
+The app was created using Create-React-App and uses most of its defaults.
 
-### Comparison slider
+We use Redux for state management, *most* things are in Redux as bits
+of state are often used both in the left sidebar and on the map.
 
-## Directory structure
+Things added to the map (trees and pavements) are stored in the Redux
+store as WGS84 GeoJSON objects.
 
-## Storybook
+## Template Geoblock
 
-## Proxying for development
+A template Geoblock is a Geoblock of which some things can be changed, these are called *tags*.
 
-## Release and deployment
+In `src/state/map.ts` a request is built to create a new Geoblock by
+filling in these tags on the template. The result is a new,
+*temporary* Geoblock that will be cleaned up after a while (two weeks?
+not sure).
 
-### Release
+For each type of tree, an array for coordinates is posted. For each
+type of pavement, the polygons for that pavement type are together
+posted as a MultiPolygon in WKT format.
 
-### Deployment
+## Comparison slider
 
-## Problems
+I copied code from react-compare-image and edited it heavily so it
+works on Leaflet panes. That is why the component is still called
+ReactCompareImage.  The code still contains features we don't use
+(like the possibility of a horizontal slider) and that are probably
+broken.
 
-### No translations
+The slider is a completely separate component from the Map, it's
+placed over it in MainScreen.tsx. It stores its position in
+'mapState.sliderPos' in Redux.
 
-### Point request for popups
+The map effect is then achieved by a `leftClip` and `rightClip` CSS
+feature that is kept as state in `MainMap.tsx`, and is updated in
+`updateClip()` in that component. The important bit there is the calls
+to `leaflet.containerPointToLayerPoint`, without them it doesn't work.
 
-### Still no testing
+# Directory structure
 
-## Future features
+*Components* are React components without state (ideally), at least
+without a connection to Redux. They are in `src/components/`.
+
+Other React components (the main parts of the screen, components that are connected to Redux) are in `src/screens/`. Start at `MainScreen`.
+
+Redux state is all in "ducks" in `src/state/`.
+
+Some util functions are in `src/utils/`.
+
+I did start on i18n in `src/i18n/`, but there is hardly anything there as this is such a Netherlands-specific app and there was time pressure.
+
+Storybook stories are in `src/stories/`, see below, these are not part of the App code proper.
+
+# Storybook
+
+# Proxying for development
+
+# Release and deployment
+
+## Release
+
+## Deployment
+
+# Problems
+
+## No translations
+
+## Point request for popups
+
+## Still no testing
+
+# Future features
