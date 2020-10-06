@@ -151,6 +151,8 @@ I did start on i18n in `src/i18n/`, but there is hardly anything there as this i
 
 Storybook stories are in `src/stories/`, see below, these are not part of the App code proper.
 
+`src/icons/` contains icons. Some are pure SVG, some are SVG turned into TSX, some have a `<div>` element and some more styling around them, depending on where they are used.
+
 # Storybook
 
 Simple UI-focused React components can be tested in *Storybook*. They can be developed there
@@ -226,6 +228,12 @@ The `fetchValueAtPoint()` function in `src/utils/api.ts` does a
 *zonal* request on a small Polygon instead of a simpler Point request;
 this is because of a backend bug. This one also doesn't always work,
 but it's better than nothing.
+
+## SVGs
+
+In `src/icons/` I did quite some work to turn SVG's from the design into TSX React Components, there is even a Python script there that will do that automatically in many cases.
+
+However, it turns out that it is possible to simply import .svg files into React, letting Webpack do the work. I didn't know.
 
 ## Still no testing
 
