@@ -30,7 +30,60 @@ changed later.
 
 ## Configuration
 
+Hittestresstool uses the **new** ClientConfig model, the first app to
+use it.
+
+The idea is that the ClientConfig is owned by the Organisation that
+the particular instance of the Hittestresstool is for, and that its
+access modifier is set to **Private**, so that only members can see
+it.
+
+Hittestresstool then gets all configs it has access to at
+/api/v4/clientconfigs/?slug=hittestresstool , *and it must get only
+one result*. People cannot have access to multiple instances of the tool.
+
+This way, multiple configurations can exist at the same URL (currently
+all customers are at https://nens.lizard.net/hittestresstool/).
+
+The Type of the expected JSON is currently as follows (see src/state/session.ts):
+
+```
+interface Bounds {
+  sw: {lat: number, lng: number},
+  ne: {lat: number, lng: number}
+}
+
+interface Configuration {
+  mapboxAccessToken: string,
+  initialBounds: Bounds,
+  maxBounds?: Bounds,
+  minZoom?: number,
+  originalHeatstressLayer: string,
+  originalTreesLayer: string,
+  originalPavementsLayer: string,
+  templateUuid: string,
+  heatstressStyle: string,
+  treesStyle: string,
+  pavementsStyle: string
+}
+```
+
+The Mapbox access token is stored in the configuration so it does not
+have to be in the source repository; client configs are Private so
+this is protected against people who don't need it.
+
+The layers and styles are used for the three background WMS layers;
+templateUuid is the template Geoblock that the app is about.
+
+If maxBounds is not given, initialBounds is used as maxBounds.
+
 ## Technical design
+
+### Our typical app layout
+
+### Template Geoblock
+
+### Comparison slider
 
 ## Directory structure
 
