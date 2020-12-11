@@ -26,7 +26,7 @@ export async function fetchValueAtPoint(rasterUuid: string, latLng: LatLng) {
   const data = await response.json();
 
   if (data && data.results && data.results.length) {
-    return data.results[0][1] as number;
+    return data.results[0].value as number;
   } else {
     return null;
   }
