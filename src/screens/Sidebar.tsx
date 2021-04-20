@@ -4,6 +4,7 @@ import BlockHittestress from './BlockHittestress';
 import BlockPavements from './BlockPavements';
 import BlockTrees from './BlockTrees';
 import BlockCalculate from './BlockCalculate';
+import ExportDoc from './ExportDoc';
 
 const Sidebar: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const Sidebar: React.FC = () => {
       <BlockTrees/>
       <BlockPavements/>
       <BlockCalculate/>
+      <ExportDoc/>
     </div>
   );
 };
