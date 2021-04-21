@@ -155,7 +155,8 @@ const ExportDoc: React.FC<Props> = ({
             id="pdf_page_1"
             style={{
               width: "210mm",
-              padding: "17mm",
+              // leave out padding, use default margins from browser print feature instead
+              // padding: "10mm",
               // height: "19000px",
               backgroundColor: "white",
               color: "#515152",
@@ -166,20 +167,28 @@ const ExportDoc: React.FC<Props> = ({
             <h1
               style={{
                 marginTop: 0,
-                marginBottom: "17mm",
+                marginBottom: "10mm",
                 color: "teal", //"#39AEA9",
               }}
             >
               Hittestress PET rapport
             </h1>
-            <h2> Kaarten</h2>
-            <hr></hr>
+            <h2
+              style={{
+                fontSize: "7mm"
+              }}
+            > Kaarten</h2>
+            <hr
+              style={{
+                marginBottom: "10mm"
+              }}
+            ></hr>
             
                 <div 
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    marginBottom: "17mm"
+                    marginBottom: "10mm"
                   }}
                 >
                 <div>
@@ -191,8 +200,8 @@ const ExportDoc: React.FC<Props> = ({
                 <div>
                   <Map
                     style={{
-                      width: "100mm",
-                      height: "80mm",
+                      width: "110mm",
+                      height: "75mm",
                     }}
                     zoomControl={false}
                     bounds={initialBounds}
@@ -231,18 +240,22 @@ const ExportDoc: React.FC<Props> = ({
                 </div>
                 {/* </td>
               </tr> */}
-              <table>
-              <tbody>
-              <tr>
-              <td>
+              <div 
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "10mm"
+                  }}
+                >
+                  <div>
                   <h3>Hittestress na maatregelen</h3>
                   <p>Uitleg over hittestress na maatregelen</p>
-                </td>
-                <td>
+                </div>
+                <div>
                   <Map
                     style={{
-                      width: "400px",
-                      height: "300px",
+                      width: "110mm",
+                      height: "75mm",
                     }}
                     zoomControl={false}
                     bounds={initialBounds}
@@ -277,19 +290,26 @@ const ExportDoc: React.FC<Props> = ({
                       }}
                     />
                   </Map>
-
-                </td>
-              </tr>
-              <tr>
-              <td>
+                  </div>
+                  </div>
+                
+                  <div 
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "10mm"
+                    }}
+                  >
+                    <div>
+              
                   <h3>Verschil in hittestress</h3>
                   <p>Uitleg over verschil in hittestress</p>
-                </td>
-                <td>
+                  </div>
+                  <div>
                   <Map
                     style={{
-                      width: "400px",
-                      height: "300px",
+                      width: "110mm",
+                      height: "75mm",
                     }}
                     zoomControl={false}
                     bounds={initialBounds}
@@ -324,27 +344,45 @@ const ExportDoc: React.FC<Props> = ({
                       }}
                     />
                   </Map>
+                  </div>
+                  </div>
 
-                </td>
-              </tr>
-              </tbody>
-            </table>
-            <h1>Hittestress PET rapport</h1>
-            <h2> Verdeling gevoelstemperatuur</h2>
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <div
-                      style={{
-                        height: "300px",
-                        width: "400px"
-                      }}
-                    >
+               
+            <h1
+              style={{
+                marginBottom: "10mm",
+                color: "teal", //"#39AEA9",
+                // use big margin to always initiate new pdf a4 page
+                marginTop: "200mm"
+              }}
+            >Hittestress PET rapport</h1>
+            <h2
+            style={{
+                fontSize: "7mm"
+              }}
+            > Verdeling gevoelstemperatuur</h2>
+            <hr
+              style={{
+                marginBottom: "10mm"
+              }}
+            ></hr>
+            <div 
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "10mm"
+                    }}
+                  >
+                    <div>
+                    
                     <h1>Todo Bar chart temperature</h1>
                     </div>
-                  </td>
-                  <td>
+                    <div 
+                      style={{
+                        width: "100mm",
+                      }}
+                    >
+                  
                       <h3>Gemiddelde gevoelstemperatuur</h3>
                       <p>De gemiddelde temperatuur in dit gebied, voor en na de maatregelen. </p>
                       <b>Belangrijk:</b>
@@ -352,7 +390,9 @@ const ExportDoc: React.FC<Props> = ({
                       <p>
                       Er kunnen grote verschillen zitten de verharding van een gebied (denk aan een grote strook groen, maar ook een grote parkeerplaats). Daarom kunnen deze cijfers een vertekend beeld geven.
                       </p>
-                      <table>
+                      <table 
+                        style={{width: "100%"}}
+                      >
                         <thead>
                           <tr>
                             <td><b>Huidige situatie</b></td>
@@ -370,12 +410,19 @@ const ExportDoc: React.FC<Props> = ({
                           </tr>
                         </tbody>
                       </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <h2> Statistieken</h2>
-            <table>
+                      </div>
+                      </div>
+            <h2
+              style={{
+                fontSize: "7mm"
+              }}
+            > Statistieken</h2>
+            <hr
+              style={{
+                marginBottom: "10mm"
+              }}
+            ></hr>
+            <table style={{width: "100%"}}>
               <thead>
                 <tr>
                   <td>
@@ -425,7 +472,16 @@ const ExportDoc: React.FC<Props> = ({
                     </tr>
               </tbody>
             </table>
-            <h2> Over de hittestress tool</h2>
+            <h2
+              style={{
+                fontSize: "7mm"
+              }}
+            > Over de hittestress tool</h2>
+            <hr
+              style={{
+                marginBottom: "10mm"
+              }}
+            ></hr>
             <p>
               <b>PET staat voor 'Physiological Equivalent Temperature'. </b>De kaart laat de gevoelstemperatuur in de buitenruimte zien. Op het Kennisportaal Ruimtelijke Adaptatie vindt u een duidelijke uitleg over hoe een PET-kaart wordt opgebouwd volgens de landelijke methodiek. 
             </p>
