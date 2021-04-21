@@ -76,11 +76,19 @@ const ExportDoc: React.FC<Props> = ({
    
     if (newWindow) {
       newWindow.document.body.appendChild(pdfPage1);
-      var link = document.createElement("link");
+      const link = document.createElement("link");
       link.type = "text/css";
       link.rel = "stylesheet";
       link.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css";
       newWindow.document.body.appendChild(link);
+
+      const linkFont = document.createElement("link");
+      linkFont.type = "text/css";
+      linkFont.rel = "stylesheet";
+      linkFont.href = "https://fonts.googleapis.com/css?family=Montserrat";
+      newWindow.document.body.appendChild(linkFont);
+
+      
     } else {
       alert('failed to export. Are you blocking popup windows?');
     }
@@ -150,15 +158,23 @@ const ExportDoc: React.FC<Props> = ({
               padding: "17mm",
               // height: "19000px",
               backgroundColor: "white",
-              color: "black",
+              color: "#515152",
+              fontFamily: "'Montserrat', sans-serif",
+              
             }}
           >
-            <h1>Hittestress PET rapport</h1>
+            <h1
+              style={{
+                marginTop: 0,
+                marginBottom: "17mm",
+                color: "teal", //"#39AEA9",
+              }}
+            >
+              Hittestress PET rapport
+            </h1>
             <h2> Kaarten</h2>
-            {/* <table>
-              <tbody>
-              <tr>
-                <td> */}
+            <hr></hr>
+            
                 <div 
                   style={{
                     display: "flex",
