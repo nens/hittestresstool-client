@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect}  from 'react';
 
-import { connect, useSelector } from 'react-redux';
+import { connect, useSelector,  } from 'react-redux';
 
 import Block, { IconRow } from '../components/Block';
 import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
@@ -51,6 +51,45 @@ const ExportDoc: React.FC<Props> = ({
   const editing = useSelector(getEditing);
   const openBlock = useSelector(getOpenBlock);
   const selectedTree = useSelector(getSelectedTree);
+
+  const [wms1Loaded, setwms1Loaded] = useState(false);
+  const [wms2Loaded, setwms2Loaded] = useState(false);
+  const [wms3Loaded, setwms3Loaded] = useState(false);
+
+  const openAsDocumentInNewWindow = () => {
+    const pdfPage1Element = document.getElementById("pdf_page_1");
+    // @ts-ignore
+    var pdfPage1 = pdfPage1Element.cloneNode(true);
+    console.log('pdfPage1', pdfPage1);
+    const newWindow = window.open();
+    // @ts-ignore
+    // newWindow.document.header.innerHtml = 
+    // `
+    // <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    // <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" rel="stylesheet">
+    // `
+    // (`
+    // <head>
+    // <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    // <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" rel="stylesheet">
+    // </head>
+    // `);
+    // @ts-ignore
+    newWindow.document.body.appendChild(pdfPage1);
+
+    var link = document.createElement("link");
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css";
+    // @ts-ignore
+    newWindow.document.body.appendChild(link);
+  }
+
+  useEffect(() => {
+    if (wms1Loaded && wms2Loaded && wms3Loaded) {
+      openAsDocumentInNewWindow();
+    }
+  }, [wms1Loaded,wms2Loaded,wms3Loaded]);
 
   const configuration = useSelector(getConfiguration);
 
@@ -179,6 +218,9 @@ const ExportDoc: React.FC<Props> = ({
                       updateWhenIdle={true}
                       updateWhenZooming={false}
                       updateInterval={1000}
+                      onload={()=>{
+                        setwms1Loaded(true);
+                      }}
                     />
                   </Map>
 
@@ -223,6 +265,9 @@ const ExportDoc: React.FC<Props> = ({
                       updateWhenIdle={true}
                       updateWhenZooming={false}
                       updateInterval={1000}
+                      onload={()=>{
+                        setwms2Loaded(true);
+                      }}
                     />
                   </Map>
 
@@ -267,6 +312,9 @@ const ExportDoc: React.FC<Props> = ({
                       updateWhenIdle={true}
                       updateWhenZooming={false}
                       updateInterval={1000}
+                      onload={()=>{
+                        setwms3Loaded(true);
+                      }}
                     />
                   </Map>
 
