@@ -66,31 +66,25 @@ const ExportDoc: React.FC<Props> = ({
 
   const openAsDocumentInNewWindow = () => {
     const pdfPage1Element = document.getElementById("pdf_page_1");
-    // @ts-ignore
+    
+    if (!pdfPage1Element) {
+      console.error('pdf html "pdf_page_1" element not found');
+      return;
+    }
     var pdfPage1 = pdfPage1Element.cloneNode(true);
-    console.log('pdfPage1', pdfPage1);
     const newWindow = window.open();
-    // @ts-ignore
-    // newWindow.document.header.innerHtml = 
-    // `
-    // <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
-    // <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" rel="stylesheet">
-    // `
-    // (`
-    // <head>
-    // <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
-    // <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" rel="stylesheet">
-    // </head>
-    // `);
-    // @ts-ignore
-    newWindow.document.body.appendChild(pdfPage1);
-
-    var link = document.createElement("link");
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    link.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css";
-    // @ts-ignore
-    newWindow.document.body.appendChild(link);
+   
+    if (newWindow) {
+      newWindow.document.body.appendChild(pdfPage1);
+      var link = document.createElement("link");
+      link.type = "text/css";
+      link.rel = "stylesheet";
+      link.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css";
+      newWindow.document.body.appendChild(link);
+    } else {
+      alert('failed to export. Are you blocking popup windows?');
+    }
+    
   }
 
   useEffect(() => {
@@ -152,26 +146,37 @@ const ExportDoc: React.FC<Props> = ({
           <div
             id="pdf_page_1"
             style={{
-              width: "1000px",
-              height: "19000px",
+              width: "210mm",
+              padding: "17mm",
+              // height: "19000px",
               backgroundColor: "white",
               color: "black",
             }}
           >
             <h1>Hittestress PET rapport</h1>
             <h2> Kaarten</h2>
-            <table>
+            {/* <table>
               <tbody>
               <tr>
-                <td>
+                <td> */}
+                <div 
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "17mm"
+                  }}
+                >
+                <div>
                   <h3>Huidige hittestress</h3>
                   <p>Uitleg over de huidige hittestress</p>
-                </td>
-                <td>
+                {/* </td>
+                <td> */}
+                </div>
+                <div>
                   <Map
                     style={{
-                      width: "400px",
-                      height: "300px",
+                      width: "100mm",
+                      height: "80mm",
                     }}
                     zoomControl={false}
                     bounds={initialBounds}
@@ -206,9 +211,12 @@ const ExportDoc: React.FC<Props> = ({
                       }}
                     />
                   </Map>
-
-                </td>
-              </tr>
+                </div>
+                </div>
+                {/* </td>
+              </tr> */}
+              <table>
+              <tbody>
               <tr>
               <td>
                   <h3>Hittestress na maatregelen</h3>
