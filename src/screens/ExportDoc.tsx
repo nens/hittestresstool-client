@@ -15,6 +15,12 @@ import {
 } from 'react-leaflet';
 import {getConfiguration} from '../state/session';
 import Leaflet, { LatLng } from 'leaflet';
+import {
+  getMapState,
+  // clickTree,
+  // clickPavement,
+  // clickTemperature,
+} from '../state/map';
 
 
 import {
@@ -51,6 +57,8 @@ const ExportDoc: React.FC<Props> = ({
   const editing = useSelector(getEditing);
   const openBlock = useSelector(getOpenBlock);
   const selectedTree = useSelector(getSelectedTree);
+  const mapState = useSelector(getMapState);
+
 
   const [wms1Loaded, setwms1Loaded] = useState(false);
   const [wms2Loaded, setwms2Loaded] = useState(false);
@@ -126,32 +134,7 @@ const ExportDoc: React.FC<Props> = ({
         
         <button 
           onClick={()=>{
-            const pdfPage1Element = document.getElementById("pdf_page_1");
-            // @ts-ignore
-            var pdfPage1 = pdfPage1Element.cloneNode(true);
-            console.log('pdfPage1', pdfPage1);
-            const newWindow = window.open();
-            // @ts-ignore
-            // newWindow.document.header.innerHtml = 
-            // `
-            // <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
-            // <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" rel="stylesheet">
-            // `
-            // (`
-            // <head>
-            // <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
-            // <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" rel="stylesheet">
-            // </head>
-            // `);
-            // @ts-ignore
-            newWindow.document.body.appendChild(pdfPage1);
-
-            var link = document.createElement("link");
-            link.type = "text/css";
-            link.rel = "stylesheet";
-            link.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css";
-            // @ts-ignore
-            newWindow.document.body.appendChild(link);
+            openAsDocumentInNewWindow();
           }}
         >
           Export as doc
@@ -259,7 +242,7 @@ const ExportDoc: React.FC<Props> = ({
                       key="heatstress-original"
                       url="http://nxt3.staging.lizard.net/wms/"
                       // @ts-ignore
-                      layers={configuration.originalHeatstressLayer}
+                      layers={mapState.templatedLayer!}
                       // @ts-ignore
                       styles={configuration.heatstressStyle}
                       updateWhenIdle={true}
