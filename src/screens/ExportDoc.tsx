@@ -1,83 +1,38 @@
 import React, {useState, useEffect}  from 'react';
-
 import { connect, useSelector,  } from 'react-redux';
-
 import Block, { IconRow } from '../components/Block';
-import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
-import TextButton from '../components/TextButton';
-import Slider from '../components/Slider';
-
-import FarmingAndGardening from '../icons/FarmingAndGardening';
 import DownloadIcon from '../icons/Download';
-
 import {
-  Map, TileLayer, WMSTileLayer, GeoJSON, Pane
+  Map, TileLayer, WMSTileLayer
 } from 'react-leaflet';
 import {getConfiguration} from '../state/session';
-import Leaflet, { LatLng } from 'leaflet';
+import Leaflet  from 'leaflet';
 import {
   getMapState,
-  // clickTree,
-  // clickPavement,
-  // clickTemperature,
 } from '../state/map';
 import {
   addMessage,
-  getMessage,
-  getMessageVisible
 } from '../state/message';
-
-
 import {
-  Tree as TreeT,
-  TREES,
-  getEditing,
   getChangesMade,
-  getOpenBlock,
-  clickBlockTrees,
-  getSelectedTree,
-  setSelectedTree,
-  startEditingTrees,
-  cancelEditingTrees,
-  submitEditingTrees,
-  undoEditingTrees,
-} from '../state/sidebar';
+ } from '../state/sidebar';
 
 interface Props {
-  clickBlockTrees: () => void,
-  setSelectedTree: (arg0: TreeT) => void,
-  startEditingTrees: () => void,
-  cancelEditingTrees: () => void,
-  undoEditingTrees: () => void,
-  submitEditingTrees: () => void,
   addMessage: (message: string) => void,
 }
 
 const ExportDoc: React.FC<Props> = ({
-  clickBlockTrees,
-  setSelectedTree,
-  startEditingTrees,
-  cancelEditingTrees,
-  submitEditingTrees,
-  undoEditingTrees,
   addMessage,
 }) => {
-  const editing = useSelector(getEditing);
-  const openBlock = useSelector(getOpenBlock);
-  const selectedTree = useSelector(getSelectedTree);
   const mapState = useSelector(getMapState);
   const changesMade = useSelector(getChangesMade);
-
-
   const [wms1Loaded, setwms1Loaded] = useState(false);
   const [wms2Loaded, setwms2Loaded] = useState(false);
   const [wms3Loaded, setwms3Loaded] = useState(false);
   const [docRequested, setDocRequested] = useState(false);
 
   const openAsDocumentInNewWindow = () => {
-    console.log("openAsDocumentInNewWindow 2")
     const pdfPage1Element = document.getElementById("pdf_page_1");
-    console.log("openAsDocumentInNewWindow 3", pdfPage1Element)
     
     if (!pdfPage1Element) {
       console.error('pdf html "pdf_page_1" element not found');
@@ -130,16 +85,12 @@ const ExportDoc: React.FC<Props> = ({
     Leaflet.latLng(configuration.initialBounds.ne)
   );
 
-
-  const blockStatus = openBlock === 'trees' ? "opened" : editing ? "disabled" : "closed";
-
   return (
     <Block
       title="Export"
       icon={<DownloadIcon/>}
       status={docRequested || !changesMade ? "disabled" : "closed"}
       onOpen={()=>{
-        console.log("openAsDocumentInNewWindow 1")
         addMessage("Export document aangevraagd");
         setDocRequested(true);
       }}
@@ -517,11 +468,5 @@ const ExportDoc: React.FC<Props> = ({
 };
 
 export default connect(null, {
-  clickBlockTrees,
-  setSelectedTree,
-  startEditingTrees,
-  cancelEditingTrees,
-  submitEditingTrees,
-  undoEditingTrees,
   addMessage,
 })(ExportDoc);
