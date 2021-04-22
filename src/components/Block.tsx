@@ -15,7 +15,8 @@ export interface BlockProps {
   icon: any,
   status: BlockStatus,
   onOpen?: () => void, // Function called is status = closed and clicked on title
-  children?: any
+  children?: any,
+  alsoRenderChildrenIfClosed?: boolean,
 }
 
 export const IconRow: React.FC<{children: any}> = ({children}) => {
@@ -26,7 +27,7 @@ export const IconRow: React.FC<{children: any}> = ({children}) => {
   );
 }
 
-const Block: React.FC<BlockProps> = ({title, icon, status, children, onOpen}: BlockProps) => {
+const Block: React.FC<BlockProps> = ({title, icon, status, children, onOpen, alsoRenderChildrenIfClosed}: BlockProps) => {
   const clickable = (status === 'closed' && onOpen);
 
   let className = styles.sidebarBlock;
@@ -54,7 +55,7 @@ const Block: React.FC<BlockProps> = ({title, icon, status, children, onOpen}: Bl
           {icon}
         </div>
       </div>
-      {(status === 'opened') ? children : null}
+      {(status === 'opened') || alsoRenderChildrenIfClosed ? children : null}
     </div>
   );
 };

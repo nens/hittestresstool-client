@@ -8,7 +8,7 @@ import TextButton from '../components/TextButton';
 import Slider from '../components/Slider';
 
 import FarmingAndGardening from '../icons/FarmingAndGardening';
-import Tree from '../icons/Tree';
+import DownloadIcon from '../icons/Download';
 
 import {
   Map, TileLayer, WMSTileLayer, GeoJSON, Pane
@@ -21,6 +21,11 @@ import {
   // clickPavement,
   // clickTemperature,
 } from '../state/map';
+import {
+  addMessage,
+  getMessage,
+  getMessageVisible
+} from '../state/message';
 
 
 import {
@@ -44,6 +49,7 @@ interface Props {
   cancelEditingTrees: () => void,
   undoEditingTrees: () => void,
   submitEditingTrees: () => void,
+  addMessage: (message: string) => void,
 }
 
 const ExportDoc: React.FC<Props> = ({
@@ -53,6 +59,7 @@ const ExportDoc: React.FC<Props> = ({
   cancelEditingTrees,
   submitEditingTrees,
   undoEditingTrees,
+  addMessage,
 }) => {
   const editing = useSelector(getEditing);
   const openBlock = useSelector(getOpenBlock);
@@ -63,9 +70,12 @@ const ExportDoc: React.FC<Props> = ({
   const [wms1Loaded, setwms1Loaded] = useState(false);
   const [wms2Loaded, setwms2Loaded] = useState(false);
   const [wms3Loaded, setwms3Loaded] = useState(false);
+  const [docRequested, setDocRequested] = useState(false);
 
   const openAsDocumentInNewWindow = () => {
+    console.log("openAsDocumentInNewWindow 2")
     const pdfPage1Element = document.getElementById("pdf_page_1");
+    console.log("openAsDocumentInNewWindow 3", pdfPage1Element)
     
     if (!pdfPage1Element) {
       console.error('pdf html "pdf_page_1" element not found');
@@ -96,12 +106,18 @@ const ExportDoc: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    if (wms1Loaded && wms2Loaded && wms3Loaded) {
+    if (wms1Loaded && wms2Loaded && wms3Loaded && docRequested) {
       // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
       // comment out temporarily for dev
-      // window.setTimeout(()=>{openAsDocumentInNewWindow()},3000);
+      window.setTimeout(()=>{
+        openAsDocumentInNewWindow();
+        setDocRequested(false);
+        setwms1Loaded(false);
+        setwms2Loaded(false);
+        setwms3Loaded(false);
+      },3000);
     }
-  }, [wms1Loaded,wms2Loaded,wms3Loaded]);
+  }, [wms1Loaded,wms2Loaded,wms3Loaded, docRequested]);
 
   const configuration = useSelector(getConfiguration);
 
@@ -114,26 +130,20 @@ const ExportDoc: React.FC<Props> = ({
 
 
   const blockStatus = openBlock === 'trees' ? "opened" : editing ? "disabled" : "closed";
-  const editingTrees = openBlock === 'trees' && editing;
-
-  // Functions to convert indexes 0, 1, 2 to Tree types
-  const idxToTree = (idx: number): TreeT => (TREES[idx] || "tree_5m");
-  const treeToIdx = (t: TreeT) => {
-    return {
-      "tree_5m": 0,
-      "tree_10m": 1,
-      "tree_15m": 2
-    }[t];
-  };
 
   return (
     <Block
       title="Export"
-      icon={<Tree/>}
-      status={blockStatus}
-      onOpen={clickBlockTrees}
-      
+      icon={<DownloadIcon/>}
+      status={docRequested? "disabled" : "closed"}
+      onOpen={()=>{
+        console.log("openAsDocumentInNewWindow 1")
+        addMessage("Export document aangevraagd");
+        setDocRequested(true);
+      }}
+      alsoRenderChildrenIfClosed={true}
     >
+      <div style={{visibility: "hidden"}}>
       <IconRow>
         
         <button 
@@ -166,6 +176,12 @@ const ExportDoc: React.FC<Props> = ({
                 font-family: 'Montserrat', sans-serif;
               }
 
+              @media print {
+                #pdf_page_1 .noprint {
+                   display: none;
+                }
+              }
+
               #pdf_page_1 h1 {
                 margin-top: 0;
                 margin-bottom: 10mm;
@@ -190,6 +206,11 @@ const ExportDoc: React.FC<Props> = ({
               }
 
             `}</style>
+            <div
+              className="noprint"
+            >
+              {"Settings >> Print >> Print as pdf"} 
+            </div>
             <h1>
               Hittestress PET rapport
             </h1>
@@ -488,6 +509,7 @@ const ExportDoc: React.FC<Props> = ({
       
       {/* ____________________________________________________________________  */}
       </IconRow>
+      </div>
     </Block>
   );
 };
@@ -498,5 +520,6 @@ export default connect(null, {
   startEditingTrees,
   cancelEditingTrees,
   submitEditingTrees,
-  undoEditingTrees
+  undoEditingTrees,
+  addMessage,
 })(ExportDoc);
