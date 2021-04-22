@@ -98,7 +98,8 @@ const ExportDoc: React.FC<Props> = ({
   useEffect(() => {
     if (wms1Loaded && wms2Loaded && wms3Loaded) {
       // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
-      window.setTimeout(()=>{openAsDocumentInNewWindow()},3000);
+      // comment out temporarily for dev
+      // window.setTimeout(()=>{openAsDocumentInNewWindow()},3000);
     }
   }, [wms1Loaded,wms2Loaded,wms3Loaded]);
 
@@ -154,49 +155,49 @@ const ExportDoc: React.FC<Props> = ({
         >
           <div
             id="pdf_page_1"
-            style={{
-              width: "210mm",
-              // leave out padding, use default margins from browser print feature instead
-              // padding: "10mm",
-              // height: "19000px",
-              backgroundColor: "white",
-              color: "#515152",
-              fontFamily: "'Montserrat', sans-serif",
-              
-            }}
           >
-            <h1
-              style={{
-                marginTop: 0,
-                marginBottom: "10mm",
-                color: "teal", //"#39AEA9",
-              }}
-            >
+            <style>{`
+              #pdf_page_1 {
+                width: 210mm;
+                /* leave out padding, use default margins from browser print feature instead */
+                /* padding: 10mm; */
+                background-color: white;
+                color: #515152;
+                font-family: 'Montserrat', sans-serif;
+              }
+
+              #pdf_page_1 h1 {
+                margin-top: 0;
+                margin-bottom: 10mm;
+                color: teal;
+              }
+
+              #pdf_page_1 h2 {
+                font-size: 7mm;
+              }
+              #pdf_page_1 hr {
+                margin-bottom: 10mm;
+              }
+
+              #pdf_page_1 .two_column_row {
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 10mm;
+              }
+
+            `}</style>
+            <h1>
               Hittestress PET rapport
             </h1>
-            <h2
-              style={{
-                fontSize: "7mm"
-              }}
-            > Kaarten</h2>
-            <hr
-              style={{
-                marginBottom: "10mm"
-              }}
-            ></hr>
+            <h2> Kaarten</h2>
+            <hr></hr>
             
                 <div 
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "10mm"
-                  }}
+                  className="two_column_row"
                 >
                 <div>
                   <h3>Huidige hittestress</h3>
                   <p>Uitleg over de huidige hittestress</p>
-                {/* </td>
-                <td> */}
                 </div>
                 <div>
                   <Map
@@ -239,14 +240,8 @@ const ExportDoc: React.FC<Props> = ({
                   </Map>
                 </div>
                 </div>
-                {/* </td>
-              </tr> */}
               <div 
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "10mm"
-                  }}
+                  className="two_column_row"
                 >
                   <div>
                   <h3>Hittestress na maatregelen</h3>
@@ -295,11 +290,7 @@ const ExportDoc: React.FC<Props> = ({
                   </div>
                 
                   <div 
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "10mm"
-                    }}
+                    className="two_column_row"
                   >
                     <div>
               
@@ -349,30 +340,11 @@ const ExportDoc: React.FC<Props> = ({
                   </div>
 
                
-            <h1
-              style={{
-                marginBottom: "10mm",
-                color: "teal", //"#39AEA9",
-                // use big margin to always initiate new pdf a4 page
-                marginTop: "200mm"
-              }}
-            >Hittestress PET rapport</h1>
-            <h2
-            style={{
-                fontSize: "7mm"
-              }}
-            > Verdeling gevoelstemperatuur</h2>
-            <hr
-              style={{
-                marginBottom: "10mm"
-              }}
-            ></hr>
+            <h1>Hittestress PET rapport</h1>
+            <h2> Verdeling gevoelstemperatuur</h2>
+            <hr></hr>
             <div 
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "10mm"
-                    }}
+                    className="two_column_row"
                   >
                     <div>
                     
@@ -413,17 +385,41 @@ const ExportDoc: React.FC<Props> = ({
                       </table>
                       </div>
                       </div>
-            <h2
-              style={{
-                fontSize: "7mm"
-              }}
-            > Statistieken</h2>
-            <hr
-              style={{
-                marginBottom: "10mm"
-              }}
-            ></hr>
-            <table style={{width: "100%"}}>
+            <h2> Statistieken</h2>
+            <hr></hr>
+            <style>{`
+
+              table.shade_table {
+                border-spacing: 0;
+                border-collapse: collapse;
+                width: 100%;
+              }
+
+              table.shade_table td {
+                height: 100px;
+                width: 200px;
+                border-width: 2mm;
+                border-color: #515152;
+              }
+              table.shade_table thead td {
+                height: 50px;
+                font-weight: bold;
+              }
+              table.shade_table tbody td {
+                text-align: center;
+                border-left-style: solid;
+                border-right-style: solid;
+              }
+
+              table.shade_table tbody tr:first-child td {
+                border-top-style: solid;
+              }
+              table.shade_table tbody tr:last-child td{
+                border-bottom-style: solid;
+              }
+
+            `}</style>
+            <table className="shade_table">
               <thead>
                 <tr>
                   <td>
@@ -473,16 +469,8 @@ const ExportDoc: React.FC<Props> = ({
                     </tr>
               </tbody>
             </table>
-            <h2
-              style={{
-                fontSize: "7mm"
-              }}
-            > Over de hittestress tool</h2>
-            <hr
-              style={{
-                marginBottom: "10mm"
-              }}
-            ></hr>
+            <h2> Over de hittestress tool</h2>
+            <hr></hr>
             <p>
               <b>PET staat voor 'Physiological Equivalent Temperature'. </b>De kaart laat de gevoelstemperatuur in de buitenruimte zien. Op het Kennisportaal Ruimtelijke Adaptatie vindt u een duidelijke uitleg over hoe een PET-kaart wordt opgebouwd volgens de landelijke methodiek. 
             </p>
