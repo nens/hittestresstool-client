@@ -172,6 +172,10 @@ const ExportDoc: React.FC<Props> = ({
                 color: teal;
               }
 
+              #pdf_page_1 h1.new_page {
+                margin-top: 200mm;
+              }
+
               #pdf_page_1 h2 {
                 font-size: 7mm;
               }
@@ -340,7 +344,7 @@ const ExportDoc: React.FC<Props> = ({
                   </div>
 
                
-            <h1>Hittestress PET rapport</h1>
+            <h1 className="new_page">Hittestress PET rapport</h1>
             <h2> Verdeling gevoelstemperatuur</h2>
             <hr></hr>
             <div 
