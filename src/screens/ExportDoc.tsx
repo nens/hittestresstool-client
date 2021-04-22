@@ -97,7 +97,8 @@ const ExportDoc: React.FC<Props> = ({
 
   useEffect(() => {
     if (wms1Loaded && wms2Loaded && wms3Loaded) {
-      openAsDocumentInNewWindow();
+      // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
+      window.setTimeout(()=>{openAsDocumentInNewWindow()},3000);
     }
   }, [wms1Loaded,wms2Loaded,wms3Loaded]);
 
