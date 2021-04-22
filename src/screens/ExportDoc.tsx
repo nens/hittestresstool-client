@@ -32,6 +32,7 @@ import {
   Tree as TreeT,
   TREES,
   getEditing,
+  getChangesMade,
   getOpenBlock,
   clickBlockTrees,
   getSelectedTree,
@@ -65,6 +66,7 @@ const ExportDoc: React.FC<Props> = ({
   const openBlock = useSelector(getOpenBlock);
   const selectedTree = useSelector(getSelectedTree);
   const mapState = useSelector(getMapState);
+  const changesMade = useSelector(getChangesMade);
 
 
   const [wms1Loaded, setwms1Loaded] = useState(false);
@@ -135,7 +137,7 @@ const ExportDoc: React.FC<Props> = ({
     <Block
       title="Export"
       icon={<DownloadIcon/>}
-      status={docRequested? "disabled" : "closed"}
+      status={docRequested || !changesMade ? "disabled" : "closed"}
       onOpen={()=>{
         console.log("openAsDocumentInNewWindow 1")
         addMessage("Export document aangevraagd");
