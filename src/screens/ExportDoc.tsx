@@ -273,7 +273,7 @@ const ExportDoc: React.FC<Props> = ({
                 >
                 <div>
                   <h3>Huidige hittestress</h3>
-                  <p>Uitleg over de huidige hittestress</p>
+                  {/* <p>Uitleg over de huidige hittestress</p> */}
                 </div>
                 <div>
                   <Map
@@ -321,7 +321,7 @@ const ExportDoc: React.FC<Props> = ({
                 >
                   <div>
                   <h3>Hittestress na maatregelen</h3>
-                  <p>Uitleg over hittestress na maatregelen</p>
+                  {/* <p>Uitleg over hittestress na maatregelen</p> */}
                 </div>
                 <div>
                   <Map
@@ -371,7 +371,7 @@ const ExportDoc: React.FC<Props> = ({
                     <div>
               
                   <h3>Verschil in hittestress</h3>
-                  <p>Uitleg over verschil in hittestress</p>
+                  {/* <p>Uitleg over verschil in hittestress</p> */}
                   </div>
                   <div>
                   <Map
