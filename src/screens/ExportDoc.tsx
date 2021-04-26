@@ -15,25 +15,56 @@ import {
   addMessage,
 } from '../state/message';
 import {
+  getOpenBlock,
   getChangesMade,
+  clickBlockReport,
+  getEditing,
+  startEditingReportPolygon,
+  cancelEditingReportPolygon,
+  submitEditingReportPolygon,
+  undoEditingReportPolygon,
+
  } from '../state/sidebar';
+ import TextButton from '../components/TextButton';
+ import Pencil from '../icons/Pencil';
+ import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
+
+
+
 
 interface Props {
   addMessage: (message: string) => void,
+  clickBlockReport: () => void,
+  startEditingReportPolygon: () => void,
+  cancelEditingReportPolygon: () => void,
+  undoEditingReportPolygon: () => void,
+  submitEditingReportPolygon: () => void,
 }
 
 const ExportDoc: React.FC<Props> = ({
   addMessage,
+  clickBlockReport,
+  startEditingReportPolygon,
+  cancelEditingReportPolygon,
+  undoEditingReportPolygon,
+  submitEditingReportPolygon,
 }) => {
   const mapState = useSelector(getMapState);
   const changesMade = useSelector(getChangesMade);
   const configuration = useSelector(getConfiguration);
   const templatedUrl = useSelector(getTemplatedUuid);
+  const openBlock = useSelector(getOpenBlock);
+  const editing = useSelector(getEditing);
+
 
   const [wms1Loaded, setwms1Loaded] = useState(false);
   const [wms2Loaded, setwms2Loaded] = useState(false);
   const [wms3Loaded, setwms3Loaded] = useState(false);
   const [docRequested, setDocRequested] = useState(false);
+
+  const editingReportPolygon = openBlock === 'report' && editing;
+
+  console.log('editing', openBlock, editing, editingReportPolygon)
 
   // if (!configuration) {
   //   return null;
@@ -98,7 +129,6 @@ const ExportDoc: React.FC<Props> = ({
       return;
     }
     const uuid = templatedUrl; // configuration.templateUuid;
-    console.log("configuration.templateUuid", configuration.templateUuid, "6d9315d5-2d24-4bba-99be-a6118216089c")
     const url = '/api/v4/rasters/';
     const geom = `POLYGON ((${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}))`;
     // const parameters = { 
@@ -180,20 +210,41 @@ const ExportDoc: React.FC<Props> = ({
     }
   }, [wms1Loaded,wms2Loaded,wms3Loaded, docRequested]);
 
-  // fetchChartData();
+  fetchChartData();
   fetchMean();
 
   return (
     <Block
       title="Export"
       icon={<DownloadIcon/>}
-      status={docRequested || !changesMade ? "disabled" : "closed"}
+      status={ !changesMade ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} // docRequested ||
       onOpen={()=>{
-        addMessage("Export document aangevraagd");
-        setDocRequested(true);
+        clickBlockReport();
+        // addMessage("Export document aangevraagd");
+        // setDocRequested(true);
       }}
-      alsoRenderChildrenIfClosed={true}
+      // alsoRenderChildrenIfClosed={true}
     >
+
+      <IconRow>
+        {editingReportPolygon ?
+         <CloseUndoCheckBar
+           onClose={cancelEditingReportPolygon}
+           onUndo={undoEditingReportPolygon}
+           onCheck={submitEditingReportPolygon}
+         />
+        :
+         <TextButton text="Teken op kaart" 
+            icon={<Pencil/>}
+            onClick={()=>{
+              console.log("startEditingReportPolygon"); 
+              startEditingReportPolygon();
+            }} 
+        />
+        }
+      </IconRow>
+
+
       <div style={{visibility: "hidden"}}>
       <IconRow>
         
@@ -567,4 +618,9 @@ const ExportDoc: React.FC<Props> = ({
 
 export default connect(null, {
   addMessage,
+  clickBlockReport,
+  startEditingReportPolygon,
+  cancelEditingReportPolygon,
+  undoEditingReportPolygon,
+  submitEditingReportPolygon,
 })(ExportDoc);
