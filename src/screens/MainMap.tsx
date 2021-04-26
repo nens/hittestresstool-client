@@ -188,7 +188,7 @@ const MainMap: React.FC<MainMapProps> = ({
           if (intersectionArray.length === 0) {
             setPavementBeingConstructed(pavementBeingConstructed.concat([latlng]));
           }
-        } else if (editingReportPolygons) {
+        } else if (editingReportPolygons && reportPolygonsBeingAdded.features.length === 0) {
           const intersectionArray = getPointsWhereNewPointInLineCrossesExistingLines(
             latlng, reportPolygonBeingConstructed
           );
@@ -313,7 +313,7 @@ const MainMap: React.FC<MainMapProps> = ({
       {/* _______________________________________________________________________________________________ REPORT */}
       {openBlock === 'report' ? (
         <>
-          <GeoJSON
+          {!editingReportPolygons? <GeoJSON
             key={"reportPolygonsOnMap" + reportPolygonsOnMap.features.length + editing}
             data={reportPolygonsOnMap}
             // style={(feature: any) => {
@@ -327,7 +327,7 @@ const MainMap: React.FC<MainMapProps> = ({
             //   !editing && layer.on("click", (event) => {
             //     clickPavement((event as any).latlng, feature);
             //   })}
-          />
+          />:null}
           {editingReportPolygons && (
             <GeoJSON
               key={"reportPolygonsBeingAdded" + reportPolygonsBeingAdded.features.length}

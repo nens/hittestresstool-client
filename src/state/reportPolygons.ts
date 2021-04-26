@@ -44,7 +44,7 @@ export const ADD_REPORT_POLYGON = 'reportPolygons/addReportPolygon';
 
 // Helper functions
 
-function pavementFromPolygon(polygon: LatLng[], properties: ReportPolygontGeojsonProperties): ReportPolygonOnMap {
+function reportFeatureFromPolygon(polygon: LatLng[], properties: ReportPolygontGeojsonProperties): ReportPolygonOnMap {
   return {
     type: "Feature",
     geometry: {
@@ -78,7 +78,7 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): ReportPolygonsState =>
         reportPolygonsOnMap: {
           ...state.reportPolygonsOnMap,
           features: [
-            ...state.reportPolygonsOnMap.features,
+            // ...state.reportPolygonsOnMap.features,
             ...state.reportPolygonsBeingAdded.features
           ]
         },
@@ -116,7 +116,7 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): ReportPolygonsState =>
           ...state.reportPolygonsBeingAdded,
           features: [
             ...state.reportPolygonsBeingAdded.features,
-            pavementFromPolygon(polygon, standardGeoJSonProperties)
+            reportFeatureFromPolygon(polygon, standardGeoJSonProperties)
           ],
         },
         reportPolygonBeingConstructed: []
