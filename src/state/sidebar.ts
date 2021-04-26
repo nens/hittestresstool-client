@@ -192,6 +192,13 @@ export const getChangesMade = (state: AppState): boolean => (
   state.sidebar.changesMade
 );
 
+export const getAnyTreesOrPavements = (state: AppState): boolean => {
+  return (
+    state.trees.treesOnMap.features.length > 0 ||
+    state.pavements.pavementsOnMap.features.length > 0
+  );
+}
+
 // Action creators
 
 export const clickHeatStress = () => {

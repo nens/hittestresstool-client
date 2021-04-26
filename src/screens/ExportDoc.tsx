@@ -23,11 +23,16 @@ import {
   cancelEditingReportPolygon,
   submitEditingReportPolygon,
   undoEditingReportPolygon,
-
+  getAnyTreesOrPavements,
  } from '../state/sidebar';
+ import {
+  getReportPolygonsOnMap,
+ } from '../state/reportPolygons';
  import TextButton from '../components/TextButton';
  import Pencil from '../icons/Pencil';
  import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
+ import Check from '../icons/Check'
+
 
 
 
@@ -50,11 +55,14 @@ const ExportDoc: React.FC<Props> = ({
   submitEditingReportPolygon,
 }) => {
   const mapState = useSelector(getMapState);
-  const changesMade = useSelector(getChangesMade);
+  // const changesMade = useSelector(getChangesMade);
+  const anyTreesOrPavements = useSelector(getAnyTreesOrPavements);
   const configuration = useSelector(getConfiguration);
   const templatedUrl = useSelector(getTemplatedUuid);
   const openBlock = useSelector(getOpenBlock);
   const editing = useSelector(getEditing);
+  const reportPolygonsOnMap = useSelector(getReportPolygonsOnMap);
+
 
 
   const [wms1Loaded, setwms1Loaded] = useState(false);
@@ -217,32 +225,59 @@ const ExportDoc: React.FC<Props> = ({
     <Block
       title="Export"
       icon={<DownloadIcon/>}
-      status={ !changesMade ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} // docRequested ||
+      status={ !anyTreesOrPavements ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} // docRequested ||
       onOpen={()=>{
         clickBlockReport();
         // addMessage("Export document aangevraagd");
         // setDocRequested(true);
       }}
       // alsoRenderChildrenIfClosed={true}
+      style={openBlock === 'report'? {height: "11rem"} : undefined}
     >
 
-      <IconRow>
+      
         {editingReportPolygon ?
-         <CloseUndoCheckBar
-           onClose={cancelEditingReportPolygon}
-           onUndo={undoEditingReportPolygon}
-           onCheck={submitEditingReportPolygon}
-         />
+         <IconRow>
+          <CloseUndoCheckBar
+            onClose={cancelEditingReportPolygon}
+            onUndo={undoEditingReportPolygon}
+            onCheck={submitEditingReportPolygon}
+          />
+         </IconRow>
         :
-         <TextButton text="Teken op kaart" 
-            icon={<Pencil/>}
-            onClick={()=>{
-              console.log("startEditingReportPolygon"); 
-              startEditingReportPolygon();
-            }} 
-        />
+        reportPolygonsOnMap.features.length === 0?
+        <IconRow>
+          <TextButton text="Teken op kaart" 
+              icon={<Pencil/>}
+              onClick={()=>{
+                console.log("startEditingReportPolygon"); 
+                startEditingReportPolygon();
+              }} 
+          />
+        </IconRow>
+        : 
+        <>
+          <IconRow>
+          <TextButton text="Teken opnieuw" 
+              icon={<Pencil/>}
+              onClick={()=>{
+                startEditingReportPolygon();
+              }} 
+          />
+          </IconRow>
+          :
+          <IconRow>
+          <TextButton text="Maak rapport" 
+              // icon={<Check/>}
+              onClick={()=>{
+                addMessage("Export document aangevraagd");
+                setDocRequested(true);
+              }} 
+          />
+          </IconRow>
+        </> 
         }
-      </IconRow>
+      
 
 
       <div style={{visibility: "hidden"}}>
