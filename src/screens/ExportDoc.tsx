@@ -16,7 +16,7 @@ import {
 } from '../state/message';
 import {
   getOpenBlock,
-  getChangesMade,
+  // getChangesMade,
   clickBlockReport,
   getEditing,
   startEditingReportPolygon,
@@ -31,7 +31,8 @@ import {
  import TextButton from '../components/TextButton';
  import Pencil from '../icons/Pencil';
  import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
- import Check from '../icons/Check'
+//  import Check from '../icons/Check';
+import { curveApiToHistogram, } from '../utils/curveApiToHistogram';
 
 
 
@@ -112,6 +113,13 @@ const ExportDoc: React.FC<Props> = ({
       const responseJson = await response.json();
 
       console.log('responseJson', responseJson);
+      if (responseJson.results) {
+        const histogram = curveApiToHistogram(responseJson.results);
+        console.log('histogram', histogram,);
+        let sum = 0;
+        histogram.forEach((val:any)=>{if (val) { sum  += val}})
+        console.log('histogram sum', sum)
+      }
     
       // uuid = "5a18db90-36a3-4f17-a0d2-990b3f8c6e44" #PET windstil export
 
@@ -219,7 +227,7 @@ const ExportDoc: React.FC<Props> = ({
   }, [wms1Loaded,wms2Loaded,wms3Loaded, docRequested]);
 
   fetchChartData();
-  fetchMean();
+  // fetchMean();
 
   return (
     <Block
