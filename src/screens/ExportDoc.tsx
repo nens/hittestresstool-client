@@ -16,7 +16,7 @@ import {
 } from '../state/message';
 import {
   getOpenBlock,
-  // getChangesMade,
+  getChangesMade,
   clickBlockReport,
   getEditing,
   startEditingReportPolygon,
@@ -33,6 +33,7 @@ import {
  import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
 //  import Check from '../icons/Check';
 import { curveApiToHistogram, } from '../utils/curveApiToHistogram';
+import Plot from 'react-plotly.js';
 
 
 
@@ -56,7 +57,7 @@ const ExportDoc: React.FC<Props> = ({
   submitEditingReportPolygon,
 }) => {
   const mapState = useSelector(getMapState);
-  // const changesMade = useSelector(getChangesMade);
+  const changesMade = useSelector(getChangesMade);
   const anyTreesOrPavements = useSelector(getAnyTreesOrPavements);
   const configuration = useSelector(getConfiguration);
   const templatedUrl = useSelector(getTemplatedUuid);
@@ -70,6 +71,7 @@ const ExportDoc: React.FC<Props> = ({
   const [wms2Loaded, setwms2Loaded] = useState(false);
   const [wms3Loaded, setwms3Loaded] = useState(false);
   const [docRequested, setDocRequested] = useState(false);
+  const [histogramData, setHistogramData] = useState<any>(null);
 
   const editingReportPolygon = openBlock === 'report' && editing;
 
@@ -118,7 +120,8 @@ const ExportDoc: React.FC<Props> = ({
         console.log('histogram', histogram,);
         let sum = 0;
         histogram.forEach((val:any)=>{if (val) { sum  += val}})
-        console.log('histogram sum', sum)
+        console.log('histogram sum', sum);
+        setHistogramData(histogram)
       }
     
       // uuid = "5a18db90-36a3-4f17-a0d2-990b3f8c6e44" #PET windstil export
@@ -233,7 +236,7 @@ const ExportDoc: React.FC<Props> = ({
     <Block
       title="Export"
       icon={<DownloadIcon/>}
-      status={ !anyTreesOrPavements ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} // docRequested ||
+      status={ !anyTreesOrPavements || changesMade ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} // docRequested ||
       onOpen={()=>{
         clickBlockReport();
         // addMessage("Export document aangevraagd");
@@ -300,6 +303,7 @@ const ExportDoc: React.FC<Props> = ({
         </button>
         {/* ____________________________________________________________________  */}
 
+        { histogramData?
         <div 
           style={{
             position: "fixed",
@@ -517,8 +521,16 @@ const ExportDoc: React.FC<Props> = ({
                     className="two_column_row"
                   >
                     <div>
-                    
-                    <h1>Todo Bar chart temperature</h1>
+                      <Plot
+                        data={[
+                          {
+                            type: 'bar', 
+                            x: histogramData.map((_:number,ind:number)=>ind), 
+                            y: histogramData.map((value:number)=>value), 
+                          },
+                        ]}
+                        layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
+                      />
                     </div>
                     <div 
                       style={{
@@ -649,7 +661,9 @@ const ExportDoc: React.FC<Props> = ({
             </p>
           </div>
         </div>
-      
+        :
+        null
+        }
       
       
       {/* ____________________________________________________________________  */}
