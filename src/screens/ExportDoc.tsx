@@ -229,8 +229,13 @@ const ExportDoc: React.FC<Props> = ({
     }
   }, [wms1Loaded,wms2Loaded,wms3Loaded, docRequested]);
 
-  fetchChartData();
-  // fetchMean();
+  useEffect(() => {
+    if ( docRequested) {
+      fetchChartData();
+      // fetchMean();
+    }
+  }, [docRequested]);
+  
 
   return (
     <Block
@@ -527,9 +532,49 @@ const ExportDoc: React.FC<Props> = ({
                             type: 'bar', 
                             x: histogramData.map((_:number,ind:number)=>ind), 
                             y: histogramData.map((value:number)=>value), 
+                            marker: {color: 'blue'},
+                            name: "Huidige projectlocatie"
+                          },
+                          {
+                            type: 'bar', 
+                            x: histogramData.map((_:number,ind:number)=>ind), 
+                            y: histogramData.map((value:number)=>value), 
+                            marker: {color: 'red'},
+                            name: "Ontwerp projectlocatie"
                           },
                         ]}
-                        layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
+                        layout={ {
+                          width: 320, 
+                          height: 240, 
+                          title: 'Distributie gevoelstemperatuur',
+                          // displayodeBar: false,
+                          
+                          showlegend: true,
+                          legend: {
+                            // the x 1 is somehow needed to move the legend to the right. No idea why
+                            // x: 1,
+                            xanchor: 'right',
+                            // the y 100 is done to move the legend up to above the chart
+                            // y: 100
+                          },
+                          xaxis: {
+                            title: {
+                              text: "temperatuur (°C)",
+                              // standoff: 5
+                            },
+                          },
+                          yaxis: {
+                            title: {
+                              text: "Percentage (%)"
+                              // standoff: 10
+                            },
+                            // exponentformat: "power",
+                            // automargin: true,
+                          },
+                        }}
+                        config={{
+                          displayModeBar: false,
+                        }}
                       />
                     </div>
                     <div 

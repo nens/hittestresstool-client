@@ -119,12 +119,15 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       };
     case SUBMIT_EDITING_TREES:
     case SUBMIT_EDITING_PAVEMENTS:
-    case SUBMIT_EDITING_REPORT_POLYGON:
-
       return {
         ...state,
         editing: false,
         changesMade: true
+      };
+    case SUBMIT_EDITING_REPORT_POLYGON:
+      return {
+        ...state,
+        editing: false,
       };
     case CANCEL_EDITING_PAVEMENTS:
     case CANCEL_EDITING_TREES:
