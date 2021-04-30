@@ -34,6 +34,8 @@ import {
 //  import Check from '../icons/Check';
 import { curveApiToHistogram, } from '../utils/curveApiToHistogram';
 import Plot from 'react-plotly.js';
+// import {Bar} from 'react-chartjs-2';
+import * as Plotly from 'plotly.js';
 
 
 
@@ -72,6 +74,7 @@ const ExportDoc: React.FC<Props> = ({
   const [wms3Loaded, setwms3Loaded] = useState(false);
   const [docRequested, setDocRequested] = useState(false);
   const [histogramData, setHistogramData] = useState<any>(null);
+  const [imageData, setImagedata] = useState<null | string>(null);
 
   const editingReportPolygon = openBlock === 'report' && editing;
 
@@ -116,12 +119,83 @@ const ExportDoc: React.FC<Props> = ({
 
       console.log('responseJson', responseJson);
       if (responseJson.results) {
-        const histogram = curveApiToHistogram(responseJson.results);
-        console.log('histogram', histogram,);
+        const histogramData = curveApiToHistogram(responseJson.results);
+        console.log('histogram', histogramData, JSON.stringify(histogramData));
         let sum = 0;
-        histogram.forEach((val:any)=>{if (val) { sum  += val}})
+        histogramData.forEach((val:any)=>{if (val) { sum  += val}})
         console.log('histogram sum', sum);
-        setHistogramData(histogram)
+        setHistogramData(histogramData);
+        //////////////////////////////////////////////////////////////////////////////////////////////
+
+        const data = [
+          {
+            type: 'bar', 
+            x: histogramData.map((item:number, ind:number)=>ind), 
+            y: histogramData.map((value:number)=>value), 
+            marker: {color: 'blue'},
+            name: "Huidige projectlocatie"
+          },
+          {
+            type: 'bar', 
+            x: histogramData.map((item:number,ind:number)=>ind), 
+            y: histogramData.map((value:number)=>value), 
+            marker: {color: 'red'},
+            name: "Ontwerp projectlocatie"
+          },
+        ];
+
+        const layout = {
+          width: 400, 
+          height: 300, 
+          // autosize: false,
+          margin: {
+            l: 30,
+            r: 10,
+            b: 30,
+            // t: 20,
+            // pad: 5
+          },
+          title: 'Distributie gevoelstemperatuur',
+          // displayodeBar: false,
+          
+          showlegend: true,
+          legend: {
+            // the x 1 is somehow needed to move the legend to the right. No idea why
+            // x: 1,
+            xanchor: 'right',
+            // the y 100 is done to move the legend up to above the chart
+            // y: 600
+          },
+          xaxis: {
+            title: {
+              text: "temperatuur (°C)",
+              // standoff: 5
+            },
+          },
+          yaxis: {
+            title: {
+              text: "Percentage (%)",
+              // standoff: 10
+            },
+            // exponentformat: "power",
+            // automargin: true,
+          },
+        };
+
+        const config = {
+          displayModeBar: false,
+        };
+
+        // @ts-ignore
+        Plotly.plot('plotly_graph_to_image_id', data, layout, config).then((gd) => {
+          // @ts-ignore  
+          return Plotly.toImage(gd);
+        }).then((dataURI:any) => {
+            console.log(dataURI);
+            setImagedata(dataURI);
+        });
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
       }
     
       // uuid = "5a18db90-36a3-4f17-a0d2-990b3f8c6e44" #PET windstil export
@@ -215,7 +289,10 @@ const ExportDoc: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    if (wms1Loaded && wms2Loaded && wms3Loaded && docRequested) {
+    if (
+      wms1Loaded && wms2Loaded && wms3Loaded && 
+      docRequested
+      ) {
       // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
       // comment out temporarily for dev
       window.setTimeout(()=>{
@@ -224,6 +301,8 @@ const ExportDoc: React.FC<Props> = ({
         setwms1Loaded(false);
         setwms2Loaded(false);
         setwms3Loaded(false);
+
+        
       },3000);
       
     }
@@ -251,7 +330,7 @@ const ExportDoc: React.FC<Props> = ({
       style={openBlock === 'report'? {height: "11rem"} : undefined}
     >
 
-      
+        <div id="plotly_graph_to_image_id" style={{ display: "none" }}></div>
         {editingReportPolygon ?
          <IconRow>
           <CloseUndoCheckBar
@@ -296,17 +375,11 @@ const ExportDoc: React.FC<Props> = ({
       
 
 
-      <div style={{visibility: "hidden"}}>
+      <div 
+        // style={{visibility: "hidden"}}
+      >
       <IconRow>
         
-        <button 
-          onClick={()=>{
-            openAsDocumentInNewWindow();
-          }}
-        >
-          Export as doc
-        </button>
-        {/* ____________________________________________________________________  */}
 
         { histogramData?
         <div 
@@ -343,7 +416,7 @@ const ExportDoc: React.FC<Props> = ({
               }
 
               #pdf_page_1 h1.new_page {
-                margin-top: 200mm;
+                /* margin-top: 200mm; */
               }
 
               #pdf_page_1 h2 {
@@ -525,27 +598,40 @@ const ExportDoc: React.FC<Props> = ({
             <div 
                     className="two_column_row"
                   >
-                    <div>
-                      <Plot
+                    <div
+                      // style={{
+                      //   height: "600px",
+                      //   width: "600px",
+                      // }}
+                    >
+                      {/* <Plot
                         data={[
                           {
                             type: 'bar', 
-                            x: histogramData.map((_:number,ind:number)=>ind), 
+                            x: histogramData.map((item:number, ind:number)=>ind), 
                             y: histogramData.map((value:number)=>value), 
                             marker: {color: 'blue'},
                             name: "Huidige projectlocatie"
                           },
                           {
                             type: 'bar', 
-                            x: histogramData.map((_:number,ind:number)=>ind), 
+                            x: histogramData.map((item:number,ind:number)=>ind), 
                             y: histogramData.map((value:number)=>value), 
                             marker: {color: 'red'},
                             name: "Ontwerp projectlocatie"
                           },
                         ]}
                         layout={ {
-                          width: 320, 
-                          height: 240, 
+                          width: 400, 
+                          height: 300, 
+                          // autosize: false,
+                          margin: {
+                            l: 30,
+                            r: 10,
+                            b: 30,
+                            // t: 20,
+                            // pad: 5
+                          },
                           title: 'Distributie gevoelstemperatuur',
                           // displayodeBar: false,
                           
@@ -555,7 +641,7 @@ const ExportDoc: React.FC<Props> = ({
                             // x: 1,
                             xanchor: 'right',
                             // the y 100 is done to move the legend up to above the chart
-                            // y: 100
+                            // y: 600
                           },
                           xaxis: {
                             title: {
@@ -565,7 +651,7 @@ const ExportDoc: React.FC<Props> = ({
                           },
                           yaxis: {
                             title: {
-                              text: "Percentage (%)"
+                              text: "Percentage (%)",
                               // standoff: 10
                             },
                             // exponentformat: "power",
@@ -575,7 +661,37 @@ const ExportDoc: React.FC<Props> = ({
                         config={{
                           displayModeBar: false,
                         }}
-                      />
+                      /> */}
+                      {imageData? <img src={imageData}></img>:null}
+                      {/* 
+                      // @ts-ignore */}
+                      {/* <Bar
+
+                        data={{
+                          labels: ['January', 'February', 'March',
+                                   'April', 'May'],
+                          datasets: [
+                            {
+                              label: 'Rainfall',
+                              backgroundColor: 'rgba(75,192,192,1)',
+                              borderColor: 'rgba(0,0,0,1)',
+                              borderWidth: 2,
+                              data: [65, 59, 80, 81, 56]
+                            }
+                          ]
+                        }}
+                        options={{
+                          title:{
+                            display:true,
+                            text:'Average Rainfall per month',
+                            fontSize:20
+                          },
+                          legend:{
+                            display:true,
+                            position:'right'
+                          }
+                        }}
+                      /> */}
                     </div>
                     <div 
                       style={{
