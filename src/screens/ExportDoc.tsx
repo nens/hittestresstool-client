@@ -3,7 +3,7 @@ import { connect, useSelector,  } from 'react-redux';
 import Block, { IconRow } from '../components/Block';
 import DownloadIcon from '../icons/Download';
 import {
-  Map, TileLayer, WMSTileLayer
+  Map, TileLayer, WMSTileLayer,GeoJSON
 } from 'react-leaflet';
 import {getConfiguration} from '../state/session';
 import Leaflet  from 'leaflet';
@@ -64,6 +64,17 @@ const ExportDoc: React.FC<Props> = ({
   const openBlock = useSelector(getOpenBlock);
   const editing = useSelector(getEditing);
   const reportPolygonsOnMap = useSelector(getReportPolygonsOnMap);
+
+  let reportMapBounds = null;
+  if (reportPolygonsOnMap.features.length !== 0) {
+    const coordsInitial = reportPolygonsOnMap.features[0].geometry.coordinates[0].slice();
+    coordsInitial.push(
+      coordsInitial[0]
+    )
+    console.log('coordsInitial', coordsInitial);
+    const poly = Leaflet.polygon(coordsInitial.map(arr=>[arr[1],arr[0]]));
+   reportMapBounds = poly.getBounds();
+  }
 
   const [wms1Loaded, setwms1Loaded] = useState(false);
   const [wms2Loaded, setwms2Loaded] = useState(false);
@@ -339,7 +350,8 @@ const ExportDoc: React.FC<Props> = ({
         }
       
 
-
+      
+      {reportPolygonsOnMap.features.length !== 0?
       <div 
         // hide here. Only show it in a new browser tab
         style={{visibility: "hidden"}}
@@ -423,7 +435,8 @@ const ExportDoc: React.FC<Props> = ({
                       height: "75mm",
                     }}
                     zoomControl={false}
-                    bounds={initialBounds}
+                    // bounds={initialBounds}
+                    bounds={reportMapBounds? reportMapBounds: initialBounds}
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
@@ -454,6 +467,14 @@ const ExportDoc: React.FC<Props> = ({
                         setwms1Loaded(true);
                       }}
                     />
+                    <GeoJSON
+                      data={reportPolygonsOnMap}
+                      style={(feature: any) => {
+                        return {
+                          fillOpacity: 0
+                        };
+                      }}
+                    />
                   </Map>
                 </div>
                 </div>
@@ -471,7 +492,8 @@ const ExportDoc: React.FC<Props> = ({
                       height: "75mm",
                     }}
                     zoomControl={false}
-                    bounds={initialBounds}
+                    // bounds={initialBounds}
+                    bounds={reportMapBounds? reportMapBounds: initialBounds}
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
@@ -502,6 +524,14 @@ const ExportDoc: React.FC<Props> = ({
                         setwms2Loaded(true);
                       }}
                     />
+                    <GeoJSON
+                      data={reportPolygonsOnMap}
+                      style={(feature: any) => {
+                        return {
+                          fillOpacity: 0
+                        };
+                      }}
+                    />
                   </Map>
                   </div>
                   </div>
@@ -521,7 +551,8 @@ const ExportDoc: React.FC<Props> = ({
                       height: "75mm",
                     }}
                     zoomControl={false}
-                    bounds={initialBounds}
+                    // bounds={initialBounds}
+                    bounds={reportMapBounds? reportMapBounds: initialBounds}
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
@@ -550,6 +581,14 @@ const ExportDoc: React.FC<Props> = ({
                       updateInterval={1000}
                       onload={()=>{
                         setwms3Loaded(true);
+                      }}
+                    />
+                    <GeoJSON
+                      data={reportPolygonsOnMap}
+                      style={(feature: any) => {
+                        return {
+                          fillOpacity: 0
+                        };
                       }}
                     />
                   </Map>
@@ -699,6 +738,7 @@ const ExportDoc: React.FC<Props> = ({
       {/* ____________________________________________________________________  */}
       </IconRow>
       </div>
+      :null}
     </Block>
   );
 };
