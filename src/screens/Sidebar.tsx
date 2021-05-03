@@ -6,6 +6,7 @@ import BlockTrees from './BlockTrees';
 import BlockCalculate from './BlockCalculate';
 import ExportDoc from './ExportDoc';
 import ExportGeoJson from './ExportGeoJson';
+import ImportGeoJson from './ImportGeoJson';
 
 const Sidebar: React.FC = () => {
 
@@ -17,6 +18,7 @@ const Sidebar: React.FC = () => {
       <h2>Brondata</h2>
       <BlockTrees/>
       <BlockPavements/>
+      <ImportGeoJson/>
       <BlockCalculate/>
       <ExportGeoJson/>
       <ExportDoc/>

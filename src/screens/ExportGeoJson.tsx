@@ -19,25 +19,17 @@ const download = (filename: string, text: string) => {
   const element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
   element.setAttribute('download', filename);
-
   element.style.display = 'none';
   document.body.appendChild(element);
-
   element.click();
-
   document.body.removeChild(element);
 }
 
-// Start file download.
 
-
-const ExportDoc: React.FC<Props> = () => {
-
+const ExportGeoJson: React.FC<Props> = () => {
   const treesOnMap = useSelector(getTreesOnMap);
   const pavementsOnMap = useSelector(getPavementsOnMap);
   const reportPolygonsOnMap = useSelector(getReportPolygonsOnMap);
-
-  console.log( "geojson", treesOnMap, pavementsOnMap, reportPolygonsOnMap );
   
   const completeGeoJson = {
     type: "FeatureCollection",
@@ -55,15 +47,12 @@ const ExportDoc: React.FC<Props> = () => {
       icon={<DownloadIcon/>}
       status={"closed"} 
       onClick={()=>{
-        console.log('clicked');
         download("Hittestress_GeoJSON.txt", JSON.stringify(completeGeoJson, null, "    "));
       }}
     >
-
-     
     </Block>
   );
 };
 
 export default connect(null, {
-})(ExportDoc);
+})(ExportGeoJson);
