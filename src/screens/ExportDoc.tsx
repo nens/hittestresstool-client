@@ -329,7 +329,9 @@ const ExportDoc: React.FC<Props> = ({
               icon={<Pencil/>}
               onClick={()=>{
                 startEditingReportPolygon();
-              }} 
+              }}
+              disabled={docRequested} 
+              disabledReason={docRequested? "Bezig rapport te genereren .." : undefined} 
           />
           </IconRow>
           :
