@@ -1,4 +1,6 @@
-import {Geometry, Point, Polygon} from 'geojson';
+import {Geometry, Point, Polygon, FeatureCollection} from 'geojson';
+import {ReportPolygontGeojsonProperties} from '../state/reportPolygons';
+
 
 export function geometryEqual(geom1: Geometry, geom2: Geometry) {
   if (geom1.type === 'Point' && geom2.type === 'Point') return pointEqual(geom1, geom2);
@@ -19,4 +21,18 @@ export function polygonEqual(geom1: Polygon, geom2: Polygon) {
   const coords2 = geom2.coordinates;
 
   return JSON.stringify(coords1) === JSON.stringify(coords2); // Why not
+}
+
+export const polygonOnMapToGeometryString = (polygonsOnMap: FeatureCollection<Polygon, ReportPolygontGeojsonProperties>) => {
+    const reportPolygon0 = polygonsOnMap.features[0].geometry.coordinates[0].slice();
+    // copy first item of array to end of array to close polygon
+    reportPolygon0.push(
+      reportPolygon0[0]
+    )
+    const reportPolygon1 = reportPolygon0.map((latLng => latLng.join(" ")));
+    const reportPolygon2 = reportPolygon1.join(", ");
+    const reportPolygon = reportPolygon2
+    // const geom = `POLYGON ((${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}))`;
+    const geom = `POLYGON ((${reportPolygon}))`;
+    return geom;
 }

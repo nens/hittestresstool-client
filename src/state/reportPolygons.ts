@@ -11,7 +11,7 @@ import {
   UNDO_EDITING_REPORT_POLYGON,
 } from './sidebar';
 
-interface ReportPolygontGeojsonProperties {
+export interface ReportPolygontGeojsonProperties {
   
 }
 const standardGeoJSonProperties:ReportPolygontGeojsonProperties = {};
