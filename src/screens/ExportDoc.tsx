@@ -99,7 +99,17 @@ const ExportDoc: React.FC<Props> = ({
         console.log('report polyon not found aborting');
         return;
       }
-      const reportPolygon = reportPolygonsOnMap.features[0].geometry.coordinates.map((latLng => latLng.join(" "))).join(",");
+      console.log('reportPolygonsOnMap.features[0].geometry.coordinates', reportPolygonsOnMap.features[0].geometry.coordinates)
+      
+      // copy array of coordinates
+      const reportPolygon0 = reportPolygonsOnMap.features[0].geometry.coordinates[0].slice();
+      // copy first item of array to end of array to close polygon
+      reportPolygon0.push(
+        reportPolygon0[0]
+      )
+      const reportPolygon1 = reportPolygon0.map((latLng => latLng.join(" ")));
+      const reportPolygon2 = reportPolygon1.join(", ");
+      const reportPolygon = reportPolygon2
       const uuid = configuration.templateUuid;
       const url = '/api/v4/rasters/';
       // const geom = `POLYGON ((${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}))`;
@@ -119,7 +129,6 @@ const ExportDoc: React.FC<Props> = ({
       );
       const responseJson = await response.json();
 
-      console.log('responseJson', responseJson);
       if (responseJson.results) {
         const histogramData = curveApiToHistogram(responseJson.results);
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,23 +203,6 @@ const ExportDoc: React.FC<Props> = ({
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
       }
-    
-      // uuid = "5a18db90-36a3-4f17-a0d2-990b3f8c6e44" #PET windstil export
-
-      // raster_url = "https://nens.lizard.net/api/v4/rasters/"
-      // get_url = f"{raster_url}{uuid}/curve/" 
-
-      // # Geometry defining the special extend of this raster data
-      // geom = 'POLYGON ((4.804847821873415 52.11667280734238, 4.806713259859531 52.11808327571072, 4.805608147820809 52.11856102711491, 4.819366745114616 52.12916174862249, 4.820391627911995 52.12882844174937, 4.825146482688536 52.13155708895362, 4.836760218799797 52.1320950542045, 4.839831083487208 52.13138455359988, 4.841855268314998 52.13279519337573, 4.844997575437689 52.13266472167823, 4.851613567129445 52.13095545048285, 4.850995342194573 52.13013121164453, 4.855100260574258 52.12826534499285, 4.858115526952704 52.1255730225948, 4.857260037781153 52.12489270966972, 4.857432505687366 52.12358885970951, 4.856966250193945 52.12318812892995, 4.857412305450096 52.12198214729695, 4.855523610331791 52.12072942129434, 4.855459491604404 52.1195211452892, 4.856410703395785 52.11874023894567, 4.857189725526387 52.11758407511068, 4.857006548770007 52.11648398314836, 4.858161027579516 52.11509998252357, 4.860588442243921 52.11558196309642, 4.862378153957152 52.11356052316284, 4.863167486792669 52.11317747763539, 4.862651303280372 52.11034849069802, 4.864831936661076 52.10842539029259, 4.864544590469517 52.1078322025319, 4.866034352158711 52.1062563318614, 4.867314973640948 52.10409968552982, 4.86967559135546 52.10353023647684, 4.865590360499596 52.09723068553979, 4.86211402445756 52.09595894201262, 4.861573683244572 52.09520757940017, 4.852430695728541 52.09876627241331, 4.846469734862426 52.10185569966663, 4.842415244351158 52.10297254568547, 4.837985745856069 52.10266207609867, 4.832555777932917 52.10394128701714, 4.831113012822775 52.10480424504518, 4.829541164175933 52.10500217933986, 4.82775049958501 52.10544065304562, 4.824631499045423 52.10542581163859, 4.825548195162908 52.10741128945562, 4.804847821873415 52.11667280734238))'
-
-      // # request the data
-      // r = requests.get(
-      //             url=get_url,
-      //             headers=headers,
-      //             params=
-      //             {"geom": geom
-      //             }
-      // )
     }
 
   const fetchMean = async () => {
@@ -288,6 +280,7 @@ const ExportDoc: React.FC<Props> = ({
   useEffect(() => {
     if (
       wms1Loaded && wms2Loaded && wms3Loaded && 
+      imageData &&
       docRequested
       ) {
       // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
@@ -303,7 +296,7 @@ const ExportDoc: React.FC<Props> = ({
       },3000);
       
     }
-  }, [wms1Loaded,wms2Loaded,wms3Loaded, docRequested]);
+  }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested]);
 
   useEffect(() => {
     if ( docRequested) {
