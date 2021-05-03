@@ -60,7 +60,7 @@ const ExportDoc: React.FC<Props> = ({
   const changesMade = useSelector(getChangesMade);
   const anyTreesOrPavements = useSelector(getAnyTreesOrPavements);
   const configuration = useSelector(getConfiguration);
-  const templatedUrl = useSelector(getTemplatedUuid);
+  const templatedUuid = useSelector(getTemplatedUuid);
   const openBlock = useSelector(getOpenBlock);
   const editing = useSelector(getEditing);
   const reportPolygonsOnMap = useSelector(getReportPolygonsOnMap);
@@ -129,8 +129,19 @@ const ExportDoc: React.FC<Props> = ({
       );
       const responseJson = await response.json();
 
-      if (responseJson.results) {
-        const histogramData = curveApiToHistogram(responseJson.results);
+      const responseAfterMeasurements = await fetch(
+        `${url}${templatedUuid}/curve?geom=${geom}`,
+        {
+          method: 'GET',
+          // body: JSON.stringify({parameters}),
+          headers: {'Content-Type': 'application/json'}
+        }
+      );
+      const responseJsonAfterMeasurements = await responseAfterMeasurements.json();
+
+      if (responseJson.results && responseJsonAfterMeasurements.results) {
+        const histogramData = curveApiToHistogram(responseJsonAfterMeasurements.results);
+        const histogramDataAfterMeasurements = curveApiToHistogram(responseJson.results);
         //////////////////////////////////////////////////////////////////////////////////////////////
 
         const data = [
@@ -139,14 +150,14 @@ const ExportDoc: React.FC<Props> = ({
             x: histogramData.map((item:number, ind:number)=>ind), 
             y: histogramData.map((value:number)=>value), 
             marker: {color: 'blue'},
-            name: "Huidige projectlocatie"
+            name: "Huidige projectlocatie",
           },
           {
             type: 'bar', 
-            x: histogramData.map((item:number,ind:number)=>ind), 
-            y: histogramData.map((value:number)=>value), 
+            x: histogramDataAfterMeasurements.map((item:number,ind:number)=>ind), 
+            y: histogramDataAfterMeasurements.map((value:number)=>value), 
             marker: {color: 'red'},
-            name: "Ontwerp projectlocatie"
+            name: "Ontwerp projectlocatie",
           },
         ];
 
@@ -168,7 +179,7 @@ const ExportDoc: React.FC<Props> = ({
           legend: {
             // the x 1 is somehow needed to move the legend to the right. No idea why
             // x: 1,
-            xanchor: 'right',
+            // xanchor: 'left',
             // the y 100 is done to move the legend up to above the chart
             // y: 600
           },
@@ -210,7 +221,7 @@ const ExportDoc: React.FC<Props> = ({
     if (!configuration) {
       return;
     }
-    const uuid = templatedUrl; // configuration.templateUuid;
+    const uuid = templatedUuid; // configuration.templateUuid;
     const url = '/api/v4/rasters/';
     const geom = `POLYGON ((${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}))`;
     // const parameters = { 
@@ -411,7 +422,7 @@ const ExportDoc: React.FC<Props> = ({
               }
 
               #pdf_page_1 h1.new_page {
-                /* margin-top: 200mm; */
+                margin-top: 200mm;
               }
 
               #pdf_page_1 h2 {
