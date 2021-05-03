@@ -33,8 +33,6 @@ import {
  import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
 //  import Check from '../icons/Check';
 import { curveApiToHistogram, } from '../utils/curveApiToHistogram';
-import Plot from 'react-plotly.js';
-// import {Bar} from 'react-chartjs-2';
 import * as Plotly from 'plotly.js';
 
 
@@ -73,12 +71,10 @@ const ExportDoc: React.FC<Props> = ({
   const [wms2Loaded, setwms2Loaded] = useState(false);
   const [wms3Loaded, setwms3Loaded] = useState(false);
   const [docRequested, setDocRequested] = useState(false);
-  const [histogramData, setHistogramData] = useState<any>(null);
   const [imageData, setImagedata] = useState<null | string>(null);
 
   const editingReportPolygon = openBlock === 'report' && editing;
 
-  console.log('editing', openBlock, editing, editingReportPolygon)
 
   // if (!configuration) {
   //   return null;
@@ -99,9 +95,15 @@ const ExportDoc: React.FC<Props> = ({
       if (!configuration) {
         return;
       }
+      if (!reportPolygonsOnMap.features[0]) {
+        console.log('report polyon not found aborting');
+        return;
+      }
+      const reportPolygon = reportPolygonsOnMap.features[0].geometry.coordinates.map((latLng => latLng.join(" "))).join(",");
       const uuid = configuration.templateUuid;
       const url = '/api/v4/rasters/';
-      const geom = `POLYGON ((${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}))`;
+      // const geom = `POLYGON ((${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}))`;
+      const geom = `POLYGON ((${reportPolygon}))`;
       // const parameters = { 
       //   geom: 'POLYGON ((4.804847821873415 52.11667280734238, 4.806713259859531 52.11808327571072, 4.805608147820809 52.11856102711491, 4.819366745114616 52.12916174862249, 4.820391627911995 52.12882844174937, 4.825146482688536 52.13155708895362, 4.836760218799797 52.1320950542045, 4.839831083487208 52.13138455359988, 4.841855268314998 52.13279519337573, 4.844997575437689 52.13266472167823, 4.851613567129445 52.13095545048285, 4.850995342194573 52.13013121164453, 4.855100260574258 52.12826534499285, 4.858115526952704 52.1255730225948, 4.857260037781153 52.12489270966972, 4.857432505687366 52.12358885970951, 4.856966250193945 52.12318812892995, 4.857412305450096 52.12198214729695, 4.855523610331791 52.12072942129434, 4.855459491604404 52.1195211452892, 4.856410703395785 52.11874023894567, 4.857189725526387 52.11758407511068, 4.857006548770007 52.11648398314836, 4.858161027579516 52.11509998252357, 4.860588442243921 52.11558196309642, 4.862378153957152 52.11356052316284, 4.863167486792669 52.11317747763539, 4.862651303280372 52.11034849069802, 4.864831936661076 52.10842539029259, 4.864544590469517 52.1078322025319, 4.866034352158711 52.1062563318614, 4.867314973640948 52.10409968552982, 4.86967559135546 52.10353023647684, 4.865590360499596 52.09723068553979, 4.86211402445756 52.09595894201262, 4.861573683244572 52.09520757940017, 4.852430695728541 52.09876627241331, 4.846469734862426 52.10185569966663, 4.842415244351158 52.10297254568547, 4.837985745856069 52.10266207609867, 4.832555777932917 52.10394128701714, 4.831113012822775 52.10480424504518, 4.829541164175933 52.10500217933986, 4.82775049958501 52.10544065304562, 4.824631499045423 52.10542581163859, 4.825548195162908 52.10741128945562, 4.804847821873415 52.11667280734238))',
       // };
@@ -120,11 +122,6 @@ const ExportDoc: React.FC<Props> = ({
       console.log('responseJson', responseJson);
       if (responseJson.results) {
         const histogramData = curveApiToHistogram(responseJson.results);
-        console.log('histogram', histogramData, JSON.stringify(histogramData));
-        let sum = 0;
-        histogramData.forEach((val:any)=>{if (val) { sum  += val}})
-        console.log('histogram sum', sum);
-        setHistogramData(histogramData);
         //////////////////////////////////////////////////////////////////////////////////////////////
 
         const data = [
@@ -313,7 +310,7 @@ const ExportDoc: React.FC<Props> = ({
       fetchChartData();
       // fetchMean();
     }
-  }, [docRequested]);
+  }, [docRequested]); // eslint-disable-line react-hooks/exhaustive-deps
   
 
   return (
@@ -365,9 +362,14 @@ const ExportDoc: React.FC<Props> = ({
           <TextButton text="Maak rapport" 
               // icon={<Check/>}
               onClick={()=>{
-                addMessage("Export document aangevraagd");
-                setDocRequested(true);
-              }} 
+                if (!docRequested) {
+                  addMessage("Export document aangevraagd");
+                  setDocRequested(true);
+                }
+                
+              }}
+              disabled={docRequested} 
+              disabledReason={docRequested? "Bezig rapport te genereren .." : undefined}
           />
           </IconRow>
         </> 
@@ -376,12 +378,12 @@ const ExportDoc: React.FC<Props> = ({
 
 
       <div 
-        // style={{visibility: "hidden"}}
+        // hide here. Only show it in a new browser tab
+        style={{visibility: "hidden"}}
       >
       <IconRow>
         
 
-        { histogramData?
         <div 
           style={{
             position: "fixed",
@@ -598,100 +600,8 @@ const ExportDoc: React.FC<Props> = ({
             <div 
                     className="two_column_row"
                   >
-                    <div
-                      // style={{
-                      //   height: "600px",
-                      //   width: "600px",
-                      // }}
-                    >
-                      {/* <Plot
-                        data={[
-                          {
-                            type: 'bar', 
-                            x: histogramData.map((item:number, ind:number)=>ind), 
-                            y: histogramData.map((value:number)=>value), 
-                            marker: {color: 'blue'},
-                            name: "Huidige projectlocatie"
-                          },
-                          {
-                            type: 'bar', 
-                            x: histogramData.map((item:number,ind:number)=>ind), 
-                            y: histogramData.map((value:number)=>value), 
-                            marker: {color: 'red'},
-                            name: "Ontwerp projectlocatie"
-                          },
-                        ]}
-                        layout={ {
-                          width: 400, 
-                          height: 300, 
-                          // autosize: false,
-                          margin: {
-                            l: 30,
-                            r: 10,
-                            b: 30,
-                            // t: 20,
-                            // pad: 5
-                          },
-                          title: 'Distributie gevoelstemperatuur',
-                          // displayodeBar: false,
-                          
-                          showlegend: true,
-                          legend: {
-                            // the x 1 is somehow needed to move the legend to the right. No idea why
-                            // x: 1,
-                            xanchor: 'right',
-                            // the y 100 is done to move the legend up to above the chart
-                            // y: 600
-                          },
-                          xaxis: {
-                            title: {
-                              text: "temperatuur (°C)",
-                              // standoff: 5
-                            },
-                          },
-                          yaxis: {
-                            title: {
-                              text: "Percentage (%)",
-                              // standoff: 10
-                            },
-                            // exponentformat: "power",
-                            // automargin: true,
-                          },
-                        }}
-                        config={{
-                          displayModeBar: false,
-                        }}
-                      /> */}
-                      {imageData? <img src={imageData}></img>:null}
-                      {/* 
-                      // @ts-ignore */}
-                      {/* <Bar
-
-                        data={{
-                          labels: ['January', 'February', 'March',
-                                   'April', 'May'],
-                          datasets: [
-                            {
-                              label: 'Rainfall',
-                              backgroundColor: 'rgba(75,192,192,1)',
-                              borderColor: 'rgba(0,0,0,1)',
-                              borderWidth: 2,
-                              data: [65, 59, 80, 81, 56]
-                            }
-                          ]
-                        }}
-                        options={{
-                          title:{
-                            display:true,
-                            text:'Average Rainfall per month',
-                            fontSize:20
-                          },
-                          legend:{
-                            display:true,
-                            position:'right'
-                          }
-                        }}
-                      /> */}
+                    <div>
+                      {imageData? <img alt="temperatuur curve histogram voor en na maatregel" src={imageData}></img>:null}
                     </div>
                     <div 
                       style={{
@@ -822,10 +732,6 @@ const ExportDoc: React.FC<Props> = ({
             </p>
           </div>
         </div>
-        :
-        null
-        }
-      
       
       {/* ____________________________________________________________________  */}
       </IconRow>

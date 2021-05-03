@@ -12,3 +12,9 @@
   text-align: center;
   cursor: pointer;
 }
+
+.TextButton.Disabled {
+  cursor: not-allowed;
+  background-color: #ABB38E;
+  color: #958688;
+}

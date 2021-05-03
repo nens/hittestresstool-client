@@ -5,15 +5,17 @@ import styles from './TextButton.module.css';
 interface TextButtonProps {
   text: string,
   icon?: any,
-  onClick: () => void
+  onClick: () => void,
+  disabled?: boolean,
+  disabledReason?: string,
 }
 
-export default function TextButton({text, icon=null, onClick}: TextButtonProps) {
+export default function TextButton({text, icon=null, onClick, disabled, disabledReason}: TextButtonProps) {
   return (
     <div
-      className={styles.TextButton}
+      className={`${styles.TextButton} ${disabled? styles.Disabled: ""}`}
       onClick={onClick}
-      title={text}
+      title={disabledReason? disabledReason : text}
     >
       {text} {icon}
     </div>

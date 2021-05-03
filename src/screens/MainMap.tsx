@@ -36,7 +36,6 @@ import {
   addPavement,
 } from '../state/pavements';
 import {
-  ReportPolygonOnMap,
   getReportPolygonsOnMap,
   getReportPolygonsBeingAdded,
   setReportPolygonBeingConstructed,
