@@ -6,19 +6,31 @@ import UploadIcon from '../icons/Upload';
   getReportPolygonsOnMap,
  } from '../state/reportPolygons';
 import {
-  getTreesOnMap,
+  addTreesFeaturesList,
 } from '../state/trees';
+import {
+  Tree,
+} from '../state/sidebar';
 import {
   getPavementsOnMap,
 } from '../state/pavements';
+import {
+  addMessage,
+} from '../state/message';
 
 
-interface Props {}
+interface Props {
+  addMessage: (message: string) => void,
+  addTreesFeaturesList: (trees: Tree[]) => void
+}
 
 
 
 
-const ImportGeoJson: React.FC<Props> = () => {
+const ImportGeoJson: React.FC<Props> = ({  
+  addMessage,
+  addTreesFeaturesList,
+}) => {
 
   
   return (
@@ -45,6 +57,46 @@ const ImportGeoJson: React.FC<Props> = () => {
             // @ts-ignore
              var content = readerEvent.target.result; // this is the content!
              console.log( content );
+             let geoJson = null;
+             try {
+              // @ts-ignore 
+              geoJson = JSON.parse(content);
+             } catch(e){
+               console.error(e);
+               addMessage("Failed to parse GeoJSON ! ")
+             }
+             const trees =  (geoJson.features && geoJson.features.length && geoJson.features.filter((item:any)=>{
+                if (
+                  item.geometry.type === "Point" && 
+                  item.properties.tree
+                ) {
+                  return true;
+                } else {
+                  return false;
+                }
+             })) || [];
+             const pavements =  (geoJson.features && geoJson.features.length && geoJson.features.filter((item:any)=>{
+                if (
+                  item.geometry.type === "Polygon" && 
+                  item.properties.pavement
+                ) {
+                  return true;
+                } else {
+                  return false;
+                }
+            })) || [];
+            const reportPolygons =  (geoJson.features && geoJson.features.length && geoJson.features.filter((item:any)=>{
+              if (
+                item.geometry.type === "Polygon" && 
+                !item.properties.pavement
+              ) {
+                return true;
+              } else {
+                return false;
+              }
+            })) || [];
+            console.log('trees', trees)
+            addTreesFeaturesList(trees);
           }
        
        }
@@ -57,4 +109,6 @@ const ImportGeoJson: React.FC<Props> = () => {
 };
 
 export default connect(null, {
+  addMessage,
+  addTreesFeaturesList,
 })(ImportGeoJson);

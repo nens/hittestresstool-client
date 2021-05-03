@@ -34,7 +34,7 @@ const ExportGeoJson: React.FC<Props> = () => {
   const completeGeoJson = {
     type: "FeatureCollection",
     // @ts-ignore 
-    features: [].concat(treesOnMap.features).concat(pavementsOnMap.features).concat(reportPolygonsOnMap)
+    features: [].concat(treesOnMap.features).concat(pavementsOnMap.features).concat(reportPolygonsOnMap.features)
   }
 
  

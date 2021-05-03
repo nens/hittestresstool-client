@@ -36,6 +36,7 @@ const INITIAL_STATE: TreesState = {
 };
 
 const ADD_TREE = 'trees/addTree';
+const ADD_FEATURES_LIST = 'trees.addFeaturesList';
 export const REMOVE_TREE = 'trees/removeTree';
 
 export function latLng2Feature(latlng: LatLng, tree: Tree): TreeOnMap {
@@ -101,6 +102,15 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): TreesState => {
           features: [...state.treesBeingAdded.features, latLng2Feature(latlng, tree)]
         }
       };
+    case ADD_FEATURES_LIST:
+      const features: TreeOnMap[] = action.features;
+      return {
+        ...state,
+        treesOnMap: {
+          ...state.treesOnMap,
+          features: [...state.treesOnMap.features, ...features],
+        },
+      };
     case REMOVE_TREE: {
       const geometry: Point = action.geometry;
       const tree: Tree = action.tree;
@@ -141,6 +151,13 @@ export const mapClickWhileEditingTrees = (latlng: LatLng): Thunk => (dispatch, g
     tree: selectedTree
   });
   dispatch(addMessage("Boom geplaatst"));
+};
+
+export const addTreesFeaturesList = (features: Tree[]): Thunk => (dispatch, getState) => {
+  dispatch({
+    type: ADD_FEATURES_LIST,
+    features: features
+  });
 };
 
 export const removeTree = (geometry: Geometry, tree: Tree) => {
