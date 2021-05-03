@@ -1,9 +1,10 @@
 import React  from 'react';
-import { connect, useSelector,  } from 'react-redux';
+import { connect, } from 'react-redux';
 import Block from '../components/Block';
 import UploadIcon from '../icons/Upload';
  import {
-  getReportPolygonsOnMap,
+  addReportPolygonFeaturesList,
+  ReportPolygonOnMap,
  } from '../state/reportPolygons';
 import {
   addTreesFeaturesList,
@@ -18,12 +19,17 @@ import {
 import {
   addMessage,
 } from '../state/message';
+import {
+  setChangesMade
+} from '../state/sidebar';
 
 
 interface Props {
   addMessage: (message: string) => void,
   addTreesFeaturesList: (trees: Tree[]) => void,
   addPavementFeaturesList: (pavements: PavementsOnMap[]) => void,
+  addReportPolygonFeaturesList: (reportPolygons: ReportPolygonOnMap[]) => void,
+  setChangesMade: () => void,
 }
 
 
@@ -33,6 +39,8 @@ const ImportGeoJson: React.FC<Props> = ({
   addMessage,
   addTreesFeaturesList,
   addPavementFeaturesList,
+  addReportPolygonFeaturesList,
+  setChangesMade,
 }) => {
 
   
@@ -98,9 +106,10 @@ const ImportGeoJson: React.FC<Props> = ({
                 return false;
               }
             })) || [];
-            console.log('trees', trees)
             addTreesFeaturesList(trees);
             addPavementFeaturesList(pavements);
+            addReportPolygonFeaturesList(reportPolygons);
+            setChangesMade();
           }
        
        }
@@ -116,4 +125,6 @@ export default connect(null, {
   addMessage,
   addTreesFeaturesList,
   addPavementFeaturesList,
+  addReportPolygonFeaturesList,
+  setChangesMade,
 })(ImportGeoJson);

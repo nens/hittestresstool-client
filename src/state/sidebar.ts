@@ -62,6 +62,7 @@ export const CANCEL_EDITING_REPORT_POLYGON = "sidebar/cancelEditingReportPolygon
 export const SUBMIT_EDITING_REPORT_POLYGON = "sidebar/submitEditingReportPolygon";
 export const UNDO_EDITING_REPORT_POLYGON = "sidebar/undoEditingReportPolygon";
 export const SENDING_CHANGES = "sidebar/sendingChanges";
+export const CHANGES_MADE = "sidebar/CHANGES_MADE";
 
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
   const type = action.type;
@@ -128,6 +129,11 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       return {
         ...state,
         editing: false,
+      };
+    case CHANGES_MADE:
+      return {
+        ...state,
+        changesMade: true,
       };
     case CANCEL_EDITING_PAVEMENTS:
     case CANCEL_EDITING_TREES:
@@ -316,6 +322,12 @@ export const submitEditingReportPolygon = (): Thunk => (dispatch, getState) => {
 export const undoEditingReportPolygon = () => {
   return {
     type: UNDO_EDITING_REPORT_POLYGON
+  };
+}
+
+export const setChangesMade = () => {
+  return {
+    type: CHANGES_MADE,
   };
 }
 

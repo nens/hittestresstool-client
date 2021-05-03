@@ -40,6 +40,8 @@ const INITIAL_STATE: ReportPolygonsState = {
 
 export const SET_REPORT_POLYGON_BEING_CONSTRUCTED = 'reportPolygons/setBeingConstructed';
 export const ADD_REPORT_POLYGON = 'reportPolygons/addReportPolygon';
+const ADD_FEATURES_LIST = 'reportPolygons/addFeaturesList';
+
 // export const REMOVE_PAVEMENT = 'reportPolygons/removePavement';
 
 // Helper functions
@@ -122,6 +124,15 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): ReportPolygonsState =>
         reportPolygonBeingConstructed: []
       };
     }
+    case ADD_FEATURES_LIST:
+      const features: ReportPolygonOnMap[] = action.features;
+      return {
+        ...state,
+        reportPolygonsOnMap: {
+          ...state.reportPolygonsOnMap,
+          features: [...state.reportPolygonsOnMap.features, ...features],
+        },
+      };
     // case REMOVE_PAVEMENT: {
     //   const geometry: Polygon = action.geometry;
     //   const pavement: Pavement = action.pavement;
@@ -159,6 +170,13 @@ export function addReportPolygon(polygon: LatLng[]) {
     polygon: polygon,
   };
 }
+
+export const addReportPolygonFeaturesList = (features: ReportPolygonOnMap[]) => {
+  return{
+    type: ADD_FEATURES_LIST,
+    features: features
+  };
+};
 
 // Selectors
 
