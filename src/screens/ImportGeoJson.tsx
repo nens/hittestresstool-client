@@ -12,7 +12,8 @@ import {
   Tree,
 } from '../state/sidebar';
 import {
-  getPavementsOnMap,
+  addPavementFeaturesList,
+  PavementsOnMap,
 } from '../state/pavements';
 import {
   addMessage,
@@ -21,7 +22,8 @@ import {
 
 interface Props {
   addMessage: (message: string) => void,
-  addTreesFeaturesList: (trees: Tree[]) => void
+  addTreesFeaturesList: (trees: Tree[]) => void,
+  addPavementFeaturesList: (pavements: PavementsOnMap[]) => void,
 }
 
 
@@ -30,6 +32,7 @@ interface Props {
 const ImportGeoJson: React.FC<Props> = ({  
   addMessage,
   addTreesFeaturesList,
+  addPavementFeaturesList,
 }) => {
 
   
@@ -97,6 +100,7 @@ const ImportGeoJson: React.FC<Props> = ({
             })) || [];
             console.log('trees', trees)
             addTreesFeaturesList(trees);
+            addPavementFeaturesList(pavements);
           }
        
        }
@@ -111,4 +115,5 @@ const ImportGeoJson: React.FC<Props> = ({
 export default connect(null, {
   addMessage,
   addTreesFeaturesList,
+  addPavementFeaturesList,
 })(ImportGeoJson);

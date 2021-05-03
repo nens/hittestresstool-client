@@ -153,11 +153,11 @@ export const mapClickWhileEditingTrees = (latlng: LatLng): Thunk => (dispatch, g
   dispatch(addMessage("Boom geplaatst"));
 };
 
-export const addTreesFeaturesList = (features: Tree[]): Thunk => (dispatch, getState) => {
-  dispatch({
+export const addTreesFeaturesList = (features: Tree[]) => {
+  return {
     type: ADD_FEATURES_LIST,
     features: features
-  });
+  };
 };
 
 export const removeTree = (geometry: Geometry, tree: Tree) => {
