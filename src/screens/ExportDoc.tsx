@@ -5,7 +5,8 @@ import DownloadIcon from '../icons/Download';
 import {
   Map, TileLayer, WMSTileLayer,GeoJSON
 } from 'react-leaflet';
-import {getConfiguration} from '../state/session';
+import {getConfiguration, getLegendSteps} from '../state/session';
+import Legend from '../components/LegendPdf';
 import Leaflet  from 'leaflet';
 import {
   getMapState,
@@ -64,6 +65,8 @@ const ExportDoc: React.FC<Props> = ({
   const openBlock = useSelector(getOpenBlock);
   const editing = useSelector(getEditing);
   const reportPolygonsOnMap = useSelector(getReportPolygonsOnMap);
+  const legendSteps = useSelector(getLegendSteps);
+
 
   let reportMapBounds = null;
   if (reportPolygonsOnMap.features.length !== 0) {
@@ -300,15 +303,16 @@ const ExportDoc: React.FC<Props> = ({
     >
 
         <div id="plotly_graph_to_image_id" 
-          // style={{ display: "none" }}
-          style={{ 
-              position: "fixed",
-              zIndex: 999999,
-              right: 0,
-              top: 0,
-              width: '700px',
-              height: '525px',
-            }}
+          style={{ display: "none" }}
+          // below style usefull for styling debugging plotly
+          // style={{ 
+          //     position: "fixed",
+          //     zIndex: 999999,
+          //     right: 0,
+          //     top: 0,
+          //     width: '700px',
+          //     height: '525px',
+          //   }}
         ></div>
         {editingReportPolygon ?
          <IconRow>
@@ -362,7 +366,7 @@ const ExportDoc: React.FC<Props> = ({
       {reportPolygonsOnMap.features.length !== 0?
       <div 
         // hide here. Only show it in a new browser tab
-        style={{visibility: "hidden"}}
+        // style={{visibility: "hidden"}}
       >
       <IconRow>
         
@@ -486,6 +490,9 @@ const ExportDoc: React.FC<Props> = ({
                         };
                       }}
                     />
+                    {legendSteps !== null && configuration !==null && (
+                      <Legend steps={legendSteps} style={configuration.heatstressStyle}/>
+                    )}
                   </Map>
                 </div>
                 </div>
@@ -543,6 +550,10 @@ const ExportDoc: React.FC<Props> = ({
                         };
                       }}
                     />
+                     {legendSteps !== null && configuration !==null && (
+                      <Legend steps={legendSteps} style={configuration.heatstressStyle}/>
+                    )}
+                    
                   </Map>
                   </div>
                   </div>
@@ -602,6 +613,9 @@ const ExportDoc: React.FC<Props> = ({
                         };
                       }}
                     />
+                     {legendSteps !== null && configuration !==null && (
+                      <Legend steps={legendSteps} style={configuration.heatstressStyle}/>
+                    )}
                   </Map>
                   </div>
                   </div>
