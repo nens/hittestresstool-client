@@ -79,16 +79,6 @@ const ExportDoc: React.FC<Props> = ({
   const [averageTempBeforeMeasurements,setAverageTempBeforeMeasurements] = useState<null | string>(null);
   const [reportMapBounds, setReportMapBounds] = useState<L.LatLngBounds | null>(null);
 
-  // let reportMapBounds = null;
-  // if (reportPolygonsOnMap.features.length !== 0) {
-  //   const coordsInitial = reportPolygonsOnMap.features[0].geometry.coordinates[0].slice();
-  //   coordsInitial.push(
-  //     coordsInitial[0]
-  //   )
-  //   const poly = Leaflet.polygon(coordsInitial.map(arr=>[arr[1],arr[0]]));
-  //  reportMapBounds = poly.getBounds();
-  // }
-
   const editingReportPolygon = openBlock === 'report' && editing;
 
     const fetchChartData = async () => {
@@ -271,12 +261,6 @@ const ExportDoc: React.FC<Props> = ({
         setwms2Loaded(false);
         setwms3Loaded(false);
   }, [templatedUuid]);
-
-  // useEffect(() => {
-  //   setwms1Loaded(false);
-  //   setwms2Loaded(false);
-  //   setwms3Loaded(false);
-  // }, [reportMapBounds]);
 
   useEffect(() => {
     if (reportPolygonsOnMap.features.length !== 0) {
