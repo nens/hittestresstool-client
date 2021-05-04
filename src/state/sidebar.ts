@@ -67,7 +67,6 @@ export const CHANGES_MADE = "sidebar/CHANGES_MADE";
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
   const type = action.type;
 
-  console.log("startEditingReportPolygon 3 type", type);
   switch (type) {
     case CLICK_HEAT_STRESS:
       if (state.editing || state.openMap === 'heatstress') {
@@ -301,7 +300,6 @@ export const undoEditingPavements = () => {
 // also for report polygon
 
 export const startEditingReportPolygon = () => {
-  console.log("startEditingReportPolygon 2")
   return {
     type: START_EDITING_REPORT_POLYGON
   };

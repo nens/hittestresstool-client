@@ -67,7 +67,6 @@ const ImportGeoJson: React.FC<Props> = ({
           reader.onload = readerEvent => {
             // @ts-ignore
              var content = readerEvent.target.result; // this is the content!
-             console.log( content );
              let geoJson = null;
              try {
               // @ts-ignore 

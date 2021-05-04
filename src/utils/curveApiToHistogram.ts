@@ -1,5 +1,4 @@
 export const curveApiToHistogram = (curve: [number,number][]) => {
-  console.log('curve', curve)
   const histogram:any = []
   for (let i = 0; i < curve.length-1; i += 1 ) {
     const histogramPart = segment2hist(curve[i][1], curve[i+1][1]);

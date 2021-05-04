@@ -195,7 +195,6 @@ const MainMap: React.FC<MainMapProps> = ({
             setReportPolygonBeingConstructed(reportPolygonBeingConstructed.concat([latlng]));
           }
         } else if (openBlock === 'heatstress') {
-          console.log('CLICK');
           clickTemperature(latlng);
         }
       }}

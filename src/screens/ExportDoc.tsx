@@ -71,7 +71,6 @@ const ExportDoc: React.FC<Props> = ({
     coordsInitial.push(
       coordsInitial[0]
     )
-    console.log('coordsInitial', coordsInitial);
     const poly = Leaflet.polygon(coordsInitial.map(arr=>[arr[1],arr[0]]));
    reportMapBounds = poly.getBounds();
   }
@@ -193,7 +192,6 @@ const ExportDoc: React.FC<Props> = ({
           // @ts-ignore  
           return Plotly.toImage(gd);
         }).then((dataURI:any) => {
-            console.log(dataURI);
             setImagedata(dataURI);
         });
 
@@ -217,8 +215,6 @@ const ExportDoc: React.FC<Props> = ({
       }
     );
     const responseJson = await response.json();
-
-    console.log('responseJson', responseJson);
 
     if (responseJson.results) {
       setFunction(responseJson.results[0].value.toFixed(1));
@@ -295,7 +291,7 @@ const ExportDoc: React.FC<Props> = ({
     <Block
       title="Export"
       icon={<DownloadIcon/>}
-      status={ !anyTreesOrPavements || changesMade ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} 
+      status={ !anyTreesOrPavements || changesMade || !templatedUuid ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} 
       onOpen={()=>{
         clickBlockReport();
       }}
@@ -317,7 +313,6 @@ const ExportDoc: React.FC<Props> = ({
           <TextButton text="Teken op kaart" 
               icon={<Pencil/>}
               onClick={()=>{
-                console.log("startEditingReportPolygon"); 
                 startEditingReportPolygon();
               }} 
           />
