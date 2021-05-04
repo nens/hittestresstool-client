@@ -151,21 +151,19 @@ const ExportDoc: React.FC<Props> = ({
           width: 400, 
           height: 300, 
           // autosize: false,
-          margin: {
-            l: 30,
-            r: 10,
-            b: 30,
-          },
+          // margin: {
+          //   l: 30,
+          //   r: 10,
+          //   b: 30,
+          // },
           title: 'Distributie gevoelstemperatuur',
           // displayodeBar: false,
           
           showlegend: true,
           legend: {
-            // the x 1 is somehow needed to move the legend to the right. No idea why
-            // x: 1,
-            // xanchor: 'left',
-            // the y 100 is done to move the legend up to above the chart
-            // y: 600
+            x: 0,
+            y: 10,
+            bgcolor: '#FFFFFF00'
           },
           xaxis: {
             title: {
@@ -291,14 +289,27 @@ const ExportDoc: React.FC<Props> = ({
     <Block
       title="Export"
       icon={<DownloadIcon/>}
-      status={ !anyTreesOrPavements || changesMade || !templatedUuid ? "disabled" : openBlock === 'report' ? "opened" :  "closed"} 
+      status={
+         !anyTreesOrPavements || changesMade || !templatedUuid ? "disabled" : openBlock === 'report' ? "opened" :  "closed"
+        //  "opened"
+      } 
       onOpen={()=>{
         clickBlockReport();
       }}
       style={openBlock === 'report'? {height: "11rem"} : undefined}
     >
 
-        <div id="plotly_graph_to_image_id" style={{ display: "none" }}></div>
+        <div id="plotly_graph_to_image_id" 
+          // style={{ display: "none" }}
+          style={{ 
+              position: "fixed",
+              zIndex: 999999,
+              right: 0,
+              top: 0,
+              width: '700px',
+              height: '525px',
+            }}
+        ></div>
         {editingReportPolygon ?
          <IconRow>
           <CloseUndoCheckBar
@@ -406,6 +417,9 @@ const ExportDoc: React.FC<Props> = ({
                   margin-bottom: 10mm;
               }
 
+              p.overhittestresstext {
+                font-size: 10px;
+              }
             `}</style>
             <div
               className="noprint"
@@ -600,7 +614,7 @@ const ExportDoc: React.FC<Props> = ({
                     className="two_column_row"
                   >
                     <div>
-                      {imageData? <img alt="temperatuur curve histogram voor en na maatregel" src={imageData}></img>:null}
+                      {imageData? <img height="300" width="400" alt="temperatuur curve histogram voor en na maatregel" src={imageData}></img>:null}
                     </div>
                     <div 
                       style={{
@@ -648,7 +662,7 @@ const ExportDoc: React.FC<Props> = ({
               }
 
               table.shade_table td {
-                height: 100px;
+                height: 70px;
                 width: 200px;
                 border-width: 2mm;
                 border-color: #515152;
@@ -723,10 +737,10 @@ const ExportDoc: React.FC<Props> = ({
             </table>
             <h2> Over de hittestress tool</h2>
             <hr></hr>
-            <p>
+            <p className={"overhittestresstext"}>
               <b>PET staat voor 'Physiological Equivalent Temperature'. </b>De kaart laat de gevoelstemperatuur in de buitenruimte zien. Op het Kennisportaal Ruimtelijke Adaptatie vindt u een duidelijke uitleg over hoe een PET-kaart wordt opgebouwd volgens de landelijke methodiek. 
             </p>
-            <p>
+            <p className={"overhittestresstext"}>>
             Voor het berekenen van de PET-hittestresskaart, worden veel verschillende informatiebronnen gebruikt. Denk daarbij aan KNMI meteogegevens (luchttemperatuur, luchtvochtigheid, en straling), en gegevens over het gebied zelf (zoals schaduw, groenfactor en skyviewfactor). Met de Lizard Geoblocks module worden al deze kaarten on-the-fly gecombineerd tot de PET-hittestresskaart. Het voordeel is dat wanneer een van de bronnen geactualiseerd wordt, de PET-hittestresskaart automatisch herberekend wordt met de meest actuele gegevens. De oude kaarten zijn natuurlijk ook nog beschikbaar!
             </p>
           </div>
