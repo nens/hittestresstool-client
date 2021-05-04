@@ -366,7 +366,7 @@ const ExportDoc: React.FC<Props> = ({
       {reportPolygonsOnMap.features.length !== 0?
       <div 
         // hide here. Only show it in a new browser tab
-        // style={{visibility: "hidden"}}
+        style={{visibility: "hidden"}}
       >
       <IconRow>
         
@@ -428,7 +428,23 @@ const ExportDoc: React.FC<Props> = ({
             <div
               className="noprint"
             >
-              {"Settings >> Print >> Print as pdf"} 
+              {/* {`To save this document as .pdf do as follows:
+              Go to: Settings >> Print
+              - As "destination" choose "Print as PDF"
+              - Go to "More settings"
+              - As "margin" choose "default"
+              - Check the checkbox "print backgrounds" or "background graphics"
+              `}  */}
+              Om op te slaan als .pdf doe als volgt:
+              <br/>
+              <ul>
+                <li>Toets CTRL+P om het print-scherm te openen</li>
+                <li>Als "destination" kies "Print as PDF"</li>
+                <li>Ga naar "More settings" in het print-scherm</li>
+                <li>Als "margin" kies "default"</li>
+                <li>Check de checkbox "print backgrounds"(in Firefox) of "background graphics" (in Chrome)</li>
+                <li>Klik op de "Print" knop</li>
+              </ul>
             </div>
             <h1>
               Hittestress PET rapport

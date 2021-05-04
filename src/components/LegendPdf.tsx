@@ -25,7 +25,7 @@ function Legend (props: LegendProps) {
   return (
     <div 
       style={{
-        background: "#5A5152",
+        backgroundColor: "#5A5152",
         boxShadow: "3px 3px 6px #00000029",
         borderRadius: "3px",
         width: "3.5rem",
@@ -47,7 +47,7 @@ function Legend (props: LegendProps) {
         {steps.map((step, i) => (
           <div key={`legendstep-${i}`} 
             style={{
-              background: step.color,
+              backgroundColor: step.color,
               width: "1.5rem",
               height: "0.1rem",
             }}
