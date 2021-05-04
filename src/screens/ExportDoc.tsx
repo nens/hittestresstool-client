@@ -68,15 +68,7 @@ const ExportDoc: React.FC<Props> = ({
   const legendSteps = useSelector(getLegendSteps);
 
 
-  let reportMapBounds = null;
-  if (reportPolygonsOnMap.features.length !== 0) {
-    const coordsInitial = reportPolygonsOnMap.features[0].geometry.coordinates[0].slice();
-    coordsInitial.push(
-      coordsInitial[0]
-    )
-    const poly = Leaflet.polygon(coordsInitial.map(arr=>[arr[1],arr[0]]));
-   reportMapBounds = poly.getBounds();
-  }
+  
 
   const [wms1Loaded, setwms1Loaded] = useState(false);
   const [wms2Loaded, setwms2Loaded] = useState(false);
@@ -85,16 +77,19 @@ const ExportDoc: React.FC<Props> = ({
   const [imageData, setImagedata] = useState<null | string>(null);
   const [averageTempAfterMeasurements,setAverageTempAfterMeasurements] = useState<null | string>(null);
   const [averageTempBeforeMeasurements,setAverageTempBeforeMeasurements] = useState<null | string>(null);
+  const [reportMapBounds, setReportMapBounds] = useState<L.LatLngBounds | null>(null);
+
+  // let reportMapBounds = null;
+  // if (reportPolygonsOnMap.features.length !== 0) {
+  //   const coordsInitial = reportPolygonsOnMap.features[0].geometry.coordinates[0].slice();
+  //   coordsInitial.push(
+  //     coordsInitial[0]
+  //   )
+  //   const poly = Leaflet.polygon(coordsInitial.map(arr=>[arr[1],arr[0]]));
+  //  reportMapBounds = poly.getBounds();
+  // }
 
   const editingReportPolygon = openBlock === 'report' && editing;
-
-  const initialBounds = Leaflet.latLngBounds(
-    // @ts-ignore
-    Leaflet.latLng(configuration.initialBounds.sw),
-    // @ts-ignore
-    Leaflet.latLng(configuration.initialBounds.ne)
-  );
-
 
     const fetchChartData = async () => {
 
@@ -188,15 +183,14 @@ const ExportDoc: React.FC<Props> = ({
           displayModeBar: false,
         };
 
+        // We draw the diagram with plotly (not react-plotly) and then use the image data for the pdf, because the css of react-plotly didnot get send correctly to the new browser window
         // @ts-ignore
-        Plotly.plot('plotly_graph_to_image_id', data, layout, config).then((gd) => {
+        Plotly.newPlot('plotly_graph_to_image_id', data, layout, config).then((gd) => {
           // @ts-ignore  
           return Plotly.toImage(gd);
         }).then((dataURI:any) => {
             setImagedata(dataURI);
-        });
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        })
       }
     }
 
@@ -257,7 +251,7 @@ const ExportDoc: React.FC<Props> = ({
     if (
       wms1Loaded && wms2Loaded && wms3Loaded && 
       imageData &&
-      averageTempBeforeMeasurements && setAverageTempAfterMeasurements &&
+      averageTempBeforeMeasurements && averageTempAfterMeasurements &&
       docRequested
       ) {
       // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
@@ -265,15 +259,47 @@ const ExportDoc: React.FC<Props> = ({
       window.setTimeout(()=>{
         openAsDocumentInNewWindow();
         setDocRequested(false);
-        setwms1Loaded(false);
-        setwms2Loaded(false);
-        setwms3Loaded(false);
+        setImagedata(null);
         setAverageTempBeforeMeasurements(null);
         setAverageTempAfterMeasurements(null);
       },3000);
       
     }
-  }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested, averageTempBeforeMeasurements, setAverageTempAfterMeasurements]);
+  }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested, averageTempBeforeMeasurements, averageTempAfterMeasurements]);
+
+  useEffect(() => {
+        setwms2Loaded(false);
+        setwms3Loaded(false);
+  }, [templatedUuid]);
+
+  // useEffect(() => {
+  //   setwms1Loaded(false);
+  //   setwms2Loaded(false);
+  //   setwms3Loaded(false);
+  // }, [reportMapBounds]);
+
+  useEffect(() => {
+    if (reportPolygonsOnMap.features.length !== 0) {
+      const coordsInitial = reportPolygonsOnMap.features[0].geometry.coordinates[0].slice();
+      coordsInitial.push(
+        coordsInitial[0]
+      )
+      const poly = Leaflet.polygon(coordsInitial.map(arr=>[arr[1],arr[0]]));
+      setReportMapBounds(poly.getBounds());
+    }
+  }, [reportPolygonsOnMap]);
+
+  useEffect(() => {
+    if (editingReportPolygon) {
+      setReportMapBounds(null);
+      setwms1Loaded(false);
+      setwms2Loaded(false);
+      setwms3Loaded(false);
+    }
+  }, [editingReportPolygon]);
+
+  
+  
 
   useEffect(() => {
     if ( docRequested) {
@@ -363,7 +389,7 @@ const ExportDoc: React.FC<Props> = ({
       
 
       
-      {reportPolygonsOnMap.features.length !== 0?
+      {reportPolygonsOnMap.features.length !== 0 && reportMapBounds && !changesMade && docRequested?
       <div 
         // hide here. Only show it in a new browser tab
         style={{visibility: "hidden"}}
@@ -466,8 +492,7 @@ const ExportDoc: React.FC<Props> = ({
                       height: "75mm",
                     }}
                     zoomControl={false}
-                    // bounds={initialBounds}
-                    bounds={reportMapBounds? reportMapBounds: initialBounds}
+                    bounds={reportMapBounds}
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
@@ -526,8 +551,7 @@ const ExportDoc: React.FC<Props> = ({
                       height: "75mm",
                     }}
                     zoomControl={false}
-                    // bounds={initialBounds}
-                    bounds={reportMapBounds? reportMapBounds: initialBounds}
+                    bounds={reportMapBounds}
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
@@ -589,8 +613,7 @@ const ExportDoc: React.FC<Props> = ({
                       height: "75mm",
                     }}
                     zoomControl={false}
-                    // bounds={initialBounds}
-                    bounds={reportMapBounds? reportMapBounds: initialBounds}
+                    bounds={reportMapBounds}
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
