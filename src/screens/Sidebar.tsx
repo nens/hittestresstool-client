@@ -7,12 +7,13 @@ import BlockCalculate from './BlockCalculate';
 import ExportDoc from './ExportDoc';
 import ExportGeoJson from './ExportGeoJson';
 import ImportGeoJson from './ImportGeoJson';
+import packageJson from '../../package.json';
 
 const Sidebar: React.FC = () => {
 
   return (
     <div>
-      <h1>Hittestresstool</h1>
+      <h1 title={"client-version: " +packageJson.version}>Hittestresstool</h1>
       <h2>Resultaat</h2>
       <BlockHittestress/>
       <h2>Brondata</h2>
