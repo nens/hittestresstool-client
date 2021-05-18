@@ -73,6 +73,9 @@ const ExportDoc: React.FC<Props> = ({
   const [averageTempAfterMeasurements,setAverageTempAfterMeasurements] = useState<null | string>(null);
   const [averageTempBeforeMeasurements,setAverageTempBeforeMeasurements] = useState<null | string>(null);
   const [reportMapBounds, setReportMapBounds] = useState<L.LatLngBounds | null>(null);
+  const [averageOriginalShadow, setAverageOriginalShadow] = useState<null | string>(null);
+  const [percentageTrees, setPercentageTrees] = useState<null | string>(null);
+  const [fractionUnpaved, setFractionUnpaved] = useState<null | string>(null);
 
   const editingReportPolygon = openBlock === 'report' && editing;
 
@@ -188,7 +191,7 @@ const ExportDoc: React.FC<Props> = ({
       }
     }
 
-  const fetchMean = async (uuid: string, setFunction: (temperature: string) => void) => {
+  const fetchMean = async (uuid: string, setFunction: (temperature: string) => void, arity: number) => {
 
     if (!configuration) {
       return;
@@ -206,9 +209,10 @@ const ExportDoc: React.FC<Props> = ({
     const responseJson = await response.json();
 
     if (responseJson.results) {
-      setFunction(responseJson.results[0].value.toFixed(1));
+      setFunction(responseJson.results[0].value.toFixed(arity));
     }
   }
+
     
   const openAsDocumentInNewWindow = () => {
     const pdfPage1Element = document.getElementById("pdf_page_1");
@@ -291,10 +295,19 @@ const ExportDoc: React.FC<Props> = ({
     if ( docRequested) {
       fetchChartData();
       if (configuration?.templateUuid) {
-        fetchMean(configuration.templateUuid, setAverageTempBeforeMeasurements);
+        fetchMean(configuration.templateUuid, setAverageTempBeforeMeasurements, 1);
       }
       if (templatedUuid) {
-        fetchMean(templatedUuid, setAverageTempAfterMeasurements);
+        fetchMean(templatedUuid, setAverageTempAfterMeasurements, 1);
+      }
+      if (true) {
+        fetchMean("01d306ad-62a5-410d-aa47-37f01583cbce", setAverageOriginalShadow, 2);
+      }
+      if (true) {
+        fetchMean("107a9b9b-5787-4bb0-8818-f05afe6560ab", setPercentageTrees, 0);
+      }
+      if (true) {
+        fetchMean("8480a74a-ab21-43bc-a1e0-41d38467bc65", setFractionUnpaved, 2);
       }
     }
   }, [docRequested]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -356,7 +369,6 @@ const ExportDoc: React.FC<Props> = ({
               disabledReason={docRequested? "Bezig rapport te genereren .." : undefined} 
           />
           </IconRow>
-          :
           <IconRow>
           <TextButton text="Maak rapport" 
               onClick={()=>{
@@ -747,7 +759,8 @@ const ExportDoc: React.FC<Props> = ({
                         Percentage schaduw
                       </td>
                       <td>
-                        20%
+                        {/* 20% */}
+                        {`${parseFloat(averageOriginalShadow || "0")*100}%`}
                       </td>
                       <td>
                         40%
@@ -758,7 +771,8 @@ const ExportDoc: React.FC<Props> = ({
                         Percentage bomen
                       </td>
                       <td>
-                        10%
+                        {/* 10% */}
+                        {`${percentageTrees || 0}%`}
                       </td>
                       <td>
                         15%
@@ -769,7 +783,8 @@ const ExportDoc: React.FC<Props> = ({
                         Groen vs. verhard oppervlak
                       </td>
                       <td>
-                        30/70
+                        {/* 30/70 */}
+                        {fractionUnpaved === null? "": `${parseFloat(fractionUnpaved || "0")*100}/${100-(parseFloat(fractionUnpaved || "0")*100)}`}
                       </td>
                       <td>
                         30/70
