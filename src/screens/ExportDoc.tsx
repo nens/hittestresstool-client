@@ -1,11 +1,11 @@
-import React, {useState, useEffect}  from 'react';
+import React, {useState, useEffect,}  from 'react';
 import { connect, useSelector,  } from 'react-redux';
 import Block, { IconRow } from '../components/Block';
 import DownloadIcon from '../icons/Download';
 import {
   Map, TileLayer, WMSTileLayer,GeoJSON
 } from 'react-leaflet';
-import {getConfiguration, getLegendSteps} from '../state/session';
+import {getConfiguration, getLegendSteps, getDifferenceLegendSteps} from '../state/session';
 import Legend from '../components/LegendPdf';
 import Leaflet  from 'leaflet';
 import {
@@ -37,9 +37,6 @@ import * as Plotly from 'plotly.js';
 import {polygonOnMapToGeometryString} from '../utils/geometry';
 
 
-
-
-
 interface Props {
   addMessage: (message: string) => void,
   clickBlockReport: () => void,
@@ -66,9 +63,7 @@ const ExportDoc: React.FC<Props> = ({
   const editing = useSelector(getEditing);
   const reportPolygonsOnMap = useSelector(getReportPolygonsOnMap);
   const legendSteps = useSelector(getLegendSteps);
-
-
-  
+  const differenceLegendSteps = useSelector(getDifferenceLegendSteps);
 
   const [wms1Loaded, setwms1Loaded] = useState(false);
   const [wms2Loaded, setwms2Loaded] = useState(false);
@@ -173,14 +168,23 @@ const ExportDoc: React.FC<Props> = ({
           displayModeBar: false,
         };
 
-        // We draw the diagram with plotly (not react-plotly) and then use the image data for the pdf, because the css of react-plotly didnot get send correctly to the new browser window
-        // @ts-ignore
-        Plotly.newPlot('plotly_graph_to_image_id', data, layout, config).then((gd) => {
+        // todo handle if user switches tab when waiting for export
+        // possible options: move plotly element to root html, or disable switching tabs when user waits for html
+        try {
+          // We draw the diagram with plotly (not react-plotly) and then use the image data for the pdf, because the css of react-plotly didnot get send correctly to the new browser window
+          // @ts-ignore
+          Plotly.newPlot('plotly_graph_to_image_id', data, layout, config).then((gd) => {
+            // @ts-ignore  
           // @ts-ignore  
-          return Plotly.toImage(gd);
-        }).then((dataURI:any) => {
-            setImagedata(dataURI);
-        })
+            // @ts-ignore  
+            return Plotly.toImage(gd);
+          }).then((dataURI:any) => {
+              setImagedata(dataURI);
+          })
+        } catch(e) {
+          console.error(e)
+        }
+        
       }
     }
 
@@ -283,8 +287,6 @@ const ExportDoc: React.FC<Props> = ({
   }, [editingReportPolygon]);
 
   
-  
-
   useEffect(() => {
     if ( docRequested) {
       fetchChartData();
@@ -470,6 +472,7 @@ const ExportDoc: React.FC<Props> = ({
                   {/* <p>Uitleg over de huidige hittestress</p> */}
                 </div>
                 <div>
+                  
                   <Map
                     style={{
                       width: "110mm",
@@ -495,7 +498,7 @@ const ExportDoc: React.FC<Props> = ({
                     />
                     <WMSTileLayer
                       key="heatstress-original"
-                      url="http://nxt3.staging.lizard.net/wms/"
+                      url={window.location.host.includes('staging')? "http://nxt3.staging.lizard.net/wms/" : "http://demo.lizard.net/wms/"}
                       // @ts-ignore
                       layers={configuration.originalHeatstressLayer}
                       // @ts-ignore
@@ -549,12 +552,12 @@ const ExportDoc: React.FC<Props> = ({
                   >
                     <TileLayer
                       // @ts-ignore
-                      url={`https://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${configuration.mapboxAccessToken}`}
+                      url={`http://api.mapbox.com/styles/v1/nelenschuurmans/ck8sgpk8h25ql1io2ccnueuj6/tiles/256/{z}/{x}/{y}@2x?access_token=${configuration.mapboxAccessToken}`}
                       zIndex={0}
                     />
                     <WMSTileLayer
                       key="heatstress-original"
-                      url="http://nxt3.staging.lizard.net/wms/"
+                      url={window.location.host.includes('staging')? "http://nxt3.staging.lizard.net/wms/" : "http://demo.lizard.net/wms/"}
                       // @ts-ignore
                       layers={mapState.templatedLayer!}
                       // @ts-ignore
@@ -562,7 +565,7 @@ const ExportDoc: React.FC<Props> = ({
                       updateWhenIdle={true}
                       updateWhenZooming={false}
                       updateInterval={1000}
-                      onload={()=>{
+                      onload={(event)=>{
                         setwms2Loaded(true);
                       }}
                     />
@@ -616,11 +619,13 @@ const ExportDoc: React.FC<Props> = ({
                     />
                     <WMSTileLayer
                       key="heatstress-original"
-                      url="http://nxt3.staging.lizard.net/wms/"
+                      url={window.location.host.includes('staging')? "http://nxt3.staging.lizard.net/wms/" : "http://demo.lizard.net/wms/"}
                       // @ts-ignore
-                      layers={configuration.originalHeatstressLayer}
+                      // layers={configuration.originalHeatstressLayer}
+                      layers={mapState.templatedDifferenceLayer!}
                       // @ts-ignore
-                      styles={configuration.heatstressStyle}
+                      styles={"pet_heatstress:-10:+10"}
+                      // styles={configuration.heatstressStyle}
                       updateWhenIdle={true}
                       updateWhenZooming={false}
                       updateInterval={1000}
@@ -636,8 +641,8 @@ const ExportDoc: React.FC<Props> = ({
                         };
                       }}
                     />
-                     {legendSteps !== null && configuration !==null && (
-                      <Legend steps={legendSteps} style={configuration.heatstressStyle}/>
+                     {differenceLegendSteps !== null && configuration !==null && (
+                      <Legend steps={differenceLegendSteps} style={"pet_heatstress:-10:+10"}/>
                     )}
                   </Map>
                   </div>

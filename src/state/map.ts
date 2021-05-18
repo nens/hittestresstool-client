@@ -25,6 +25,8 @@ interface MapState {
   sliderPos: number; // 0 to 1
   templatedLayer: string | null;
   templatedUuid: string | null,
+  templatedDifferenceLayer: string | null;
+  templatedDifferenceUuid: string | null,
 
   // Popup. We show at most one at a time
   popupLatLng: LatLng | null,
@@ -41,6 +43,8 @@ const INITIAL_STATE = {
   sliderPos: 0.5,
   templatedLayer: null,
   templatedUuid: null,
+  templatedDifferenceLayer: null,
+  templatedDifferenceUuid:  null,
   popupLatLng: null,
   popupType: null,
   popupTree: null,
@@ -51,6 +55,7 @@ const INITIAL_STATE = {
 const SET_WIDTH = 'map/setWidth';
 const SET_SLIDER_POS = 'map/setSliderPos';
 export const RECEIVE_TEMPLATED_LAYER = 'map/receiveTemplatedLayer';
+export const RECEIVE_TEMPLATED_DIFFERENCE_LAYER = 'map/receiveTemplatedDifferenceLayer';
 const CLICK_TREE = 'map/clickTree';
 const CLICK_PAVEMENT = 'map/clickPavement';
 const CLICK_TEMPERATURE = 'map/clickTemperature';
@@ -67,6 +72,12 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
         ...state,
         templatedLayer: action.templatedLayer,
         templatedUuid: action.templatedUuid
+      };
+    case RECEIVE_TEMPLATED_DIFFERENCE_LAYER:
+      return {
+        ...state,
+        templatedDifferenceLayer: action.templatedLayer,
+        templatedDifferenceUuid: action.templatedUuid
       };
     case CLICK_TREE:
       return {
@@ -233,6 +244,27 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
       templatedUuid: json.uuid
     });
     dispatch(addMessage("Hittestresskaart ververst"));
+  }
+
+  const URLDifference = `/api/v4/rasters/02cb4e3d-55de-4c06-9a8c-7f4d63928248/template/`;
+
+  const responseDifference = await fetch(
+    URLDifference, {
+      method: 'POST',
+      body: JSON.stringify({parameters}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responseDifference.status === 201) { // Created
+    const json = await responseDifference.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_DIFFERENCE_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
+    // dispatch(addMessage("Hittestresskaart ververst"));
   }
 };
 
