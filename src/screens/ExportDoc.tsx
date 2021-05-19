@@ -664,7 +664,7 @@ const ExportDoc: React.FC<Props> = ({
                       // layers={configuration.originalHeatstressLayer}
                       layers={mapState.templatedDifferenceLayer!}
                       // @ts-ignore
-                      styles={"pet_heatstress:-10:+10"}
+                      styles={"pet_difference:-5:5"} // {"styles": "pet_difference:-5:5"}
                       // styles={configuration.heatstressStyle}
                       updateWhenIdle={true}
                       updateWhenZooming={false}
@@ -682,7 +682,7 @@ const ExportDoc: React.FC<Props> = ({
                       }}
                     />
                      {differenceLegendSteps !== null && configuration !==null && (
-                      <Legend steps={differenceLegendSteps} style={"pet_heatstress:-10:+10"}/>
+                      <Legend steps={differenceLegendSteps} style={"pet_difference:-5:5"}/>
                     )}
                   </Map>
                   </div>
