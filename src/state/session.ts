@@ -158,7 +158,7 @@ export const fetchConfiguration = (): Thunk => async (dispatch: AppDispatch) => 
 
     dispatch({type: RECEIVE_CONFIGURATION, configuration});
     dispatch(fetchLegend(configuration.heatstressStyle));
-    dispatch(fetchDifferenceLegend("pet_heatstress:-10:+10"));
+    dispatch(fetchDifferenceLegend("pet_difference:-5:5"));
   } else {
     dispatch(addError("Fout bij ophalen Hittestresstool configuratie, " + json.count + " configuraties gevonden."));
   }

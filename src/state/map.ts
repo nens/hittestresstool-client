@@ -259,6 +259,15 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     PavedTag: pavementsPaved
   };
 
+  const parameterWithoutBottomType = { 
+    ...parameters,
+    WaterTag: undefined,
+    GrassTag: undefined,
+    ShrubTag: undefined,
+    SemiPavedTag: undefined,
+    PavedTag: undefined
+  }
+
   const URL = `/api/v4/rasters/${configuration.templateUuid!}/template/`;
 
   const response = await fetch(
@@ -305,7 +314,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
   const responsePercentageShadow = await fetch(
     URLPercentageShadow, {
       method: 'POST',
-      body: JSON.stringify({parameters}),
+      body: JSON.stringify({parameterWithoutBottomType}),
       headers: {'Content-Type': 'application/json'}
     }
   );
@@ -325,7 +334,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
   const responsePercentageTrees = await fetch(
     URLPercentageTrees, {
       method: 'POST',
-      body: JSON.stringify({parameters}),
+      body: JSON.stringify({parameterWithoutBottomType}),
       headers: {'Content-Type': 'application/json'}
     }
   );
