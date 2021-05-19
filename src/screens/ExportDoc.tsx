@@ -74,6 +74,7 @@ const ExportDoc: React.FC<Props> = ({
   const [averageTempBeforeMeasurements,setAverageTempBeforeMeasurements] = useState<null | string>(null);
   const [reportMapBounds, setReportMapBounds] = useState<L.LatLngBounds | null>(null);
   const [averageOriginalShadow, setAverageOriginalShadow] = useState<null | string>(null);
+  const [averageNewShadow, setAverageNewShadow] = useState<null | string>(null);
   const [percentageTrees, setPercentageTrees] = useState<null | string>(null);
   const [fractionUnpaved, setFractionUnpaved] = useState<null | string>(null);
 
@@ -308,6 +309,9 @@ const ExportDoc: React.FC<Props> = ({
       }
       if (true) {
         fetchMean("8480a74a-ab21-43bc-a1e0-41d38467bc65", setFractionUnpaved, 2);
+      }
+      if (mapState.templatedUuidPercentageShadow) {
+        fetchMean(mapState.templatedUuidPercentageShadow, setAverageNewShadow, 2);
       }
     }
   }, [docRequested]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -763,7 +767,7 @@ const ExportDoc: React.FC<Props> = ({
                         {`${parseFloat(averageOriginalShadow || "0")*100}%`}
                       </td>
                       <td>
-                        40%
+                      {`${parseFloat(averageNewShadow || "0")*100}%`}
                       </td>
                     </tr>
                     <tr>

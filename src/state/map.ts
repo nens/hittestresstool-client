@@ -25,6 +25,8 @@ interface MapState {
   sliderPos: number; // 0 to 1
   templatedLayer: string | null;
   templatedUuid: string | null,
+  templatedLayerPercentageShadow: string | null;
+  templatedUuidPercentageShadow: string | null,
   templatedDifferenceLayer: string | null;
   templatedDifferenceUuid: string | null,
 
@@ -45,6 +47,8 @@ const INITIAL_STATE = {
   templatedUuid: null,
   templatedDifferenceLayer: null,
   templatedDifferenceUuid:  null,
+  templatedLayerPercentageShadow: null,
+  templatedUuidPercentageShadow: null,
   popupLatLng: null,
   popupType: null,
   popupTree: null,
@@ -56,6 +60,7 @@ const SET_WIDTH = 'map/setWidth';
 const SET_SLIDER_POS = 'map/setSliderPos';
 export const RECEIVE_TEMPLATED_LAYER = 'map/receiveTemplatedLayer';
 export const RECEIVE_TEMPLATED_DIFFERENCE_LAYER = 'map/receiveTemplatedDifferenceLayer';
+export const RECEIVE_TEMPLATED_PERCENTAGE_SHADOW_LAYER = 'map/receiveTemplatedPercentageShadowLayer';
 const CLICK_TREE = 'map/clickTree';
 const CLICK_PAVEMENT = 'map/clickPavement';
 const CLICK_TEMPERATURE = 'map/clickTemperature';
@@ -78,6 +83,12 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
         ...state,
         templatedDifferenceLayer: action.templatedLayer,
         templatedDifferenceUuid: action.templatedUuid
+      };
+    case RECEIVE_TEMPLATED_PERCENTAGE_SHADOW_LAYER:
+      return {
+        ...state,
+        templatedLayerPercentageShadow: action.templatedLayer,
+        templatedUuidPercentageShadow: action.templatedUuid
       };
     case CLICK_TREE:
       return {
@@ -261,6 +272,26 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
 
     dispatch({
       type: RECEIVE_TEMPLATED_DIFFERENCE_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
+    // dispatch(addMessage("Hittestresskaart ververst"));
+  }
+  const URLPercentageShadow = `/api/v4/rasters/66cfcd47-fa0c-4533-88e0-839743cabbb8/template/`;
+
+  const responsePercentageShadow = await fetch(
+    URLPercentageShadow, {
+      method: 'POST',
+      body: JSON.stringify({parameters}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responsePercentageShadow.status === 201) { // Created
+    const json = await responsePercentageShadow.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_PERCENTAGE_SHADOW_LAYER,
       templatedLayer: json.wms_info.layer,
       templatedUuid: json.uuid
     });
