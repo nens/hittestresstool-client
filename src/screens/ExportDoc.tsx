@@ -18,6 +18,7 @@ import {
 import {
   getOpenBlock,
   getChangesMade,
+  getChangesProcessed,
   clickBlockReport,
   getEditing,
   startEditingReportPolygon,
@@ -56,6 +57,7 @@ const ExportDoc: React.FC<Props> = ({
 }) => {
   const mapState = useSelector(getMapState);
   const changesMade = useSelector(getChangesMade);
+  const changesProcessed = useSelector(getChangesProcessed)
   const anyTreesOrPavements = useSelector(getAnyTreesOrPavements);
   const configuration = useSelector(getConfiguration);
   const templatedUuid = useSelector(getTemplatedUuid);
@@ -253,6 +255,9 @@ const ExportDoc: React.FC<Props> = ({
       wms1Loaded && wms2Loaded && wms3Loaded && 
       imageData &&
       averageTempBeforeMeasurements && averageTempAfterMeasurements &&
+      averageOriginalShadow && averageNewShadow && 
+      percentageTrees && newPercentageTrees && 
+      fractionUnpaved && newFractionUnpaved &&
       docRequested
       ) {
       // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
@@ -263,10 +268,18 @@ const ExportDoc: React.FC<Props> = ({
         setImagedata(null);
         setAverageTempBeforeMeasurements(null);
         setAverageTempAfterMeasurements(null);
+
+        setAverageOriginalShadow(null);
+        setAverageNewShadow(null);
+        setPercentageTrees(null);
+        setNewPercentageTrees(null);
+        setFractionUnpaved(null);
+        setNewFractionUnpaved(null);
+
       },3000);
       
     }
-  }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested, averageTempBeforeMeasurements, averageTempAfterMeasurements]);
+  }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested, averageTempBeforeMeasurements, averageTempAfterMeasurements, averageOriginalShadow, averageNewShadow, percentageTrees, newPercentageTrees, fractionUnpaved, newFractionUnpaved]);
 
   useEffect(() => {
         setwms2Loaded(false);
@@ -295,7 +308,7 @@ const ExportDoc: React.FC<Props> = ({
 
   
   useEffect(() => {
-    if ( docRequested) {
+    if ( docRequested && changesProcessed) {
       fetchChartData();
       if (configuration?.templateUuid) {
         fetchMean(configuration.templateUuid, setAverageTempBeforeMeasurements, 1);
@@ -322,7 +335,7 @@ const ExportDoc: React.FC<Props> = ({
         fetchMean(mapState.templatedPavedUuid, setNewFractionUnpaved, 2);
       }
     }
-  }, [docRequested]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [docRequested, changesProcessed]); // eslint-disable-line react-hooks/exhaustive-deps
   
 
   return (
@@ -330,7 +343,10 @@ const ExportDoc: React.FC<Props> = ({
       title="Export"
       icon={<DownloadIcon/>}
       status={
-         !anyTreesOrPavements || changesMade || !templatedUuid ? "disabled" : openBlock === 'report' ? "opened" :  "closed"
+         !anyTreesOrPavements || changesMade || !templatedUuid || 
+         !mapState.templatedDifferenceLayer || !mapState.templatedTreesUuid || !mapState.templatedUuidPercentageShadow || !mapState.templatedPavedUuid   ? 
+          "disabled" : 
+          openBlock === 'report' ? "opened" :  "closed"
         //  "opened"
       } 
       onOpen={()=>{
@@ -772,10 +788,10 @@ const ExportDoc: React.FC<Props> = ({
                       </td>
                       <td>
                         {/* 20% */}
-                        {`${parseFloat(averageOriginalShadow || "0")*100}%`}
+                        {`${(parseFloat(averageOriginalShadow || "0")*100).toFixed(0)}%`}
                       </td>
                       <td>
-                      {`${parseFloat(averageNewShadow || "0")*100}%`}
+                      {`${(parseFloat(averageNewShadow || "0")*100).toFixed(0)}%`}
                       </td>
                     </tr>
                     <tr>
@@ -796,11 +812,11 @@ const ExportDoc: React.FC<Props> = ({
                       </td>
                       <td>
                         {/* 30/70 */}
-                        {fractionUnpaved === null? "": `${parseFloat(fractionUnpaved || "0")*100}/${100-(parseFloat(fractionUnpaved || "0")*100)}`}
+                        {fractionUnpaved === null? "": `${(parseFloat(fractionUnpaved || "0")*100).toFixed(0)}/${(100-(parseFloat(fractionUnpaved || "0")*100)).toFixed(0)}`}
                       </td>
                       <td>
                         {/* 30/70 */}
-                        {newFractionUnpaved === null? "": `${parseFloat(newFractionUnpaved || "0")*100}/${100-(parseFloat(newFractionUnpaved || "0")*100)}`}
+                        {newFractionUnpaved === null? "": `${(parseFloat(newFractionUnpaved || "0")*100).toFixed(0)}/${(100-(parseFloat(newFractionUnpaved || "0")*100)).toFixed(0)}`}
                       </td>
                     </tr>
               </tbody>

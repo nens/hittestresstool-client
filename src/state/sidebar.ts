@@ -31,6 +31,7 @@ interface SidebarState {
   selectedTree: Tree;
   selectedPavement: Pavement;
   changesMade: boolean;
+  changesProcessed: boolean;
   heatstressUpdated: boolean;
 }
 
@@ -40,6 +41,7 @@ const INITIAL_STATE: SidebarState = {
   selectedTree: "tree_5m",
   selectedPavement: "grass",
   changesMade: false,
+  changesProcessed: false,
   heatstressUpdated: false,
 };
 
@@ -62,6 +64,7 @@ export const CANCEL_EDITING_REPORT_POLYGON = "sidebar/cancelEditingReportPolygon
 export const SUBMIT_EDITING_REPORT_POLYGON = "sidebar/submitEditingReportPolygon";
 export const UNDO_EDITING_REPORT_POLYGON = "sidebar/undoEditingReportPolygon";
 export const SENDING_CHANGES = "sidebar/sendingChanges";
+export const CHANGES_PROCESSED_BY_BACKEND = 'sidebar/changesProcessedByBackend'
 export const CHANGES_MADE = "sidebar/CHANGES_MADE";
 
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
@@ -122,7 +125,8 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       return {
         ...state,
         editing: false,
-        changesMade: true
+        changesMade: true,
+        changesProcessed: false,
       };
     case SUBMIT_EDITING_REPORT_POLYGON:
       return {
@@ -133,6 +137,7 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       return {
         ...state,
         changesMade: true,
+        changesProcessed: false,
       };
     case CANCEL_EDITING_PAVEMENTS:
     case CANCEL_EDITING_TREES:
@@ -163,6 +168,17 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
         ...state,
         changesMade: false
       };
+    case CHANGES_PROCESSED_BY_BACKEND: 
+      if (state.changesMade === false) {
+        return {
+          ...state,
+          changesProcessed: true,
+  
+        };
+      } else { // if new changes are made and thus state.changesMade === truen then this CHANGES_PROCESSED_BY_BACKEND is not about the latest changes anymore so do nothing
+        return { ...state }
+      }
+      
     default:
       return state;
   }
@@ -198,6 +214,9 @@ export const getHeatstressUpdated = (state: AppState): boolean => {
 
 export const getChangesMade = (state: AppState): boolean => (
   state.sidebar.changesMade
+);
+export const getChangesProcessed = (state: AppState): boolean => (
+  state.sidebar.changesProcessed
 );
 
 export const getAnyTreesOrPavements = (state: AppState): boolean => {

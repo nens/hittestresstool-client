@@ -9,7 +9,8 @@ import {
   CLICK_HEAT_STRESS,
   CLICK_BLOCK_TREES,
   CLICK_BLOCK_PAVEMENTS,
-  SENDING_CHANGES
+  SENDING_CHANGES,
+  CHANGES_PROCESSED_BY_BACKEND,
 } from './sidebar';
 import {
   addMessage
@@ -360,9 +361,10 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     });
     // dispatch(addMessage("Hittestresskaart ververst"));
   }
+  dispatch({type: CHANGES_PROCESSED_BY_BACKEND});
 };
 
-// Clciks for popups
+// Clicks for popups
 
 export const clickTree = (latlng: LatLng, tree: TreeOnMap) => {
   return {
