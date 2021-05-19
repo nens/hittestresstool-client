@@ -25,10 +25,14 @@ interface MapState {
   sliderPos: number; // 0 to 1
   templatedLayer: string | null;
   templatedUuid: string | null,
-  templatedLayerPercentageShadow: string | null;
-  templatedUuidPercentageShadow: string | null,
   templatedDifferenceLayer: string | null;
   templatedDifferenceUuid: string | null,
+  templatedLayerPercentageShadow: string | null;
+  templatedUuidPercentageShadow: string | null,
+  templatedTreesLayer: string | null;
+  templatedTreesUuid: string | null,
+  templatedPavedLayer: string | null;
+  templatedPavedUuid: string | null,
 
   // Popup. We show at most one at a time
   popupLatLng: LatLng | null,
@@ -49,6 +53,10 @@ const INITIAL_STATE = {
   templatedDifferenceUuid:  null,
   templatedLayerPercentageShadow: null,
   templatedUuidPercentageShadow: null,
+  templatedTreesLayer: null,
+  templatedTreesUuid:null,
+  templatedPavedLayer: null,
+  templatedPavedUuid:null,
   popupLatLng: null,
   popupType: null,
   popupTree: null,
@@ -61,6 +69,8 @@ const SET_SLIDER_POS = 'map/setSliderPos';
 export const RECEIVE_TEMPLATED_LAYER = 'map/receiveTemplatedLayer';
 export const RECEIVE_TEMPLATED_DIFFERENCE_LAYER = 'map/receiveTemplatedDifferenceLayer';
 export const RECEIVE_TEMPLATED_PERCENTAGE_SHADOW_LAYER = 'map/receiveTemplatedPercentageShadowLayer';
+export const RECEIVE_TEMPLATED_TREES_LAYER = 'map/receiveTemplatedTreesLayer';
+export const RECEIVE_TEMPLATED_PAVEMENT_LAYER = 'map/receiveTemplatedPavementLayer';
 const CLICK_TREE = 'map/clickTree';
 const CLICK_PAVEMENT = 'map/clickPavement';
 const CLICK_TEMPERATURE = 'map/clickTemperature';
@@ -89,6 +99,18 @@ export default function reducer(state: MapState=INITIAL_STATE, action: AnyAction
         ...state,
         templatedLayerPercentageShadow: action.templatedLayer,
         templatedUuidPercentageShadow: action.templatedUuid
+      };
+    case RECEIVE_TEMPLATED_TREES_LAYER:
+      return {
+        ...state,
+        templatedTreesLayer: action.templatedLayer,
+        templatedTreesUuid: action.templatedUuid
+      };
+    case RECEIVE_TEMPLATED_PAVEMENT_LAYER:
+      return {
+        ...state,
+        templatedPavedLayer: action.templatedLayer,
+        templatedPavedUuid: action.templatedUuid
       };
     case CLICK_TREE:
       return {
@@ -292,6 +314,47 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
 
     dispatch({
       type: RECEIVE_TEMPLATED_PERCENTAGE_SHADOW_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
+    // dispatch(addMessage("Hittestresskaart ververst"));
+  }
+  const URLPercentageTrees = `/api/v4/rasters/fcefa3c0-b538-4648-97e1-b72135918c3f/template/`;
+
+  const responsePercentageTrees = await fetch(
+    URLPercentageTrees, {
+      method: 'POST',
+      body: JSON.stringify({parameters}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responsePercentageTrees.status === 201) { // Created
+    const json = await responsePercentageTrees.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_TREES_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
+    // dispatch(addMessage("Hittestresskaart ververst"));
+  }
+
+  const URLPercentagePaved = `/api/v4/rasters/76bfd395-ffb3-420e-aceb-c42d1e7bc581/template/`;
+
+  const responsePercentagePaved = await fetch(
+    URLPercentagePaved, {
+      method: 'POST',
+      body: JSON.stringify({parameters}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responsePercentagePaved.status === 201) { // Created
+    const json = await responsePercentagePaved.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_PAVEMENT_LAYER,
       templatedLayer: json.wms_info.layer,
       templatedUuid: json.uuid
     });

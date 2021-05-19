@@ -76,7 +76,9 @@ const ExportDoc: React.FC<Props> = ({
   const [averageOriginalShadow, setAverageOriginalShadow] = useState<null | string>(null);
   const [averageNewShadow, setAverageNewShadow] = useState<null | string>(null);
   const [percentageTrees, setPercentageTrees] = useState<null | string>(null);
+  const [newPercentageTrees, setNewPercentageTrees] = useState<null | string>(null);
   const [fractionUnpaved, setFractionUnpaved] = useState<null | string>(null);
+  const [newFractionUnpaved, setNewFractionUnpaved] = useState<null | string>(null);
 
   const editingReportPolygon = openBlock === 'report' && editing;
 
@@ -312,6 +314,12 @@ const ExportDoc: React.FC<Props> = ({
       }
       if (mapState.templatedUuidPercentageShadow) {
         fetchMean(mapState.templatedUuidPercentageShadow, setAverageNewShadow, 2);
+      }
+      if (mapState.templatedTreesUuid) {
+        fetchMean(mapState.templatedTreesUuid, setNewPercentageTrees, 2);
+      }
+      if (mapState.templatedPavedUuid) {
+        fetchMean(mapState.templatedPavedUuid, setNewFractionUnpaved, 2);
       }
     }
   }, [docRequested]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -779,7 +787,7 @@ const ExportDoc: React.FC<Props> = ({
                         {`${percentageTrees || 0}%`}
                       </td>
                       <td>
-                        15%
+                      {`${newPercentageTrees || 0}%`}
                       </td>
                     </tr>
                     <tr>
@@ -791,7 +799,8 @@ const ExportDoc: React.FC<Props> = ({
                         {fractionUnpaved === null? "": `${parseFloat(fractionUnpaved || "0")*100}/${100-(parseFloat(fractionUnpaved || "0")*100)}`}
                       </td>
                       <td>
-                        30/70
+                        {/* 30/70 */}
+                        {newFractionUnpaved === null? "": `${parseFloat(newFractionUnpaved || "0")*100}/${100-(parseFloat(newFractionUnpaved || "0")*100)}`}
                       </td>
                     </tr>
               </tbody>
