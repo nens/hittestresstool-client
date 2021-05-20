@@ -161,7 +161,8 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
     case REMOVE_PAVEMENT:
       return {
         ...state,
-        changesMade: true
+        changesMade: true,
+        changesProcessed: false,
       };
     case SENDING_CHANGES:
       return {

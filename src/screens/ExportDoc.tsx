@@ -32,6 +32,7 @@ import {
  } from '../state/reportPolygons';
  import TextButton from '../components/TextButton';
  import Pencil from '../icons/Pencil';
+ import PdfIcon from '../icons/PdfIcon';
  import CloseUndoCheckBar from '../components/CloseUndoCheckBar';
 import { curveApiToHistogram, } from '../utils/curveApiToHistogram';
 import * as Plotly from 'plotly.js';
@@ -340,14 +341,12 @@ const ExportDoc: React.FC<Props> = ({
 
   return (
     <Block
-      title="Export"
-      icon={<DownloadIcon/>}
+      title="Rapport"
+      icon={<PdfIcon/>}
       status={
-         !anyTreesOrPavements || changesMade || !templatedUuid || 
-         !mapState.templatedDifferenceLayer || !mapState.templatedTreesUuid || !mapState.templatedUuidPercentageShadow || !mapState.templatedPavedUuid   ? 
+         !anyTreesOrPavements || changesMade || !templatedUuid || !changesProcessed || (editing && openBlock !== 'report') ? 
           "disabled" : 
           openBlock === 'report' ? "opened" :  "closed"
-        //  "opened"
       } 
       onOpen={()=>{
         clickBlockReport();
