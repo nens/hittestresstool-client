@@ -289,7 +289,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     dispatch(addMessage("Hittestresskaart ververst"));
   }
 
-  const URLDifference = `/api/v4/rasters/02cb4e3d-55de-4c06-9a8c-7f4d63928248/template/`;
+  const URLDifference = `/api/v4/rasters/${configuration.differenceTemplateUuid}/template/`;
 
   const responseDifference = await fetch(
     URLDifference, {
@@ -309,12 +309,12 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     });
     // dispatch(addMessage("Hittestresskaart ververst"));
   }
-  const URLPercentageShadow = `/api/v4/rasters/66cfcd47-fa0c-4533-88e0-839743cabbb8/template/`;
+  const URLPercentageShadow = `/api/v4/rasters/${configuration.interactiveShadeTemplateUuid}/template/`;
 
   const responsePercentageShadow = await fetch(
     URLPercentageShadow, {
       method: 'POST',
-      body: JSON.stringify({parameterWithoutBottomType}),
+      body: JSON.stringify({parameters: parameterWithoutBottomType}),
       headers: {'Content-Type': 'application/json'}
     }
   );
@@ -329,12 +329,12 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     });
     // dispatch(addMessage("Hittestresskaart ververst"));
   }
-  const URLPercentageTrees = `/api/v4/rasters/fcefa3c0-b538-4648-97e1-b72135918c3f/template/`;
+  const URLPercentageTrees = `/api/v4/rasters/${configuration.interactiveTreesTemplateUuid}/template/`;
 
   const responsePercentageTrees = await fetch(
     URLPercentageTrees, {
       method: 'POST',
-      body: JSON.stringify({parameterWithoutBottomType}),
+      body: JSON.stringify({parameters: parameterWithoutBottomType}),
       headers: {'Content-Type': 'application/json'}
     }
   );
@@ -350,7 +350,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     // dispatch(addMessage("Hittestresskaart ververst"));
   }
 
-  const URLPercentagePaved = `/api/v4/rasters/76bfd395-ffb3-420e-aceb-c42d1e7bc581/template/`;
+  const URLPercentagePaved = `/api/v4/rasters/${configuration.interactivePavedTemplateUuid}/template/`;
 
   const responsePercentagePaved = await fetch(
     URLPercentagePaved, {

@@ -32,7 +32,20 @@ interface Configuration {
   templateUuid: string,
   heatstressStyle: string,
   treesStyle: string,
-  pavementsStyle: string
+  pavementsStyle: string,
+
+  differenceTemplateUuid: string,
+  differenceMapStyle: string,
+   
+  originalShadeRasterUuid: string,
+  interactiveShadeTemplateUuid: string,
+
+   originalTreesRasterUuid: string,
+   interactiveTreesTemplateUuid: string,
+
+   originalPavedRasterUuid: string,
+   interactivePavedTemplateUuid: string,
+
 }
 
 export interface LegendStep {
@@ -158,7 +171,7 @@ export const fetchConfiguration = (): Thunk => async (dispatch: AppDispatch) => 
 
     dispatch({type: RECEIVE_CONFIGURATION, configuration});
     dispatch(fetchLegend(configuration.heatstressStyle));
-    dispatch(fetchDifferenceLegend("pet_difference:-5:5"));
+    dispatch(fetchDifferenceLegend(configuration.differenceMapStyle));
   } else {
     dispatch(addError("Fout bij ophalen Hittestresstool configuratie, " + json.count + " configuraties gevonden."));
   }

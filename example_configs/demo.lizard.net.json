@@ -30,6 +30,7 @@
    "originalHeatstressLayer":"nelen-schuurmans:interactive-heat-stress-model",
    
    "differenceTemplateUuid": "02cb4e3d-55de-4c06-9a8c-7f4d63928248",
+   "differenceMapStyle": "pet_difference:-5:5",
    
    "originalShadeRasterUuid": "01d306ad-62a5-410d-aa47-37f01583cbce",
    "interactiveShadeTemplateUuid": "66cfcd47-fa0c-4533-88e0-839743cabbb8",

@@ -316,14 +316,14 @@ const ExportDoc: React.FC<Props> = ({
       if (templatedUuid) {
         fetchMean(templatedUuid, setAverageTempAfterMeasurements, 1);
       }
-      if (true) {
-        fetchMean("01d306ad-62a5-410d-aa47-37f01583cbce", setAverageOriginalShadow, 2);
+      if (configuration?.originalShadeRasterUuid) {
+        fetchMean(configuration.originalShadeRasterUuid, setAverageOriginalShadow, 2);
       }
-      if (true) {
-        fetchMean("107a9b9b-5787-4bb0-8818-f05afe6560ab", setPercentageTrees, 0);
+      if (configuration?.originalTreesRasterUuid) {
+        fetchMean(configuration.originalTreesRasterUuid, setPercentageTrees, 0);
       }
-      if (true) {
-        fetchMean("8480a74a-ab21-43bc-a1e0-41d38467bc65", setFractionUnpaved, 2);
+      if (configuration?.originalPavedRasterUuid) {
+        fetchMean(configuration.originalPavedRasterUuid, setFractionUnpaved, 2);
       }
       if (mapState.templatedUuidPercentageShadow) {
         fetchMean(mapState.templatedUuidPercentageShadow, setAverageNewShadow, 2);
@@ -664,7 +664,7 @@ const ExportDoc: React.FC<Props> = ({
                       // layers={configuration.originalHeatstressLayer}
                       layers={mapState.templatedDifferenceLayer!}
                       // @ts-ignore
-                      styles={"pet_difference:-5:5"} // {"styles": "pet_difference:-5:5"}
+                      styles={configuration.differenceMapStyle}
                       // styles={configuration.heatstressStyle}
                       updateWhenIdle={true}
                       updateWhenZooming={false}
@@ -682,7 +682,7 @@ const ExportDoc: React.FC<Props> = ({
                       }}
                     />
                      {differenceLegendSteps !== null && configuration !==null && (
-                      <Legend steps={differenceLegendSteps} style={"pet_difference:-5:5"}/>
+                      <Legend steps={differenceLegendSteps} style={configuration.differenceMapStyle}/>
                     )}
                   </Map>
                   </div>
