@@ -1,7 +1,6 @@
 import React, {useState, useEffect,}  from 'react';
 import { connect, useSelector,  } from 'react-redux';
 import Block, { IconRow } from '../components/Block';
-import DownloadIcon from '../icons/Download';
 import {
   Map, TileLayer, WMSTileLayer,GeoJSON
 } from 'react-leaflet';
