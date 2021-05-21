@@ -31,7 +31,7 @@ const BlockCalculate: React.FC<Props> = ({clickCalculate, calculateReportData}) 
       status={editing || !changesMade ? "disabled" : "closed"}
       onOpen={()=>{
         clickCalculate();
-        calculateReportData();
+        // calculateReportData();
       }} />
   );
 };

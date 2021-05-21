@@ -8,6 +8,7 @@ import {getConfiguration, getLegendSteps, getDifferenceLegendSteps} from '../sta
 import Legend from '../components/LegendPdf';
 import Leaflet  from 'leaflet';
 import {
+  calculateReportData,
   getMapState,
   getTemplatedUuid,
 } from '../state/map';
@@ -49,6 +50,7 @@ interface Props {
   submitEditingReportPolygon: () => void,
   setReportRequested: () => void,
   setReportReady: () => void,
+  calculateReportData: () => void,
 }
 
 const ExportDoc: React.FC<Props> = ({
@@ -60,6 +62,7 @@ const ExportDoc: React.FC<Props> = ({
   submitEditingReportPolygon,
   setReportRequested,
   setReportReady,
+  calculateReportData,
 }) => {
   const mapState = useSelector(getMapState);
   const changesMade = useSelector(getChangesMade);
@@ -286,8 +289,9 @@ const ExportDoc: React.FC<Props> = ({
       },3000);
       
     }
-  }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested, averageTempBeforeMeasurements, averageTempAfterMeasurements, averageOriginalShadow, averageNewShadow, percentageTrees, newPercentageTrees, fractionUnpaved, newFractionUnpaved]);
+  }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested, averageTempBeforeMeasurements, averageTempAfterMeasurements, averageOriginalShadow, averageNewShadow, percentageTrees, newPercentageTrees, fractionUnpaved, newFractionUnpaved]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // is there a better way ?
   useEffect(() => {
         setwms2Loaded(false);
         setwms3Loaded(false);
@@ -312,6 +316,12 @@ const ExportDoc: React.FC<Props> = ({
       setwms3Loaded(false);
     }
   }, [editingReportPolygon]);
+
+  useEffect(() => {
+    if ( docRequested) {
+      calculateReportData();
+    }
+  }, [docRequested]); // eslint-disable-line react-hooks/exhaustive-deps
 
   
   useEffect(() => {
@@ -350,7 +360,7 @@ const ExportDoc: React.FC<Props> = ({
       title="Rapport"
       icon={<PdfIcon/>}
       status={
-         !anyTreesOrPavements || changesMade || !templatedUuid || !changesProcessed || (editing && openBlock !== 'report') ? 
+         !anyTreesOrPavements || changesMade || !templatedUuid || (editing && openBlock !== 'report') ? 
           "disabled" : 
           openBlock === 'report' ? "opened" :  "closed"
       } 
@@ -855,4 +865,5 @@ export default connect(null, {
   submitEditingReportPolygon,
   setReportRequested,
   setReportReady,
+  calculateReportData,
 })(ExportDoc);
