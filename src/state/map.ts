@@ -211,14 +211,7 @@ function geojsonToMultipolygonWKT(pavements: PavementOnMap[]) {
   ).join(',') + ')';
 }
 
-export const clickCalculate = (): Thunk => async (dispatch, getState) => {
-  const state = getState();
-
-  dispatch({type: SENDING_CHANGES});
-  dispatch(addMessage("Nieuwe hittestresskaart aangevraagd"));
-  const configuration = getConfiguration(state);
-  if (configuration === null) return;
-
+const getGeoblockParameters = (state: AppState) => {
   const trees = state.trees.treesOnMap;
   const pavements = state.pavements.pavementsOnMap;
 
@@ -262,7 +255,11 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     SemiPavedTag: pavementsSemipaved,
     PavedTag: pavementsPaved
   };
+  return parameters;
+}
 
+export const getGeoBlockParametersWithoutBottomData = (state: AppState) => {
+  const parameters = getGeoblockParameters(state);
   const parameterWithoutBottomType = { 
     ...parameters,
     WaterTag: undefined,
@@ -270,7 +267,108 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     ShrubTag: undefined,
     SemiPavedTag: undefined,
     PavedTag: undefined
+  };
+  return parameterWithoutBottomType;
+}
+
+export const calculateReportData = (): Thunk => async (dispatch, getState) => {
+  const state = getState();
+  const configuration = getConfiguration(state);
+  if (configuration === null) return;
+
+  const parameters = getGeoblockParameters(state);
+
+  const parameterWithoutBottomType = getGeoBlockParametersWithoutBottomData(state);
+
+  const URLDifference = `/api/v4/rasters/${configuration.differenceTemplateUuid}/template/`;
+
+  const responseDifference = await fetch(
+    URLDifference, {
+      method: 'POST',
+      body: JSON.stringify({parameters}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responseDifference.status === 201) { // Created
+    const json = await responseDifference.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_DIFFERENCE_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
   }
+  const URLPercentageShadow = `/api/v4/rasters/${configuration.interactiveShadeTemplateUuid}/template/`;
+
+  const responsePercentageShadow = await fetch(
+    URLPercentageShadow, {
+      method: 'POST',
+      body: JSON.stringify({parameters: parameterWithoutBottomType}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responsePercentageShadow.status === 201) { // Created
+    const json = await responsePercentageShadow.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_PERCENTAGE_SHADOW_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
+  }
+  const URLPercentageTrees = `/api/v4/rasters/${configuration.interactiveTreesTemplateUuid}/template/`;
+
+  const responsePercentageTrees = await fetch(
+    URLPercentageTrees, {
+      method: 'POST',
+      body: JSON.stringify({parameters: parameterWithoutBottomType}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responsePercentageTrees.status === 201) { // Created
+    const json = await responsePercentageTrees.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_TREES_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
+  }
+
+  const URLPercentagePaved = `/api/v4/rasters/${configuration.interactivePavedTemplateUuid}/template/`;
+
+  const responsePercentagePaved = await fetch(
+    URLPercentagePaved, {
+      method: 'POST',
+      body: JSON.stringify({parameters}),
+      headers: {'Content-Type': 'application/json'}
+    }
+  );
+
+  if (responsePercentagePaved.status === 201) { // Created
+    const json = await responsePercentagePaved.json();
+
+    dispatch({
+      type: RECEIVE_TEMPLATED_PAVEMENT_LAYER,
+      templatedLayer: json.wms_info.layer,
+      templatedUuid: json.uuid
+    });
+  }
+  dispatch({type: CHANGES_PROCESSED_BY_BACKEND});
+}
+
+export const clickCalculate = (): Thunk => async (dispatch, getState) => {
+  const state = getState();
+
+  dispatch({type: SENDING_CHANGES});
+  dispatch(addMessage("Nieuwe hittestresskaart aangevraagd"));
+  const configuration = getConfiguration(state);
+  if (configuration === null) return;
+
+  const parameters = getGeoblockParameters(state);
 
   const URL = `/api/v4/rasters/${configuration.templateUuid!}/template/`;
 
@@ -301,88 +399,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     dispatch(setChangesMade());
   }
 
-  const URLDifference = `/api/v4/rasters/${configuration.differenceTemplateUuid}/template/`;
-
-  const responseDifference = await fetch(
-    URLDifference, {
-      method: 'POST',
-      body: JSON.stringify({parameters}),
-      headers: {'Content-Type': 'application/json'}
-    }
-  );
-
-  if (responseDifference.status === 201) { // Created
-    const json = await responseDifference.json();
-
-    dispatch({
-      type: RECEIVE_TEMPLATED_DIFFERENCE_LAYER,
-      templatedLayer: json.wms_info.layer,
-      templatedUuid: json.uuid
-    });
-    // dispatch(addMessage("Hittestresskaart ververst"));
-  }
-  const URLPercentageShadow = `/api/v4/rasters/${configuration.interactiveShadeTemplateUuid}/template/`;
-
-  const responsePercentageShadow = await fetch(
-    URLPercentageShadow, {
-      method: 'POST',
-      body: JSON.stringify({parameters: parameterWithoutBottomType}),
-      headers: {'Content-Type': 'application/json'}
-    }
-  );
-
-  if (responsePercentageShadow.status === 201) { // Created
-    const json = await responsePercentageShadow.json();
-
-    dispatch({
-      type: RECEIVE_TEMPLATED_PERCENTAGE_SHADOW_LAYER,
-      templatedLayer: json.wms_info.layer,
-      templatedUuid: json.uuid
-    });
-    // dispatch(addMessage("Hittestresskaart ververst"));
-  }
-  const URLPercentageTrees = `/api/v4/rasters/${configuration.interactiveTreesTemplateUuid}/template/`;
-
-  const responsePercentageTrees = await fetch(
-    URLPercentageTrees, {
-      method: 'POST',
-      body: JSON.stringify({parameters: parameterWithoutBottomType}),
-      headers: {'Content-Type': 'application/json'}
-    }
-  );
-
-  if (responsePercentageTrees.status === 201) { // Created
-    const json = await responsePercentageTrees.json();
-
-    dispatch({
-      type: RECEIVE_TEMPLATED_TREES_LAYER,
-      templatedLayer: json.wms_info.layer,
-      templatedUuid: json.uuid
-    });
-    // dispatch(addMessage("Hittestresskaart ververst"));
-  }
-
-  const URLPercentagePaved = `/api/v4/rasters/${configuration.interactivePavedTemplateUuid}/template/`;
-
-  const responsePercentagePaved = await fetch(
-    URLPercentagePaved, {
-      method: 'POST',
-      body: JSON.stringify({parameters}),
-      headers: {'Content-Type': 'application/json'}
-    }
-  );
-
-  if (responsePercentagePaved.status === 201) { // Created
-    const json = await responsePercentagePaved.json();
-
-    dispatch({
-      type: RECEIVE_TEMPLATED_PAVEMENT_LAYER,
-      templatedLayer: json.wms_info.layer,
-      templatedUuid: json.uuid
-    });
-    // dispatch(addMessage("Hittestresskaart ververst"));
-  }
-  dispatch({type: CHANGES_PROCESSED_BY_BACKEND});
+  
 };
 
 // Clicks for popups

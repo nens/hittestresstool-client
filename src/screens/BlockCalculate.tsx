@@ -9,14 +9,16 @@ import {
   getChangesMade
 } from '../state/sidebar';
 import {
-  clickCalculate
+  clickCalculate,
+  calculateReportData,
 } from '../state/map';
 
 interface Props {
-  clickCalculate: () => void
+  clickCalculate: () => void,
+  calculateReportData: () => void,
 }
 
-const BlockCalculate: React.FC<Props> = ({clickCalculate}) => {
+const BlockCalculate: React.FC<Props> = ({clickCalculate, calculateReportData}) => {
   const editing = useSelector(getEditing);
   const changesMade = useSelector(getChangesMade);
 
@@ -27,8 +29,11 @@ const BlockCalculate: React.FC<Props> = ({clickCalculate}) => {
       }
       icon={<Reload/>}
       status={editing || !changesMade ? "disabled" : "closed"}
-      onOpen={clickCalculate} />
+      onOpen={()=>{
+        clickCalculate();
+        calculateReportData();
+      }} />
   );
 };
 
-export default connect(null, {clickCalculate})(BlockCalculate);
+export default connect(null, {clickCalculate,calculateReportData})(BlockCalculate);
