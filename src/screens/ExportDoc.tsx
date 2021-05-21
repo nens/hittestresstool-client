@@ -321,10 +321,10 @@ const ExportDoc: React.FC<Props> = ({
         fetchMean(configuration.originalShadeRasterUuid, setAverageOriginalShadow, 2);
       }
       if (configuration?.originalTreesRasterUuid) {
-        fetchMean(configuration.originalTreesRasterUuid, setPercentageTrees, 0);
+        fetchMean(configuration.originalTreesRasterUuid, setPercentageTrees, 4);
       }
       if (configuration?.originalPavedRasterUuid) {
-        fetchMean(configuration.originalPavedRasterUuid, setFractionUnpaved, 2);
+        fetchMean(configuration.originalPavedRasterUuid, setFractionUnpaved, 4);
       }
       if (mapState.templatedUuidPercentageShadow) {
         fetchMean(mapState.templatedUuidPercentageShadow, setAverageNewShadow, 2);
@@ -799,10 +799,10 @@ const ExportDoc: React.FC<Props> = ({
                       </td>
                       <td>
                         {/* 10% */}
-                        {`${percentageTrees || 0}%`}
+                        {`${(parseFloat(percentageTrees || "0")*100).toFixed(0)}%`}
                       </td>
                       <td>
-                      {`${newPercentageTrees || 0}%`}
+                      {`${(parseFloat(newPercentageTrees || "0")*100).toFixed(0)}%`}
                       </td>
                     </tr>
                     <tr>
