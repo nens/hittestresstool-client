@@ -32,6 +32,7 @@ interface SidebarState {
   selectedPavement: Pavement;
   changesMade: boolean;
   changesProcessed: boolean;
+  reportRequested: boolean;
   heatstressUpdated: boolean;
 }
 
@@ -42,6 +43,7 @@ const INITIAL_STATE: SidebarState = {
   selectedPavement: "grass",
   changesMade: false,
   changesProcessed: false,
+  reportRequested: false,
   heatstressUpdated: false,
 };
 
@@ -66,6 +68,8 @@ export const UNDO_EDITING_REPORT_POLYGON = "sidebar/undoEditingReportPolygon";
 export const SENDING_CHANGES = "sidebar/sendingChanges";
 export const CHANGES_PROCESSED_BY_BACKEND = 'sidebar/changesProcessedByBackend'
 export const CHANGES_MADE = "sidebar/CHANGES_MADE";
+export const REPORT_REQUESTED = "sidebar/REPORT_REQUESTED";
+export const REPORT_READY = "sidebar/REPORT_READY";
 
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
   const type = action.type;
@@ -179,7 +183,16 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       } else { // if new changes are made and thus state.changesMade === truen then this CHANGES_PROCESSED_BY_BACKEND is not about the latest changes anymore so do nothing
         return { ...state }
       }
-      
+    case REPORT_REQUESTED:
+      return {
+        ...state,
+        reportRequested: true,
+      };
+    case REPORT_READY:
+      return {
+        ...state,
+        reportRequested: false,
+      };
     default:
       return state;
   }
@@ -218,6 +231,9 @@ export const getChangesMade = (state: AppState): boolean => (
 );
 export const getChangesProcessed = (state: AppState): boolean => (
   state.sidebar.changesProcessed
+);
+export const getReportRequested = (state: AppState): boolean => (
+  state.sidebar.reportRequested
 );
 
 export const getAnyTreesOrPavements = (state: AppState): boolean => {
@@ -346,6 +362,17 @@ export const undoEditingReportPolygon = () => {
 export const setChangesMade = () => {
   return {
     type: CHANGES_MADE,
+  };
+}
+
+export const setReportRequested = () => {
+  return {
+    type: REPORT_REQUESTED,
+  };
+}
+export const setReportReady = () => {
+  return {
+    type: REPORT_READY,
   };
 }
 

@@ -1,5 +1,5 @@
 import React  from 'react';
-import { connect, } from 'react-redux';
+import { connect, useSelector, } from 'react-redux';
 import Block from '../components/Block';
 import UploadIcon from '../icons/Upload';
  import {
@@ -11,6 +11,7 @@ import {
 } from '../state/trees';
 import {
   Tree,
+  getReportRequested,
 } from '../state/sidebar';
 import {
   addPavementFeaturesList,
@@ -42,13 +43,13 @@ const ImportGeoJson: React.FC<Props> = ({
   addReportPolygonFeaturesList,
   setChangesMade,
 }) => {
-
+  const reportRequested = useSelector(getReportRequested)
   
   return (
     <Block
       title="Import GeoJSON"
       icon={<UploadIcon/>}
-      status={"closed"} 
+      status={reportRequested? "disabled":"closed"} 
       onClick={()=>{
         const input = document.createElement('input');
         input.type = 'file';

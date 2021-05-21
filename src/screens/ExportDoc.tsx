@@ -25,6 +25,8 @@ import {
   submitEditingReportPolygon,
   undoEditingReportPolygon,
   getAnyTreesOrPavements,
+  setReportRequested,
+  setReportReady,
  } from '../state/sidebar';
  import {
   getReportPolygonsOnMap,
@@ -45,6 +47,8 @@ interface Props {
   cancelEditingReportPolygon: () => void,
   undoEditingReportPolygon: () => void,
   submitEditingReportPolygon: () => void,
+  setReportRequested: () => void,
+  setReportReady: () => void,
 }
 
 const ExportDoc: React.FC<Props> = ({
@@ -54,6 +58,8 @@ const ExportDoc: React.FC<Props> = ({
   cancelEditingReportPolygon,
   undoEditingReportPolygon,
   submitEditingReportPolygon,
+  setReportRequested,
+  setReportReady,
 }) => {
   const mapState = useSelector(getMapState);
   const changesMade = useSelector(getChangesMade);
@@ -243,6 +249,7 @@ const ExportDoc: React.FC<Props> = ({
       linkFont.href = "https://fonts.googleapis.com/css?family=Montserrat";
       newWindow.document.body.appendChild(linkFont);
 
+      setReportReady();
       
     } else {
       alert('failed to export. Are you blocking popup windows?');
@@ -400,6 +407,7 @@ const ExportDoc: React.FC<Props> = ({
               onClick={()=>{
                 if (!docRequested) {
                   addMessage("Export document aangevraagd");
+                  setReportRequested();
                   setDocRequested(true);
                 }
                 
@@ -845,4 +853,6 @@ export default connect(null, {
   cancelEditingReportPolygon,
   undoEditingReportPolygon,
   submitEditingReportPolygon,
+  setReportRequested,
+  setReportReady,
 })(ExportDoc);

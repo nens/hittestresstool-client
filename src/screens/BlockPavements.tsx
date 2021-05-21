@@ -20,6 +20,7 @@ import {
   cancelEditingPavements,
   submitEditingPavements,
   undoEditingPavements,
+  getReportRequested,
 } from '../state/sidebar';
 
 interface Props {
@@ -42,8 +43,10 @@ const BlockPavements: React.FC<Props> = ({
     const editing = useSelector(getEditing);
   const openBlock = useSelector(getOpenBlock);
   const selectedPavement = useSelector(getSelectedPavement);
+  const reportRequested = useSelector(getReportRequested);
 
-  const blockStatus = openBlock === 'pavements' ? "opened" : editing ? "disabled" : "closed";
+
+  const blockStatus = openBlock === 'pavements' ? "opened" : editing || reportRequested ? "disabled" : "closed";
   const editingPavements = openBlock === 'pavements' && editing;
 
   return (
