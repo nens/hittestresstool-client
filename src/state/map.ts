@@ -272,7 +272,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     PavedTag: undefined
   }
 
-  const URL = `/api/v4/rasters/${configuration.templateUuid!}/template#######/`;
+  const URL = `/api/v4/rasters/${configuration.templateUuid!}/template/`;
 
   const response = await fetch(
     URL, {
