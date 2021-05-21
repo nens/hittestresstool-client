@@ -1,6 +1,10 @@
 import { AnyAction } from 'redux';
 import { AppState, Thunk } from '../App';
 
+export const errorMessageCalculate = `Probeer herberekenen nog eens. \n `
+export const errorMessageRefreshBrowser = `Werkt dit niet? klik dan 'exporteer als GeoJSON' en ververs het browser scherm.`
+export const errorMessageSupport = `Als het probleem zich blijft voordoen neem dan contact op met support: https://nelen-schuurmans.topdesk.net/ `
+
 interface MessageState {
   lastMessage: string;
   lastMessageId: number;

@@ -11,9 +11,13 @@ import {
   CLICK_BLOCK_PAVEMENTS,
   SENDING_CHANGES,
   CHANGES_PROCESSED_BY_BACKEND,
+  setChangesMade
 } from './sidebar';
 import {
-  addMessage
+  addMessage,
+  errorMessageCalculate,
+  errorMessageRefreshBrowser,
+  errorMessageSupport,
 } from './message';
 
 export interface LegendStep {
@@ -268,7 +272,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     PavedTag: undefined
   }
 
-  const URL = `/api/v4/rasters/${configuration.templateUuid!}/template/`;
+  const URL = `/api/v4/rasters/${configuration.templateUuid!}/template#######/`;
 
   const response = await fetch(
     URL, {
@@ -287,6 +291,14 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
       templatedUuid: json.uuid
     });
     dispatch(addMessage("Hittestresskaart ververst"));
+  } else {
+    dispatch(addMessage(
+      `Berekenen hittestresskaart mislukt! \n
+      ${errorMessageCalculate} \n
+      ${errorMessageRefreshBrowser} \n
+      ${errorMessageSupport}`
+    ));
+    dispatch(setChangesMade());
   }
 
   const URLDifference = `/api/v4/rasters/${configuration.differenceTemplateUuid}/template/`;
