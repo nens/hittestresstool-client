@@ -150,14 +150,7 @@ const ExportDoc: React.FC<Props> = ({
         const layout = {
           width: 400, 
           height: 300, 
-          // autosize: false,
-          // margin: {
-          //   l: 30,
-          //   r: 10,
-          //   b: 30,
-          // },
           title: 'Distributie gevoelstemperatuur',
-          // displayodeBar: false,
           
           showlegend: true,
           legend: {
@@ -168,16 +161,12 @@ const ExportDoc: React.FC<Props> = ({
           xaxis: {
             title: {
               text: "temperatuur (°C)",
-              // standoff: 5
             },
           },
           yaxis: {
             title: {
               text: "Percentage (%)",
-              // standoff: 10
             },
-            // exponentformat: "power",
-            // automargin: true,
           },
         };
 
@@ -191,8 +180,6 @@ const ExportDoc: React.FC<Props> = ({
           // We draw the diagram with plotly (not react-plotly) and then use the image data for the pdf, because the css of react-plotly didnot get send correctly to the new browser window
           // @ts-ignore
           Plotly.newPlot('plotly_graph_to_image_id', data, layout, config).then((gd) => {
-            // @ts-ignore  
-          // @ts-ignore  
             // @ts-ignore  
             return Plotly.toImage(gd);
           }).then((dataURI:any) => {
@@ -271,7 +258,6 @@ const ExportDoc: React.FC<Props> = ({
       docRequested
       ) {
       // add extra timeout for wms to properly visualize ?! If I don't do this I get half transparent wms..
-      // comment out temporarily for dev
       window.setTimeout(()=>{
         openAsDocumentInNewWindow();
         setDocRequested(false);
@@ -291,7 +277,6 @@ const ExportDoc: React.FC<Props> = ({
     }
   }, [wms1Loaded,wms2Loaded,wms3Loaded, imageData, docRequested, averageTempBeforeMeasurements, averageTempAfterMeasurements, averageOriginalShadow, averageNewShadow, percentageTrees, newPercentageTrees, fractionUnpaved, newFractionUnpaved]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // is there a better way ?
   useEffect(() => {
         setwms2Loaded(false);
         setwms3Loaded(false);
@@ -496,13 +481,6 @@ const ExportDoc: React.FC<Props> = ({
             <div
               className="noprint"
             >
-              {/* {`To save this document as .pdf do as follows:
-              Go to: Settings >> Print
-              - As "destination" choose "Print as PDF"
-              - Go to "More settings"
-              - As "margin" choose "default"
-              - Check the checkbox "print backgrounds" or "background graphics"
-              `}  */}
               Om op te slaan als .pdf doe als volgt:
               <br/>
               <ul>
@@ -539,10 +517,6 @@ const ExportDoc: React.FC<Props> = ({
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
-                    // @ts-ignore \*}
-                    // zoomSnap={false}
-                    // @ts-ignore 
-                    // zoomDelta={false}
                     trackResize={false}
                     touchZoom={false}
                     scrollWheelZoom={false}
@@ -598,10 +572,6 @@ const ExportDoc: React.FC<Props> = ({
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
-                    // @ts-ignore \*}
-                    // zoomSnap={false}
-                    // @ts-ignore 
-                    // zoomDelta={false}
                     trackResize={false}
                     touchZoom={false}
                     scrollWheelZoom={false}
@@ -660,10 +630,6 @@ const ExportDoc: React.FC<Props> = ({
                     doubleClickZoom={false}
                     closePopupOnClick={false}
                     dragging={false}
-                    // @ts-ignore \*}
-                    // zoomSnap={false}
-                    // @ts-ignore 
-                    // zoomDelta={false}
                     trackResize={false}
                     touchZoom={false}
                     scrollWheelZoom={false}
@@ -676,8 +642,6 @@ const ExportDoc: React.FC<Props> = ({
                     <WMSTileLayer
                       key="heatstress-original"
                       url={window.location.host.includes('staging')? "http://nxt3.staging.lizard.net/wms/" : "http://demo.lizard.net/wms/"}
-                      // @ts-ignore
-                      // layers={configuration.originalHeatstressLayer}
                       layers={mapState.templatedDifferenceLayer!}
                       // @ts-ignore
                       styles={configuration.differenceMapStyle}
@@ -803,7 +767,6 @@ const ExportDoc: React.FC<Props> = ({
                         Percentage schaduw
                       </td>
                       <td>
-                        {/* 20% */}
                         {`${(parseFloat(averageOriginalShadow || "0")*100).toFixed(0)}%`}
                       </td>
                       <td>
@@ -815,7 +778,6 @@ const ExportDoc: React.FC<Props> = ({
                         Percentage bomen
                       </td>
                       <td>
-                        {/* 10% */}
                         {`${(parseFloat(percentageTrees || "0")*100).toFixed(0)}%`}
                       </td>
                       <td>
@@ -827,11 +789,9 @@ const ExportDoc: React.FC<Props> = ({
                         Groen vs. verhard oppervlak
                       </td>
                       <td>
-                        {/* 30/70 */}
                         {fractionUnpaved === null? "": `${(parseFloat(fractionUnpaved || "0")*100).toFixed(0)}/${(100-(parseFloat(fractionUnpaved || "0")*100)).toFixed(0)}`}
                       </td>
                       <td>
-                        {/* 30/70 */}
                         {newFractionUnpaved === null? "": `${(parseFloat(newFractionUnpaved || "0")*100).toFixed(0)}/${(100-(parseFloat(newFractionUnpaved || "0")*100)).toFixed(0)}`}
                       </td>
                     </tr>
