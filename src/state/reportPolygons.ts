@@ -1,8 +1,7 @@
-import { FeatureCollection, /*Geometry,*/ Feature, Polygon } from 'geojson';
+import { FeatureCollection, Feature, Polygon } from 'geojson';
 import { LatLng } from 'leaflet';
 import { AnyAction } from 'redux';
 import { AppState } from '../App';
-// import { polygonEqual } from '../utils/geometry';
 
 import {
   START_EDITING_REPORT_POLYGON,
@@ -42,7 +41,6 @@ export const SET_REPORT_POLYGON_BEING_CONSTRUCTED = 'reportPolygons/setBeingCons
 export const ADD_REPORT_POLYGON = 'reportPolygons/addReportPolygon';
 const ADD_FEATURES_LIST = 'reportPolygons/addFeaturesList';
 
-// export const REMOVE_PAVEMENT = 'reportPolygons/removePavement';
 
 // Helper functions
 
@@ -80,7 +78,6 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): ReportPolygonsState =>
         reportPolygonsOnMap: {
           ...state.reportPolygonsOnMap,
           features: [
-            // ...state.reportPolygonsOnMap.features,
             ...state.reportPolygonsBeingAdded.features
           ]
         },
@@ -133,22 +130,6 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): ReportPolygonsState =>
           features: [...state.reportPolygonsOnMap.features, ...features],
         },
       };
-    // case REMOVE_PAVEMENT: {
-    //   const geometry: Polygon = action.geometry;
-    //   const pavement: Pavement = action.pavement;
-
-    //   return {
-    //     ...state,
-    //     pavementsOnMap: {
-    //       ...state.pavementsOnMap,
-    //       features: state.pavementsOnMap.features.filter(
-    //         (feature) => (
-    //           feature.properties.pavement !== pavement ||
-    //           !polygonEqual(feature.geometry, geometry)
-    //         ))
-    //     }
-    //   };
-    // }
     default: return state;
   };
 };
@@ -191,14 +172,3 @@ export function getReportPolygonsBeingAdded(state: AppState) {
 export function getReportPolygonsBeingConstructed(state: AppState) {
   return state.reportPolygons.reportPolygonBeingConstructed;
 }
-
-// export const removePavement = (
-//   geometry: Geometry,
-//   pavement: Pavement
-// ) => {
-//   return {
-//     type: REMOVE_PAVEMENT,
-//     geometry,
-//     pavement
-//   };
-// };

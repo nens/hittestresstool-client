@@ -314,27 +314,11 @@ const MainMap: React.FC<MainMapProps> = ({
           {!editingReportPolygons? <GeoJSON
             key={"reportPolygonsOnMap" + reportPolygonsOnMap.features.length + editing}
             data={reportPolygonsOnMap}
-            // style={(feature: any) => {
-            //   return {
-            //     color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement],
-            //     opacity: editingPavements ? 0.3 : 1,
-            //     fillOpacity: editingPavements ? 0.1 : 0.25
-            //   };
-            // }}
-            // onEachFeature={(feature: PavementOnMap, layer) =>
-            //   !editing && layer.on("click", (event) => {
-            //     clickPavement((event as any).latlng, feature);
-            //   })}
           />:null}
           {editingReportPolygons && (
             <GeoJSON
               key={"reportPolygonsBeingAdded" + reportPolygonsBeingAdded.features.length}
               data={reportPolygonsBeingAdded}
-              // style={(feature: any) => {
-              //   return {
-              //     color: COLORS_PER_PAVEMENT[(feature as PavementOnMap).properties.pavement]
-              //   };
-              // }}
             />
           )}
           {editingReportPolygons && reportPolygonBeingConstructed && (
@@ -346,7 +330,6 @@ const MainMap: React.FC<MainMapProps> = ({
                 addReportPolygon(polygon);
                 addMessage("Report polygon geplaatst");
               }}
-              // polygonColor={COLORS_PER_PAVEMENT[selectedPavement]}
             />
           )}
         </>

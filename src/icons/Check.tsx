@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './Icons.module.css';
 
 interface CheckProps {
-  onClick?: () => void
+  onClick: () => void
 }
 
 const Check: React.FC<CheckProps> = ({onClick}) => (

@@ -32,7 +32,6 @@ export const polygonOnMapToGeometryString = (polygonsOnMap: FeatureCollection<Po
     const reportPolygon1 = reportPolygon0.map((latLng => latLng.join(" ")));
     const reportPolygon2 = reportPolygon1.join(", ");
     const reportPolygon = reportPolygon2
-    // const geom = `POLYGON ((${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.ne.lat}, ${configuration.initialBounds.ne.lng} ${configuration.initialBounds.sw.lat}, ${configuration.initialBounds.sw.lng} ${configuration.initialBounds.sw.lat}))`;
     const geom = `POLYGON ((${reportPolygon}))`;
     return geom;
 }

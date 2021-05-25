@@ -9,11 +9,11 @@ import {
   getChangesMade
 } from '../state/sidebar';
 import {
-  clickCalculate,
+  clickCalculate
 } from '../state/map';
 
 interface Props {
-  clickCalculate: () => void,
+  clickCalculate: () => void
 }
 
 const BlockCalculate: React.FC<Props> = ({clickCalculate}) => {
@@ -27,10 +27,8 @@ const BlockCalculate: React.FC<Props> = ({clickCalculate}) => {
       }
       icon={<Reload/>}
       status={editing || !changesMade ? "disabled" : "closed"}
-      onOpen={()=>{
-        clickCalculate();
-      }} />
+      onOpen={clickCalculate} />
   );
 };
 
-export default connect(null, {clickCalculate,})(BlockCalculate);
+export default connect(null, {clickCalculate})(BlockCalculate);
