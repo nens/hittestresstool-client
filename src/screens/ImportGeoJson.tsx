@@ -50,7 +50,7 @@ const ImportGeoJson: React.FC<Props> = ({
       title="Import GeoJSON"
       icon={<UploadIcon/>}
       status={reportRequested? "disabled":"closed"} 
-      onClick={()=>{
+      onOpen={()=>{
         const input = document.createElement('input');
         input.type = 'file';
 

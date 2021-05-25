@@ -46,7 +46,7 @@ const ExportGeoJson: React.FC<Props> = () => {
       title="Export as GeoJSON"
       icon={<DownloadIcon/>}
       status={"closed"} 
-      onClick={()=>{
+      onOpen={()=>{
         download("Hittestress_GeoJSON.txt", JSON.stringify(completeGeoJson, null, "    "));
       }}
     >
