@@ -148,7 +148,8 @@ const MainMap: React.FC<MainMapProps> = ({
   const mapClass = (
       editingTrees ?
       mapEditTreesStyle : editingPavements ?
-      styles.MapEditPavements : '');
+      styles.MapEditPavements : editingReportPolygons ?
+      styles.MapEditReportPolygon : '');
 
   const initialBounds = Leaflet.latLngBounds(
     Leaflet.latLng(configuration.initialBounds.sw),

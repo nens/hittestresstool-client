@@ -14,3 +14,7 @@
 .MapEditPavements:hover {
   cursor: crosshair;
 }
+
+.MapEditReportPolygon:hover {
+  cursor: crosshair;
+}
