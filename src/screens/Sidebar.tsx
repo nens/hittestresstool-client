@@ -8,7 +8,6 @@ import ExportDoc from './ExportDoc';
 import ExportGeoJson from './ExportGeoJson';
 import ImportGeoJson from './ImportGeoJson';
 import packageJson from '../../package.json';
-import center from '@turf/center';
 
 const Sidebar: React.FC = () => {
 
@@ -23,11 +22,12 @@ const Sidebar: React.FC = () => {
         }}
       >
         <span>Hittestresstool</span>
-        <button
+        <a
           style={{
             backgroundColor: "white",
             color: "#6DC1A9",
             fontSize: "29px",
+            textDecoration: "none",
             borderRadius: "18px",
             width: "36px",
             height: "36px",
@@ -36,7 +36,10 @@ const Sidebar: React.FC = () => {
             justifyContent: "center",
             alignItems: "center",
           }}
-        >i</button>
+          href={process.env.PUBLIC_URL + "/20201211 - Gebruiksaanwijzing hittetool.pdf"}
+          target="_blank"
+          rel="noopener noreferrer"
+        >i</a>
       </h1>
       <h2>Resultaat</h2>
       <BlockHittestress/>
