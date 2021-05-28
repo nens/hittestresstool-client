@@ -7,49 +7,41 @@ import BlockCalculate from './BlockCalculate';
 import ExportDoc from './ExportDoc';
 import ExportGeoJson from './ExportGeoJson';
 import ImportGeoJson from './ImportGeoJson';
-import packageJson from '../../package.json';
+import Header from '../components/Header';
 
 const Sidebar: React.FC = () => {
 
   return (
-    <div>
-      <h1 
-        title={"client-version: " +packageJson.version}
+    <div
+    style={{
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+    }}
+    >
+      <Header/>
+      <div
         style={{
+          flexGrow: 1,
           display: "flex",
+          flexDirection: "column",
           justifyContent: "space-between",
-          alignItems: "center",
         }}
       >
-        <span>Hittestresstool</span>
-        <a
-          style={{
-            backgroundColor: "white",
-            color: "#6DC1A9",
-            fontSize: "29px",
-            textDecoration: "none",
-            borderRadius: "18px",
-            width: "36px",
-            height: "36px",
-            border: "none",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          href={process.env.PUBLIC_URL + "/20201211 - Gebruiksaanwijzing hittetool.pdf"}
-          target="_blank"
-          rel="noopener noreferrer"
-        >i</a>
-      </h1>
-      <h2>Resultaat</h2>
-      <BlockHittestress/>
-      <h2>Brondata</h2>
-      <BlockTrees/>
-      <BlockPavements/>
-      <ImportGeoJson/>
-      <BlockCalculate/>
-      <ExportGeoJson/>
-      <ExportDoc/>
+        <div>
+          <h2>Resultaat</h2>
+          <BlockHittestress/>
+          <h2>Tools</h2>
+          <BlockTrees/>
+          <BlockPavements/>
+        </div>
+        <div>
+          <BlockCalculate/>
+          <ImportGeoJson/>
+          <ExportGeoJson/>
+          <ExportDoc/>
+        </div>
+      </div>
     </div>
   );
 };
