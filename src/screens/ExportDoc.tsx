@@ -686,11 +686,6 @@ const ExportDoc: React.FC<Props> = ({
                   
                       <h3>Gemiddelde gevoelstemperatuur</h3>
                       <p>De gemiddelde temperatuur in dit gebied, voor en na de maatregelen. </p>
-                      <b>Belangrijk:</b>
-                      <br/>
-                      <p>
-                      Er kunnen grote verschillen zitten de verharding van een gebied (denk aan een grote strook groen, maar ook een grote parkeerplaats). Daarom kunnen deze cijfers een vertekend beeld geven.
-                      </p>
                       <table 
                         style={{width: "100%"}}
                       >
@@ -702,10 +697,10 @@ const ExportDoc: React.FC<Props> = ({
                         </thead>
                         <tbody>
                           <tr>
-                            <td>
+                            <td style={{color: "#980000"}}>
                               {averageTempBeforeMeasurements}°
                             </td>
-                            <td>
+                            <td style={{color: "#3fc100"}}>
                               {averageTempAfterMeasurements}°
                             </td>
                           </tr>
@@ -789,10 +784,10 @@ const ExportDoc: React.FC<Props> = ({
                         Groen vs. verhard oppervlak
                       </td>
                       <td>
-                        {fractionUnpaved === null? "": `${(parseFloat(fractionUnpaved || "0")*100).toFixed(0)}/${(100-(parseFloat(fractionUnpaved || "0")*100)).toFixed(0)}`}
+                        <span style={{color: "#3fc100"/*"#b2df8a"*/}}>{fractionUnpaved === null? "": `${(parseFloat(fractionUnpaved || "0")*100).toFixed(0)}`}</span>/<span style={{color: "#5a5152"}}>{`${(100-(parseFloat(fractionUnpaved || "0")*100)).toFixed(0)}`}</span>
                       </td>
                       <td>
-                        {newFractionUnpaved === null? "": `${(parseFloat(newFractionUnpaved || "0")*100).toFixed(0)}/${(100-(parseFloat(newFractionUnpaved || "0")*100)).toFixed(0)}`}
+                        <span style={{color: "#3fc100"/*"#b2df8a"*/}}>{newFractionUnpaved === null? "": `${(parseFloat(newFractionUnpaved || "0")*100).toFixed(0)}`}</span>/<span style={{color: "#5a5152"}}>{`${(100-(parseFloat(newFractionUnpaved || "0")*100)).toFixed(0)}`}</span>
                       </td>
                     </tr>
               </tbody>
@@ -803,7 +798,7 @@ const ExportDoc: React.FC<Props> = ({
               <b>PET staat voor 'Physiological Equivalent Temperature'. </b>De kaart laat de gevoelstemperatuur in de buitenruimte zien. Op het Kennisportaal Ruimtelijke Adaptatie vindt u een duidelijke uitleg over hoe een PET-kaart wordt opgebouwd volgens de landelijke methodiek. 
             </p>
             <p className={"overhittestresstext"}>>
-            Voor het berekenen van de PET-hittestresskaart, worden veel verschillende informatiebronnen gebruikt. Denk daarbij aan KNMI meteogegevens (luchttemperatuur, luchtvochtigheid, en straling), en gegevens over het gebied zelf (zoals schaduw, groenfactor en skyviewfactor). Met de Lizard Geoblocks module worden al deze kaarten on-the-fly gecombineerd tot de PET-hittestresskaart. Het voordeel is dat wanneer een van de bronnen geactualiseerd wordt, de PET-hittestresskaart automatisch herberekend wordt met de meest actuele gegevens. De oude kaarten zijn natuurlijk ook nog beschikbaar!
+            Voor het berekenen van de PET-hittestresskaart, worden veel verschillende informatiebronnen gebruikt. Denk daarbij aan KNMI meteogegevens (luchttemperatuur, luchtvochtigheid, en straling), en gegevens over het gebied zelf (zoals schaduw, groenfactor en skyviewfactor). Met de Lizard Geoblocks module worden al deze kaarten on-the-fly gecombineerd tot de PET-hittestresskaart. 
             </p>
           </div>
         </div>
