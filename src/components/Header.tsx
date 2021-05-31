@@ -14,7 +14,7 @@ const Header: React.FC = () => {
           alignItems: "center",
         }}
       >
-        <span>Hittestresstool</span>
+        <span>Hittestress.nu</span>
         <a
           style={{
             backgroundColor: "white",

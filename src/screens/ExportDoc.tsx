@@ -342,7 +342,7 @@ const ExportDoc: React.FC<Props> = ({
 
   return (
     <Block
-      title="Rapport"
+      title="Exporteer rapport"
       icon={<PdfIcon/>}
       status={
          !anyTreesOrPavements || changesMade || !templatedUuid || (editing && openBlock !== 'report') ? 

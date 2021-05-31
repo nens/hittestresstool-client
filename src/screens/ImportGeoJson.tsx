@@ -47,7 +47,7 @@ const ImportGeoJson: React.FC<Props> = ({
   
   return (
     <Block
-      title="Import GeoJSON"
+      title="Upload aanpassingen"
       icon={<UploadIcon/>}
       status={reportRequested? "disabled":"closed"} 
       onOpen={()=>{
