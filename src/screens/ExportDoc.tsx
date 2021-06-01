@@ -201,7 +201,7 @@ const ExportDoc: React.FC<Props> = ({
     const geom = polygonOnMapToGeometryString(reportPolygonsOnMap);
     
     const response = await fetch(
-      `${url}${uuid}/zonal?geom=${geom}&zonal_statistic=mean&pixel_size=10&zonal_projection=EPSG:28992`,
+      `${url}${uuid}/zonal?geom=${geom}&zonal_statistic=mean&pixel_size=1&zonal_projection=EPSG:28992`,
       {
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
