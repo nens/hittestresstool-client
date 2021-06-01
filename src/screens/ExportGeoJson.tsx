@@ -43,7 +43,7 @@ const ExportGeoJson: React.FC<Props> = () => {
     
   return (
     <Block
-      title="Exporteer resultaten"
+      title="Maatregelen opslaan"
       icon={<DownloadIcon/>}
       status={"closed"} 
       onOpen={()=>{

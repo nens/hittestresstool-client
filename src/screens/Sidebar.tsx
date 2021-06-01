@@ -31,7 +31,7 @@ const Sidebar: React.FC = () => {
         <div>
           <h2>Resultaat</h2>
           <BlockHittestress/>
-          <h2>Tools</h2>
+          <h2>Maatregelen</h2>
           <BlockTrees/>
           <BlockPavements/>
         </div>
