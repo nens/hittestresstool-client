@@ -24,7 +24,7 @@ const BlockHittestress: React.FC<Props> = ({clickHeatStress}) => {
   return (
     <Block
       title={<>
-        <span>Hittestress</span>
+        <span>Hittestresskaart</span>
         {heatstressUpdated ? <span style={{
           display: "inline-block",
           textAlign: "center",
