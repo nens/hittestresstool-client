@@ -77,19 +77,23 @@ templateUuid is the template Geoblock that the app is about.
 
 If maxBounds is not given, initialBounds is used as maxBounds.
 
-# Development and proxy
+# Development
 
 Install dependencies simply with `yarn install` (I guess npm also works but I didn't use it).
 
-Then
+# PROXY
 
-```
-$ PROXY_USER=your.username PROXY_PASSWORD=your.password yarn start
-```
+- start the app using `$ yarn start`  
+- By default, the proxy sends requests to https://nxt3.staging.lizard.net/  
+  (for selected URLs), without authentication.  
+- Set up proxy and basic authentication by following the steps [here](./BASIC_AUTH.md)
+- start the app by running one of (depending on your choice in previous step) :  
 
-Will start the app and proxy the relevant URLs.
-
-See `src/setupProxy.js` to configure where it proxies to.
+`yarn start`  
+or  
+`PROXY_URL=https://nxt3.staging.lizard.net/ PROXY_API_KEY=123456789STAGINGKEY yarn start`  
+or    
+`yarn run startauth`
 
 # Technical design
 
