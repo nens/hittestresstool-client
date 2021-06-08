@@ -39,6 +39,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "startauth": "./startauth.sh",
     "build": "mkdir -p dist/ && rm -rf dist/*.zip && react-scripts build && scripts/makedist.sh",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
