@@ -11,9 +11,11 @@ import {
 } from './sidebar';
 
 export interface ReportPolygontGeojsonProperties {
-  
+  report: string
 }
-const standardGeoJSonProperties:ReportPolygontGeojsonProperties = {};
+const standardGeoJSonProperties:ReportPolygontGeojsonProperties = {
+  report: "reportPolygon"
+};
 
 export type ReportPolygonsOnMap = FeatureCollection<Polygon, ReportPolygontGeojsonProperties>;
 export type ReportPolygonOnMap = Feature<Polygon, ReportPolygontGeojsonProperties>;
