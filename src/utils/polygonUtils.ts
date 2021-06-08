@@ -44,8 +44,6 @@ export const getPointsWhereNewPointInLineCrossesExistingLines = (
   // convert parameters to format that turf library understands
   const existingCoordinatesInTurfFormat = existingPoints.map(latLng=>[latLng.lng,latLng.lat]);
   const newCoordinateInTurfFormat = [newPoint.lng, newPoint.lat];
-  console.log(existingCoordinatesInTurfFormat);
-  console.log(newCoordinateInTurfFormat);
 
   // if there are not at least 3 existing points a new point (less then 4th points) cannot cause intersections yet.
   // following represents a line between nodes 1 and 2 and 3:

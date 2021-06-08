@@ -32,7 +32,20 @@ interface Configuration {
   templateUuid: string,
   heatstressStyle: string,
   treesStyle: string,
-  pavementsStyle: string
+  pavementsStyle: string,
+
+  differenceTemplateUuid: string,
+  differenceMapStyle: string,
+   
+  originalShadeRasterUuid: string,
+  interactiveShadeTemplateUuid: string,
+
+   originalTreesRasterUuid: string,
+   interactiveTreesTemplateUuid: string,
+
+   originalPavedRasterUuid: string,
+   interactivePavedTemplateUuid: string,
+
 }
 
 export interface LegendStep {
@@ -45,6 +58,7 @@ interface SessionState {
   configuration: Configuration | null;
   startupErrors: string[];
   steps: LegendStep[] | null;
+  differenceSteps: LegendStep[] | null;
 }
 
 const INITIAL_STATE: SessionState = {
@@ -52,12 +66,14 @@ const INITIAL_STATE: SessionState = {
   configuration: null,
   startupErrors: [],
   steps: null,
+  differenceSteps: null,
 };
 
 const RECEIVE_BOOTSTRAP = 'session/RECEIVE_BOOTSTRAP';
 const RECEIVE_CONFIGURATION = 'session/RECEIVE_CONFIGURATION';
 const ADD_ERROR = 'session/ADD_ERROR';
 const SET_LEGEND_STEPS = 'session/SET_LEGEND_STEPS';
+const SET_DIFFERENCE_LEGEND_STEPS = 'session/SET_DIFFERENCE_LEGEND_STEPS';
 
 // Reducer
 
@@ -83,6 +99,11 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SessionState => {
         ...state,
         steps: action.steps
       };
+    case SET_DIFFERENCE_LEGEND_STEPS:
+      return {
+        ...state,
+        differenceSteps: action.steps
+      };
     default:
       return state;
   }
@@ -107,6 +128,7 @@ export const getConfiguration = (state: AppState) => state.session.configuration
 export const getErrors = (state: AppState) => state.session.startupErrors;
 
 export const getLegendSteps = (state: AppState) => state.session.steps;
+export const getDifferenceLegendSteps = (state: AppState) => state.session.differenceSteps;
 
 // Action creators
 
@@ -149,6 +171,7 @@ export const fetchConfiguration = (): Thunk => async (dispatch: AppDispatch) => 
 
     dispatch({type: RECEIVE_CONFIGURATION, configuration});
     dispatch(fetchLegend(configuration.heatstressStyle));
+    dispatch(fetchDifferenceLegend(configuration.differenceMapStyle));
   } else {
     dispatch(addError("Fout bij ophalen Hittestresstool configuratie, " + json.count + " configuraties gevonden."));
   }
@@ -170,5 +193,15 @@ export const fetchLegend = (style: string): Thunk => (dispatch) => {
         const steps = json.legend as LegendStep[];
         steps.reverse();
         dispatch({type: SET_LEGEND_STEPS, steps});
+      });
+};
+
+export const fetchDifferenceLegend = (style: string): Thunk => (dispatch) => {
+  fetch(`/wms/?service=WMS&request=GetLegend&style=${style}&steps=65&format=json`).then(
+    (response) => response.json()).then(
+      (json) => {
+        const steps = json.legend as LegendStep[];
+        steps.reverse();
+        dispatch({type: SET_DIFFERENCE_LEGEND_STEPS, steps});
       });
 };

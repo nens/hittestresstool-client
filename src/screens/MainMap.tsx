@@ -36,6 +36,13 @@ import {
   addPavement,
 } from '../state/pavements';
 import {
+  getReportPolygonsOnMap,
+  getReportPolygonsBeingAdded,
+  setReportPolygonBeingConstructed,
+  getReportPolygonsBeingConstructed,
+  addReportPolygon,
+} from '../state/reportPolygons';
+import {
   getMapState,
   clickTree,
   clickPavement,
@@ -62,7 +69,9 @@ import styles from './MainMap.module.css';
 interface MainMapProps {
   mapClickWhileEditingTrees: (latlng: LatLng) => void,
   addPavement: (polygon: LatLng[], pavement: Pavement) => void,
+  addReportPolygon: (polygon: LatLng[]) => void,
   setPavementBeingConstructed: (latlngs: LatLng[]) => void,
+  setReportPolygonBeingConstructed: (latlngs: LatLng[]) => void,
   removeTree: (geometry: Geometry, tree: Tree) => void,
   clickTree: (latlng: LatLng, tree: TreeOnMap) => void
   clickPavement: (latlng: LatLng, pavement: PavementOnMap) => void,
@@ -75,6 +84,8 @@ const MainMap: React.FC<MainMapProps> = ({
   addMessage,
   addPavement,
   setPavementBeingConstructed,
+  addReportPolygon,
+  setReportPolygonBeingConstructed,
   clickTree,
   clickPavement,
   clickTemperature
@@ -87,6 +98,11 @@ const MainMap: React.FC<MainMapProps> = ({
   const pavementsOnMap = useSelector(getPavementsOnMap);
   const pavementsBeingAdded = useSelector(getPavementsBeingAdded);
   const pavementBeingConstructed = useSelector(getPavementBeingConstructed);
+
+  const reportPolygonsOnMap = useSelector(getReportPolygonsOnMap);
+  const reportPolygonsBeingAdded = useSelector(getReportPolygonsBeingAdded);
+  const reportPolygonBeingConstructed = useSelector(getReportPolygonsBeingConstructed);
+
   const mapState = useSelector(getMapState);
   const configuration = useSelector(getConfiguration);
   const legendSteps = useSelector(getLegendSteps);
@@ -122,6 +138,7 @@ const MainMap: React.FC<MainMapProps> = ({
 
   const editingTrees = editing && openBlock === 'trees';
   const editingPavements = editing && openBlock === 'pavements';
+  const editingReportPolygons = editing && openBlock === 'report';
 
   const mapEditTreesStyle = (
     selectedTree === 'tree_5m' ? styles.MapEditTrees5 :
@@ -131,7 +148,8 @@ const MainMap: React.FC<MainMapProps> = ({
   const mapClass = (
       editingTrees ?
       mapEditTreesStyle : editingPavements ?
-      styles.MapEditPavements : '');
+      styles.MapEditPavements : editingReportPolygons ?
+      styles.MapEditReportPolygon : '');
 
   const initialBounds = Leaflet.latLngBounds(
     Leaflet.latLng(configuration.initialBounds.sw),
@@ -170,12 +188,18 @@ const MainMap: React.FC<MainMapProps> = ({
           if (intersectionArray.length === 0) {
             setPavementBeingConstructed(pavementBeingConstructed.concat([latlng]));
           }
+        } else if (editingReportPolygons && reportPolygonsBeingAdded.features.length === 0) {
+          const intersectionArray = getPointsWhereNewPointInLineCrossesExistingLines(
+            latlng, reportPolygonBeingConstructed
+          );
+          if (intersectionArray.length === 0) {
+            setReportPolygonBeingConstructed(reportPolygonBeingConstructed.concat([latlng]));
+          }
         } else if (openBlock === 'heatstress') {
-          console.log('CLICK');
           clickTemperature(latlng);
         }
       }}
-      onMousemove={(event: any) => editingPavements && setMouseLatLng(event.latlng as LatLng)}
+      onMousemove={(event: any) => (editingPavements || editingReportPolygons ) && setMouseLatLng(event.latlng as LatLng)}
       onViewportChange={updateClip}
       minZoom={minZoom}
       maxZoom={25}
@@ -285,6 +309,33 @@ const MainMap: React.FC<MainMapProps> = ({
           )}
         </>
       ) : null}
+      {/* _______________________________________________________________________________________________ REPORT */}
+      {openBlock === 'report' ? (
+        <>
+          {!editingReportPolygons? <GeoJSON
+            key={"reportPolygonsOnMap" + reportPolygonsOnMap.features.length + editing}
+            data={reportPolygonsOnMap}
+          />:null}
+          {editingReportPolygons && (
+            <GeoJSON
+              key={"reportPolygonsBeingAdded" + reportPolygonsBeingAdded.features.length}
+              data={reportPolygonsBeingAdded}
+            />
+          )}
+          {editingReportPolygons && reportPolygonBeingConstructed && (
+            <PolygonEditableComponent
+              polygonPoints={reportPolygonBeingConstructed}
+              setPolygonPoints={setReportPolygonBeingConstructed}
+              mouseLocation={mouseLatLng}
+              setPointsAction={(polygon: LatLng[]) => {
+                addReportPolygon(polygon);
+                addMessage("Report polygon geplaatst");
+              }}
+            />
+          )}
+        </>
+      ) : null}
+      {/* _______________________________________________________________________________________________ END REPORT */}
       {(mapState.popupLatLng !== null && mapState.popupType === 'tree' && mapState.popupTree) && (
         <TreePopup
           latLng={mapState.popupLatLng}
@@ -310,6 +361,8 @@ export default connect(null, {
   setPavementBeingConstructed,
   addMessage,
   addPavement,
+  addReportPolygon,
+  setReportPolygonBeingConstructed,
   removeTree,
   clickTree,
   clickPavement,

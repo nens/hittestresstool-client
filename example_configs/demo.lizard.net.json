@@ -1,0 +1,43 @@
+{
+   "minZoom":15,
+   "maxBounds":{
+      "ne":{
+         "lat":51.611301,
+         "lng":4.143262
+      },
+      "sw":{
+         "lat":51.58795,
+         "lng":4.061294
+      }
+   },
+   "treesStyle":"Greens:0:2000",
+   "templateUuid":"a3600181-0f80-4d16-87f1-ee1d9cea6482",
+   "initialBounds":{
+      "ne":{
+         "lat":51.611301,
+         "lng":4.143262
+      },
+      "sw":{
+         "lat":51.58795,
+         "lng":4.061294
+      }
+   },
+   "pavementsStyle":"lc-fun-1801c",
+   "heatstressStyle":"pet_heatstress:38:52",
+   "mapboxAccessToken":"pk.eyJ1IjoibmVsZW5zY2h1dXJtYW5zIiwiYSI6ImhkXzhTdXcifQ.3k2-KAxQdyl5bILh_FioCw",
+   "originalTreesLayer":"intern:ahn2:tree",
+   "originalPavementsLayer":"intern:nl:cover:fun-1801c",
+   "originalHeatstressLayer":"nelen-schuurmans:interactive-heat-stress-model",
+   
+   "differenceTemplateUuid": "02cb4e3d-55de-4c06-9a8c-7f4d63928248",
+   "differenceMapStyle": "pet_difference:-5:5",
+   
+   "originalShadeRasterUuid": "01d306ad-62a5-410d-aa47-37f01583cbce",
+   "interactiveShadeTemplateUuid": "66cfcd47-fa0c-4533-88e0-839743cabbb8",
+
+   "originalTreesRasterUuid": "357edce2-b802-46d4-8206-fe1ce9f383eb",
+   "interactiveTreesTemplateUuid": "fcefa3c0-b538-4648-97e1-b72135918c3f",
+
+   "originalPavedRasterUuid": "8480a74a-ab21-43bc-a1e0-41d38467bc65",
+   "interactivePavedTemplateUuid": "76bfd395-ffb3-420e-aceb-c42d1e7bc581"
+}

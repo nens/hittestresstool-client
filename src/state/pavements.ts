@@ -40,6 +40,7 @@ const INITIAL_STATE: PavementsState = {
 export const SET_PAVEMENT_BEING_CONSTRUCTED = 'pavements/setBeingConstructed';
 export const ADD_PAVEMENT = 'pavements/addPavement';
 export const REMOVE_PAVEMENT = 'pavements/removePavement';
+const ADD_FEATURES_LIST = 'pavements/addFeaturesList';
 
 // Helper functions
 
@@ -122,6 +123,15 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): PavementsState => {
         pavementBeingConstructed: []
       };
     }
+    case ADD_FEATURES_LIST:
+      const features: PavementOnMap[] = action.features;
+      return {
+        ...state,
+        pavementsOnMap: {
+          ...state.pavementsOnMap,
+          features: [...state.pavementsOnMap.features, ...features],
+        },
+      };
     case REMOVE_PAVEMENT: {
       const geometry: Polygon = action.geometry;
       const pavement: Pavement = action.pavement;
@@ -160,6 +170,13 @@ export function addPavement(polygon: LatLng[], pavement: Pavement) {
     pavement: pavement
   };
 }
+
+export const addPavementFeaturesList = (features: PavementsOnMap[]) => {
+  return{
+    type: ADD_FEATURES_LIST,
+    features: features
+  };
+};
 
 // Selectors
 

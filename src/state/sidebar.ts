@@ -10,7 +10,7 @@ import { REMOVE_PAVEMENT } from './pavements';
 // Are we editing?
 // And so on
 
-export type Map = "heatstress" | "pavements" | "trees";
+export type Map = "heatstress" | "pavements" | "trees" | "report";
 
 export type Tree = "tree_5m" | "tree_10m" | "tree_15m";
 export const TREES: [Tree, Tree, Tree] = ["tree_5m", "tree_10m", "tree_15m"];
@@ -31,6 +31,8 @@ interface SidebarState {
   selectedTree: Tree;
   selectedPavement: Pavement;
   changesMade: boolean;
+  changesProcessed: boolean;
+  reportRequested: boolean;
   heatstressUpdated: boolean;
 }
 
@@ -40,14 +42,17 @@ const INITIAL_STATE: SidebarState = {
   selectedTree: "tree_5m",
   selectedPavement: "grass",
   changesMade: false,
+  changesProcessed: false,
+  reportRequested: false,
   heatstressUpdated: false,
 };
 
 export const CLICK_HEAT_STRESS = "sidebar/clickHeatStress";
 export const CLICK_BLOCK_TREES = "sidebar/clickBlockTrees";
 export const CLICK_BLOCK_PAVEMENTS = "sidebar/clickBlockPavements";
+export const CLICK_REPORT = "sidebar/clickReport";
 const SET_SELECTED_PAVEMENT = "sidebar/setSelectedPavement";
-const SET_SELECTED_TREE = "sidebar/setSelectedTree";
+const SET_SELECTED_TREE = "sidebar/setSelectedTree"; 
 export const START_EDITING_TREES = "sidebar/startEditingTrees";
 export const CANCEL_EDITING_TREES = "sidebar/cancelEditingTrees";
 export const SUBMIT_EDITING_TREES = "sidebar/submitEditingTrees";
@@ -56,7 +61,15 @@ export const START_EDITING_PAVEMENTS = "sidebar/startEditingPavements";
 export const CANCEL_EDITING_PAVEMENTS = "sidebar/cancelEditingPavements";
 export const SUBMIT_EDITING_PAVEMENTS = "sidebar/submitEditingPavements";
 export const UNDO_EDITING_PAVEMENTS = "sidebar/undoEditingPavements";
+export const START_EDITING_REPORT_POLYGON = "sidebar/startEditingReportPolygon";
+export const CANCEL_EDITING_REPORT_POLYGON = "sidebar/cancelEditingReportPolygon";
+export const SUBMIT_EDITING_REPORT_POLYGON = "sidebar/submitEditingReportPolygon";
+export const UNDO_EDITING_REPORT_POLYGON = "sidebar/undoEditingReportPolygon";
 export const SENDING_CHANGES = "sidebar/sendingChanges";
+export const CHANGES_PROCESSED_BY_BACKEND = 'sidebar/changesProcessedByBackend'
+export const CHANGES_MADE = "sidebar/CHANGES_MADE";
+export const REPORT_REQUESTED = "sidebar/REPORT_REQUESTED";
+export const REPORT_READY = "sidebar/REPORT_READY";
 
 const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
   const type = action.type;
@@ -87,6 +100,13 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       } else {
         return {...state, openMap: "pavements"};
       }
+    case CLICK_REPORT:
+      if (state.editing || state.openMap === 'report') {
+        // Doesn't do anything
+        return state;
+      } else {
+        return {...state, openMap: "report"};
+      }
     case SET_SELECTED_PAVEMENT:
       return {
         ...state,
@@ -99,6 +119,7 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       };
     case START_EDITING_TREES:
     case START_EDITING_PAVEMENTS:
+    case START_EDITING_REPORT_POLYGON:
       return {
         ...state,
         editing: true
@@ -108,10 +129,23 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
       return {
         ...state,
         editing: false,
-        changesMade: true
+        changesMade: true,
+        changesProcessed: false,
+      };
+    case SUBMIT_EDITING_REPORT_POLYGON:
+      return {
+        ...state,
+        editing: false,
+      };
+    case CHANGES_MADE:
+      return {
+        ...state,
+        changesMade: true,
+        changesProcessed: false,
       };
     case CANCEL_EDITING_PAVEMENTS:
     case CANCEL_EDITING_TREES:
+    case CANCEL_EDITING_REPORT_POLYGON:
       return {
         ...state,
         editing: false
@@ -131,12 +165,33 @@ const reducer = (state=INITIAL_STATE, action: AnyAction): SidebarState => {
     case REMOVE_PAVEMENT:
       return {
         ...state,
-        changesMade: true
+        changesMade: true,
+        changesProcessed: false,
       };
     case SENDING_CHANGES:
       return {
         ...state,
         changesMade: false
+      };
+    case CHANGES_PROCESSED_BY_BACKEND: 
+      if (state.changesMade === false) {
+        return {
+          ...state,
+          changesProcessed: true,
+  
+        };
+      } else { // if new changes are made and thus state.changesMade === truen then this CHANGES_PROCESSED_BY_BACKEND is not about the latest changes anymore so do nothing
+        return { ...state }
+      }
+    case REPORT_REQUESTED:
+      return {
+        ...state,
+        reportRequested: true,
+      };
+    case REPORT_READY:
+      return {
+        ...state,
+        reportRequested: false,
       };
     default:
       return state;
@@ -159,8 +214,12 @@ export const getEditingPavements = (state: AppState): boolean => (
   state.sidebar.editing && state.sidebar.openMap === 'pavements'
 );
 
+export const getEditingReport = (state: AppState): boolean => (
+  state.sidebar.editing && state.sidebar.openMap === 'report'
+);
+
 export const getEditing = (state: AppState): boolean => (
-  getEditingTrees(state) || getEditingPavements(state)
+  getEditingTrees(state) || getEditingPavements(state) || getEditingReport(state)
 );
 
 export const getHeatstressUpdated = (state: AppState): boolean => {
@@ -170,6 +229,19 @@ export const getHeatstressUpdated = (state: AppState): boolean => {
 export const getChangesMade = (state: AppState): boolean => (
   state.sidebar.changesMade
 );
+export const getChangesProcessed = (state: AppState): boolean => (
+  state.sidebar.changesProcessed
+);
+export const getReportRequested = (state: AppState): boolean => (
+  state.sidebar.reportRequested
+);
+
+export const getAnyTreesOrPavements = (state: AppState): boolean => {
+  return (
+    state.trees.treesOnMap.features.length > 0 ||
+    state.pavements.pavementsOnMap.features.length > 0
+  );
+}
 
 // Action creators
 
@@ -188,6 +260,12 @@ export const clickBlockTrees = () => {
 export const clickBlockPavements = () => {
   return {
     type: CLICK_BLOCK_PAVEMENTS
+  };
+};
+
+export const clickBlockReport = () => {
+  return {
+    type: CLICK_REPORT
   };
 };
 
@@ -254,3 +332,47 @@ export const undoEditingPavements = () => {
     type: UNDO_EDITING_PAVEMENTS
   };
 }
+
+// also for report polygon
+
+export const startEditingReportPolygon = () => {
+  return {
+    type: START_EDITING_REPORT_POLYGON
+  };
+}
+
+export const cancelEditingReportPolygon = () => {
+  return {
+    type: CANCEL_EDITING_REPORT_POLYGON
+  };
+}
+
+export const submitEditingReportPolygon = (): Thunk => (dispatch, getState) => {
+  dispatch({
+    type: SUBMIT_EDITING_REPORT_POLYGON
+  });
+}
+
+export const undoEditingReportPolygon = () => {
+  return {
+    type: UNDO_EDITING_REPORT_POLYGON
+  };
+}
+
+export const setChangesMade = () => {
+  return {
+    type: CHANGES_MADE,
+  };
+}
+
+export const setReportRequested = () => {
+  return {
+    type: REPORT_REQUESTED,
+  };
+}
+export const setReportReady = () => {
+  return {
+    type: REPORT_READY,
+  };
+}
+

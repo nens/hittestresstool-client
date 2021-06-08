@@ -22,6 +22,7 @@ import {
   cancelEditingTrees,
   submitEditingTrees,
   undoEditingTrees,
+  getReportRequested,
 } from '../state/sidebar';
 
 interface Props {
@@ -44,8 +45,10 @@ const BlockTrees: React.FC<Props> = ({
   const editing = useSelector(getEditing);
   const openBlock = useSelector(getOpenBlock);
   const selectedTree = useSelector(getSelectedTree);
+  const reportRequested = useSelector(getReportRequested);
 
-  const blockStatus = openBlock === 'trees' ? "opened" : editing ? "disabled" : "closed";
+
+  const blockStatus = openBlock === 'trees' ? "opened" : editing || reportRequested ? "disabled" : "closed";
   const editingTrees = openBlock === 'trees' && editing;
 
   // Functions to convert indexes 0, 1, 2 to Tree types

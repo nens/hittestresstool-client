@@ -7,7 +7,8 @@ import Heat from '../icons/Heat';
 import {
   getEditing,
   getHeatstressUpdated,
-  clickHeatStress
+  clickHeatStress,
+  getReportRequested,
 } from '../state/sidebar';
 
 interface Props {
@@ -17,11 +18,13 @@ interface Props {
 const BlockHittestress: React.FC<Props> = ({clickHeatStress}) => {
   const editing = useSelector(getEditing);
   const heatstressUpdated = useSelector(getHeatstressUpdated);
+  const reportRequested = useSelector(getReportRequested);
+
 
   return (
     <Block
       title={<>
-        <span>Hittestress</span>
+        <span>Hittestresskaart</span>
         {heatstressUpdated ? <span style={{
           display: "inline-block",
           textAlign: "center",
@@ -35,7 +38,7 @@ const BlockHittestress: React.FC<Props> = ({clickHeatStress}) => {
       </>
       }
       icon={<Heat/>}
-      status={editing ? "disabled" : "closed"}
+      status={editing || reportRequested ? "disabled" : "closed"}
       onOpen={clickHeatStress} />
   );
 };
