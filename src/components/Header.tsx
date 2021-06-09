@@ -4,6 +4,8 @@ import packageJson from '../../package.json';
 
 const Header: React.FC = () => {
 
+  const pdfUrl = require('../files/20201211 - Gebruiksaanwijzing hittetool.pdf');
+
   return (
    
       <h1 
@@ -29,7 +31,7 @@ const Header: React.FC = () => {
             justifyContent: "center",
             alignItems: "center",
           }}
-          href={process.env.PUBLIC_URL + "/20201211 - Gebruiksaanwijzing hittetool.pdf"}
+          href={pdfUrl}
           target="_blank"
           rel="noopener noreferrer"
         >i</a>
