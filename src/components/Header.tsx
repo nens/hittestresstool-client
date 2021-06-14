@@ -4,7 +4,7 @@ import packageJson from '../../package.json';
 
 const Header: React.FC = () => {
 
-  const pdfUrl = require('../files/20201211 - Gebruiksaanwijzing hittetool.pdf');
+  const pdfUrl = require('../files/handleiding hittestresstool 10 juni 2021.pdf');
 
   return (
    
