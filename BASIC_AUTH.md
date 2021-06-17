@@ -19,9 +19,9 @@ but replace `123456789STAGINGKEY` with a key you created with [api-key-managemen
 In your `~/.bashrc` file add the following lines:
 
 `export LIZARD_URL='https://parramatta.lizard.net/'`   
-`export LIZARD_API_KEY=123456789STAGINGKEY`  
+`export LIZARD_API_KEY=123456789PRODKEY`  
 `export PROXY_URL='https://nxt3.staging.lizard.net/'`  
-`export PROXY_API_KEY=123456789PRODKEY`  
+`export PROXY_API_KEY=123456789STAGINGKEY`  
 
 But change the `123456789STAGINGKEY` with a key you created with [api-key-management-page](https://nxt3.staging.lizard.net/management/#/personal_api_keys).  
 Also change the `123456789PRODKEY` with a key you created with [production_api-key-management-page](https://demo.lizard.net/management/#/personal_api_keys). 
