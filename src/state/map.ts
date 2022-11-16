@@ -245,7 +245,6 @@ const getGeoblockParameters = (state: AppState) => {
 
   const parameters = {
     ProjectionTag: 'EPSG:28992',
-    AnchorTag: [0, 0], // lng/lat of Rijksdriehoek 0 0
     Trees5mTag: trees_5m.length ? trees_5m : undefined,
     Trees10mTag: trees_10m.length ? trees_10m : undefined,
     Trees15mTag: trees_15m.length ? trees_15m : undefined,
@@ -260,7 +259,7 @@ const getGeoblockParameters = (state: AppState) => {
 
 export const getGeoBlockParametersWithoutBottomData = (state: AppState) => {
   const parameters = getGeoblockParameters(state);
-  const parameterWithoutBottomType = { 
+  const parameterWithoutBottomType = {
     ...parameters,
     WaterTag: undefined,
     GrassTag: undefined,
@@ -399,7 +398,7 @@ export const clickCalculate = (): Thunk => async (dispatch, getState) => {
     dispatch(setChangesMade());
   }
 
-  
+
 };
 
 // Clicks for popups
